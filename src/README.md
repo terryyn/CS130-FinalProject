@@ -1,0 +1,1 @@
+The folder api will contain the flask code implementing the APIs of the web app, while the folder app contains react code serving the web app.
