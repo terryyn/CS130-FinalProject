@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from flask import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
@@ -32,5 +32,8 @@ def create_app(test_config=None):
     @app.route('/hello')
     def hello():
         return 'Hello, World!'
+
+    from main import main as main_blueprint
+    app.register_blueprint(main_blueprint)
 
     return app
