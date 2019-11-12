@@ -40,8 +40,3 @@ class Event(db.Model):
     description = db.Column(db.String(64), nullable=True)
     eventType = db.Column(db.Integer, default=EventType.DEFAULT)
     participants = db.Column(db.PickleType, nullable=True)
-
-def add_event(event_json):
-    new_event = Event(eventName=event_json[eventName], userID=event_json[userID], date=event_json[date], time=event_json[time], location=event_json[location], description=event_json[description], eventType=event_json[eventType], participants=event_json[participants])
-    db.session.add(new_event)
-    db.session.commit()
