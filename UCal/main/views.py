@@ -28,7 +28,7 @@ def edit_event_in_database(eventID, changes_json):
     db.session.add(target)
     db.session.commit()
 
-def get_user_events(req_json):
+def get_events_by_user(req_json):
     # match the json object from client
     userid = req_json['userid']
     date = req_json['date']
@@ -123,15 +123,14 @@ def edit_event():
     # return xx_template('success')
 
 # get event by userid + date
-@main.route('/getEvent', methods=['GET', 'POST']) 
-def get_events():
-    events_on_date = get_user_events(request.form)
-    event_names = []
-    for event in events_on_date:
-        event_names.append(event.eventName)
-    return event_names
+@main.route('/getEventByUserAndDate', methods=['GET', 'POST']) 
+def get_events_by_user_and_date():
+    return events_on_date = get_events_by_user(request.form)
 
-
+# get event by eventID
+@main.route('/getEventById', methods=['GET', 'POST']) 
+def get_event_by_id():
+    return Event.query.get(request.form['eventID'])
 
 @main.route('/add-meeting', methods=['GET','POST']) 
 def add_meetings(): 
