@@ -6,13 +6,17 @@ import datetime
 
 def add_event_to_database(event_json):
     # match the json object names
-    new_event = Event(eventName=event_json[eventName], userID=event_json[userID], date=event_json[date], time=event_json[time], location=event_json[location], description=event_json[description], eventType=event_json[eventType], participants=event_json[participants])
+    new_event = Event(eventName=event_json['eventName'], date=event_json['date'], \
+                time=event_json['time'], location=event_json['location'], \
+                description=event_json['description'], \
+                eventType=event_json['eventType'], participants=event_json['participants'])
     db.session.add(new_event)
     db.session.commit()
     return new_event[id]
 
 def delete_event_from_database(eventID):
-    db.session.delete(Event.query.get(eventID))
+    target = Event.query.get(eventID)
+    db.session.delete(target)
     db.session.commit()
 
 def edit_event_in_database(eventID, changes_json):
@@ -24,6 +28,14 @@ def edit_event_in_database(eventID, changes_json):
     db.session.add(target)
     db.session.commit()
 
+def get_user_events(req_json):
+    # match the json object from client
+    userid = req_json['userid']
+    date = req_json['date']
+    occupied_events = Event.query \
+                    .join(Participation) \
+                    .filter_by(Participation.user_id=userid, Event.date=date).all()
+    return occupied_events
 
 #Assume the json has "meeting_name, participants, list of days, meet_duration, earliest meet time, latest meet time"
 #TODO: discuss the format of passed in earliest/latest meet time
@@ -109,6 +121,16 @@ def edit_event():
     edit_event_in_database(request.form['eventID'], request.form)
     return 'success'
     # return xx_template('success')
+
+# get event by userid + date
+@main.route('/getEvent', methods=['GET', 'POST']) 
+def get_events():
+    events_on_date = get_user_events(request.form)
+    event_names = []
+    for event in events_on_date:
+        event_names.append(event.eventName)
+    return event_names
+
 
 
 @main.route('/add-meeting', methods=['GET','POST']) 
