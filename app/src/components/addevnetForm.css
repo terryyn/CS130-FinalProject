@@ -1,0 +1,39 @@
+.addevent {
+  font: 95% Arial, Helvetica, sans-serif
+
+}
+
+.addevent-form{
+  padding: 20px;
+}
+
+
+#addevent-title{
+	background: rgb(80, 79, 136);
+	padding: 20px 0;
+	font-weight: 300;
+	font-size: 140%;
+	text-align: center;
+	color: #fff;
+  margin-left:20px;
+  margin-right: 800px;
+}
+
+div {
+  margin-bottom: 20px;
+}
+
+
+
+#starttime, #endtime {
+  display: inline;
+  margin-left: 20px;
+}
+
+
+
+
+
+
+
+
