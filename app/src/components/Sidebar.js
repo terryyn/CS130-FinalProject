@@ -10,47 +10,45 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
-function Sidebar() {
-	const useStyles = makeStyles({
-		list: {
-			width: 250
-		},
-		fullList: {
-			width: 'auto'
-		}
-	});
+const useStyles = makeStyles({
+	list: {
+		width: 250
+	}
+});
 
+function Sidebar() {
 	return (
-		<Drawer open variant="permanent" className="sidebar">
-			<div className={useStyles().list}>
-				<List>
-					<ListItem>
-						<ListItemIcon>
-							<CalendarToday />
-						</ListItemIcon>
-						<ListItemText>
-							<Link to="/home">Home</Link>
-						</ListItemText>
-					</ListItem>
-					<ListItem>
-						<ListItemIcon>
-							<MeetingRoom />
-						</ListItemIcon>
-						<ListItemText>
-							<Link to="/meeting">Meeting</Link>
-						</ListItemText>
-					</ListItem>
-					<Divider />
-					<ListItem>
-						<ListItemIcon>
-							<ExitToApp />
-						</ListItemIcon>
-						<ListItemText>
-							<Link to="/">Sign out</Link>
-						</ListItemText>
-					</ListItem>
-				</List>
-			</div>
+		<Drawer open variant="permanent" className={useStyles().list} classes={{ paper: useStyles().list }}>
+			<List>
+				<ListItem>
+					<h2>UCal</h2>
+				</ListItem>
+				<ListItem>
+					<ListItemIcon>
+						<CalendarToday />
+					</ListItemIcon>
+					<ListItemText>
+						<Link to="/home">Home</Link>
+					</ListItemText>
+				</ListItem>
+				<ListItem>
+					<ListItemIcon>
+						<MeetingRoom />
+					</ListItemIcon>
+					<ListItemText>
+						<Link to="/meeting">Meeting</Link>
+					</ListItemText>
+				</ListItem>
+				<Divider />
+				<ListItem>
+					<ListItemIcon>
+						<ExitToApp />
+					</ListItemIcon>
+					<ListItemText>
+						<Link to="/">Sign out</Link>
+					</ListItemText>
+				</ListItem>
+			</List>
 		</Drawer>
 	);
 }

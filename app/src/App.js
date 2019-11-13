@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Switch, Route, Link, Redirect, useHistory, useLocation } from 'react-router-dom';
 
+import Grid from '@material-ui/core/Grid';
+
 import Login from './containers/Login';
 import Meeting from './containers/Meeting';
 import Home from './containers/Home';
