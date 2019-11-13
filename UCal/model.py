@@ -51,9 +51,3 @@ class Participation(db.Model):
     __tablename__ = 'participation'
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'), primary_key = True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
-
-
-def add_event(event_json):
-    new_event = Event(eventName=event_json[eventName], userID=event_json[userID], date=event_json[date], time=event_json[time], location=event_json[location], description=event_json[description], eventType=event_json[eventType], participants=event_json[participants])
-    db.session.add(new_event)
-    db.session.commit()
