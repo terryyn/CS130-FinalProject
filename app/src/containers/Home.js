@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Calendar from 'react-calendar';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -14,50 +14,82 @@ const useStyles = makeStyles({
 	}
 });
 
-const sampleEvents = [
-	{
-		Title: 'Bowling tournament',
-		Description: '',
-		StartTimezone: null,
-		Start: '2013-06-09T21:00:00.000Z',
-		End: '2013-06-10T00:00:00.000Z'
-	},
-	{
-		Title: 'Bowling tournament',
-		Description: '',
-		StartTimezone: null,
-		Start: '2013-06-09T21:00:00.000Z',
-		End: '2013-06-10T00:00:00.000Z'
-	}
-];
-
 function Home() {
-	// function getCalendar() {
-	// 	// TODO: get from server
-	// 	const sampleICS =
-	// 		'BEGIN:VCALENDAR' +
-	// 		'CALSCALE:GREGORIAN' +
-	// 		'PRODID:-//Example Inc.//Example Calendar//EN' +
-	// 		'VERSION:2.0' +
-	// 		'END:VCALENDAR';
-	// 	return ICAL.parse(sampleICS);
-	// }
-	// function getVevent(calendar) {
-	// 	return calendar.getFirstSubcomponent('vevent');
-	// }
-
-	// const calendar = useMemo(() => getCalendar(), []);
-	// const vevent = useMemo(() => getVevent(calendar), [ calendar ]);
-
 	const [ dateString, setDate ] = useState(new Date().toLocaleString());
-	const [ events, setEvents ] = useState(sampleEvents);
+	const [ calendar, setCalendar ] = useState(null);
+	const [ showAddEvent, setAddEVent ] = useState(false);
+
+	function getCalendar() {
+		// TODO: get from server
+		const sampleICS = [
+			'BEGIN:VCALENDAR',
+			'CALSCALE:GREGORIAN',
+			'PRODID:-//Example Inc.//Example Calendar//EN',
+			'VERSION:2.0',
+			'BEGIN:VEVENT',
+			'DTSTAMP:20190205T191224Z',
+			'DTSTART:20191112T070000Z',
+			'DTEND:20191112T110000Z',
+			'SUMMARY:Planning meeting',
+			'UID:4088E990AD89CB3DBB484909',
+			'END:VEVENT',
+			'BEGIN:VEVENT',
+			'DTSTAMP:20190205T191224Z',
+			'DTSTART:20191113T070000Z',
+			'DTEND:20191113T110000Z',
+			'SUMMARY:Planning meeting 2',
+			'UID:4088E990AD89CB3DBB484909',
+			'END:VEVENT',
+			'END:VCALENDAR'
+		].join('\r\n');
+		const parsed = ICAL.parse(sampleICS);
+		setCalendar(parsed);
+	}
+
+	function getEvents() {
+		// Get events and filter based on date
+		console.log('getting events');
+		if (!calendar) return [];
+		const comp = new ICAL.Component(calendar);
+		const currDate = new Date(dateString).toDateString();
+		const vevents = comp.getAllSubcomponents('vevent');
+
+		const events = [];
+		vevents.forEach((vevent) => {
+			const event = new ICAL.Event(vevent);
+			const dtstart = event.startDate.toJSDate().toDateString();
+			const dtend = event.endDate.toJSDate().toDateString();
+			if (dtstart === currDate || dtend === currDate) {
+				events.push(event);
+			}
+		});
+		return events;
+	}
+
+	useEffect(() => getCalendar(), []);
+	const events = useMemo(() => getEvents(), [ calendar, dateString ]);
 
 	function onChangeDate(date) {
 		setDate(date.toLocaleString());
-		console.log(date);
 	}
 
-	function addEvent() {}
+	function addEvent() {
+		// Update current calendar object
+		const comp = new ICAL.Component(calendar);
+		var vevent = new ICAL.Component('vevent'),
+			event = new ICAL.Event(vevent);
+
+		// Set standard properties
+		event.summary = 'foo bar';
+		event.uid = 'abcdef...';
+		event.startDate = ICAL.Time.now();
+		comp.addSubcomponent(vevent);
+		// Post serialized calendar
+		console.log(comp.toString());
+		// Refetch calendar
+		setCalendar(comp.toJSON());
+		// TODO: change to get
+	}
 
 	return (
 		<Grid container spacing={3} className={useStyles().grid}>

@@ -11,12 +11,18 @@ function DayView(props) {
 		const mmddyy = date.split(',')[0];
 		return mmddyy;
 	}
+
+	function formatTime(time) {
+		const date = time.toJSDate().toString();
+		return date;
+	}
+
 	function renderEvent(event) {
 		return (
 			<ListItem>
 				<ListItemText>
-					<div>{`${event.Start} to ${event.End}`}</div>
-					<div>{event.Title}</div>
+					<div>{`${formatTime(event.startDate)} to ${formatTime(event.endDate)}`}</div>
+					<div>{event.summary}</div>
 				</ListItemText>
 			</ListItem>
 		);
