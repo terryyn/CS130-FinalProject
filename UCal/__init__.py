@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-from dbmanager import DatabaseManager
+from .dbmanager import DatabaseManager
 db_manager = DatabaseManager.getInstance()
 
 def create_app(test_config=None):
@@ -30,12 +30,7 @@ def create_app(test_config=None):
 
     db.init_app(app)
 
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
-
-    from main import main as main_blueprint
+    from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
     return app

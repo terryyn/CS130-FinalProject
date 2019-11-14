@@ -1,6 +1,6 @@
 from . import db
 import datetime
-from model import Event, User, Participation
+from .model import Event, User, Participation
 
 class DatabaseManager():
     __instance = None
@@ -55,7 +55,7 @@ class DatabaseManager():
         date = req_json['date']
         occupied_events = Event.query \
                         .join(Participation) \
-                        .filter_by(Participation.user_id=userid, Event.date=date).all()
+                        .filter_by(user_id=userid, date=date).all()
         return occupied_events
 
     #Assume the json has "meeting_name, participants, list of days, meet_duration, earliest meet time, latest meet time"
