@@ -1,7 +1,7 @@
-from . import db
 import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+from . import db
 from .model import Event, User, Participation
-
 class DatabaseManager():
     __instance = None
     @staticmethod
@@ -18,7 +18,28 @@ class DatabaseManager():
         else:
             DatabaseManager.__instance = self
 
-    def read_event_json(event_json):
+    def sign_up(self,user_json):
+        has_user = User.query.filter(db.or_(User.username == user_json['username'], User.email == user_json['email'])).first()
+        if not has_user:
+            new_user = User(username=user_json['username'], \
+                                email=user_json['email'], \
+                                password_hash=generate_password_hash(user_json['password'], \
+                                is_instructor = user_json['is_instructor']))
+            db.session.add(new_user)
+            db.session.commit()
+            return True
+        return False
+
+    def log_in(self,user_json):
+        current_user = User.query.filter_by(username = user_json['username']).first()
+        if not current_user:
+            return -1
+        if check_password_hash(current_user.password_hash, user_json['password']):
+            return current_user.id
+        return -1
+        
+
+    def read_event_json(self,event_json):
         # match the json object namesd
         start_date = datetime.datetime.strptime(event_json['startdate'] , '%Y-%m-%d')
         start_time = datetime.datetime.strptime(event_json['starttime'] , '%H:%M')
@@ -29,18 +50,18 @@ class DatabaseManager():
                     eventType=event_json['type'], enddate=end_date, \
                     endtime=end_time, description=event_json['description'])
 
-    def add_event_to_database(event_json):
+    def add_event_to_database(self, event_json):
         new_event = read_event_json(event_json)
         db.session.add(new_event)
         db.session.commit()
         return new_event[id]
 
-    def delete_event_from_database(eventID):
+    def delete_event_from_database(self, eventID):
         target = Event.query.get(eventID)
         db.session.delete(target)
         db.session.commit()
 
-    def edit_event_in_database(eventID, changes_json):
+    def edit_event_in_database(self, eventID, changes_json):
         # match the json object names
         target = Event.query.get(eventID)
         for change in changes_json:
@@ -49,19 +70,27 @@ class DatabaseManager():
         db.session.add(target)
         db.session.commit()
 
-    def get_events_by_user(req_json):
+    def get_events_by_user(self, req_json):
         # match the json object from client
         userid = req_json['userid']
         date = req_json['date']
-        occupied_events = Event.query \
-                        .join(Participation) \
-                        .filter_by(user_id=userid, date=date).all()
+        occupied_events = Event.query.join(Participation) \
+                            .filter(Participation.user_id==userid, Event.startdate <= date & Event.enddate >= date) \
+                            .order_by(Event.startdate).all()
         return occupied_events
+
+    def get_students(self, course_name):
+        rows = Participation.query.join(Event) \
+                        .filter(Event.name==course_name).all()
+        students_id = []
+        for row in rows:
+            students_id.append(row.user_id)
+        return students_id
 
     #Assume the json has "meeting_name, participants, list of days, meet_duration, earliest meet time, latest meet time"
     #TODO: discuss the format of passed in earliest/latest meet time
     #TODO: consider cases where there are events before earliest meeting time or lastest meet time
-    def find_available_meeting_time(event_json):
+    def find_available_meeting_time(self,event_json):
         meeting_name = event_json['meeting_name']
         participants = event_json['participants']
         possible_days = event_json('possible_days')

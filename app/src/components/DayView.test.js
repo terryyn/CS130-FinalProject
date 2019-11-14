@@ -1,10 +1,10 @@
 import React from 'react';
-import App from './App.js';
+import DayView from './DayVIew.js';
 import renderer from 'react-test-renderer';
 
-describe('App', () =>{
+describe('Day View', () =>{
   test('snapshot renders', () => {
-    const component = renderer.create(<App/>);
+    const component = renderer.create(<DayView/>);
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });

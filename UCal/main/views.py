@@ -1,12 +1,32 @@
 from . import main
 from .. import db, db_manager
 from ..model import User, Event
-from flask import request
+from flask import request, redirect, render_template
 
+class Course:
+    def __init__(self, course_name):
+        self.course_name = course_name
+    
+    def getStudentsId(self):
+        return db_manager.get_students(self.course_name)
 
 @main.route('/', methods=['GET', 'POST']) 
 def index():
     return 'To be integrated with frontend'
+
+@main.route('/signUp', methods=['GET','POST']) 
+def sign_up():
+    if request.method == 'POST':
+        db_manager.sign_up(request.form)
+        return "rendering login template"
+    return "rendering signup template"
+
+@main.route('/logIn', methods=['GET','POST']) 
+def log_in():
+    if request.method == 'POST':
+        user_id = db_manager.log_in(request.form)
+        return "rendering index template with user id"
+    return "rendering login template"
 
 @main.route('/addEvent', methods=['GET', 'POST']) 
 def add_event():
