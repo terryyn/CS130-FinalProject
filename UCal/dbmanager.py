@@ -18,15 +18,26 @@ class DatabaseManager():
         else:
             DatabaseManager.__instance = self
 
+    def read_event_json(event_json):
+        # match the json object namesd
+        start_date = datetime.datetime.strptime(event_json['startdate'] , '%Y-%m-%d')
+        start_time = datetime.datetime.strptime(event_json['starttime'] , '%H:%M')
+        end_date = datetime.datetime.strptime(event_json['enddate'] , '%Y-%m-%d')
+        end_time = datetime.datetime.strptime(event_json['endtime'] , '%H:%M')
+        return Event(name=event_json['name'], startdate=start_date, \
+                    starttime=start_time, location=event_json['location'], \
+                    eventType=event_json['type'], enddate=end_date, \
+                    endtime=end_time, description=event_json['description'])
+
     def add_event_to_database(event_json):
-        # match the json object names
-        new_event = Event(eventName=event_json[eventName], userID=event_json[userID], date=event_json[date], time=event_json[time], location=event_json[location], description=event_json[description], eventType=event_json[eventType], participants=event_json[participants])
+        new_event = read_event_json(event_json)
         db.session.add(new_event)
         db.session.commit()
         return new_event[id]
 
     def delete_event_from_database(eventID):
-        db.session.delete(Event.query.get(eventID))
+        target = Event.query.get(eventID)
+        db.session.delete(target)
         db.session.commit()
 
     def edit_event_in_database(eventID, changes_json):
@@ -38,6 +49,14 @@ class DatabaseManager():
         db.session.add(target)
         db.session.commit()
 
+    def get_events_by_user(req_json):
+        # match the json object from client
+        userid = req_json['userid']
+        date = req_json['date']
+        occupied_events = Event.query \
+                        .join(Participation) \
+                        .filter_by(Participation.user_id=userid, Event.date=date).all()
+        return occupied_events
 
     #Assume the json has "meeting_name, participants, list of days, meet_duration, earliest meet time, latest meet time"
     #TODO: discuss the format of passed in earliest/latest meet time

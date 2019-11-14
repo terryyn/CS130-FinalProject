@@ -29,6 +29,15 @@ def edit_event():
     return 'success'
     # return xx_template('success')
 
+# get event by userid + date
+@main.route('/getEventByUserAndDate', methods=['GET', 'POST']) 
+def get_events_by_user_and_date():
+    return events_on_date = get_events_by_user(request.form)
+
+# get event by eventID
+@main.route('/getEventById', methods=['GET', 'POST']) 
+def get_event_by_id():
+    return Event.query.get(request.form['eventID'])
 
 @main.route('/schedule-meeting', methods=['GET','POST']) 
 def schedule_meeting(): 

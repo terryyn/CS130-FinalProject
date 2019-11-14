@@ -1,0 +1,13 @@
+#fbbutton {
+    margin-top: 20%;
+    margin-bottom: 10%;
+}
+
+hr {
+    border: 0;
+    clear:both;
+    display:block;
+    width: 96%;               
+    background-color: black;
+    height: 1px;
+}
