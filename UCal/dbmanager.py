@@ -1,6 +1,6 @@
 from . import db
 import datetime
-from model import Event, User, Participation
+from .model import Event, User, Participation
 
 class DatabaseManager():
     __instance = None

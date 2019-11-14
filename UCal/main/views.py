@@ -6,7 +6,7 @@ from flask import request
 
 @main.route('/', methods=['GET', 'POST']) 
 def index():
-    pass
+    return 'To be integrated with frontend'
 
 @main.route('/addEvent', methods=['GET', 'POST']) 
 def add_event():
@@ -32,7 +32,8 @@ def edit_event():
 # get event by userid + date
 @main.route('/getEventByUserAndDate', methods=['GET', 'POST']) 
 def get_events_by_user_and_date():
-    return events_on_date = get_events_by_user(request.form)
+    events_on_date = get_events_by_user(request.form)
+    return events_on_date
 
 # get event by eventID
 @main.route('/getEventById', methods=['GET', 'POST']) 
@@ -46,4 +47,4 @@ def schedule_meeting():
 
 @main.route('/add-meeting', methods=['GET','POST'])
 def add_meeting():
-    pass
+    return 'success'
