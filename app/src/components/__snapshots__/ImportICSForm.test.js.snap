@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ImportICSForm snapshot renders 1`] = `
+<div
+  className="form"
+>
+  <h1>
+    Import your calendar
+  </h1>
+  <div
+    className="dzu-dropzone"
+    onDragEnter={[Function]}
+    onDragLeave={[Function]}
+    onDragOver={[Function]}
+    onDrop={[Function]}
+  >
+    <label
+      className="dzu-inputLabel"
+    >
+      Upload an .ics file
+      <input
+        accept=".ics"
+        className="dzu-input"
+        disabled={false}
+        multiple={false}
+        onChange={[Function]}
+        type="file"
+      />
+    </label>
+  </div>
+</div>
+`;
