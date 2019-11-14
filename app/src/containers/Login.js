@@ -13,16 +13,12 @@ import Container from '@material-ui/core/Container';
 import Divider from '@material-ui/core/Divider';
 
 import { Link } from 'react-router-dom';
-import FacebookLoginWithButton from 'react-facebook-login';
+import FacebookLogin from 'react-facebook-login';
 import '../styles/login.css';
+import App from '../App'
 
-const responseFacebook = (response) => {
-    console.log(response);
-}
-
-const componentClicked = () => {
-    console.log( "Clicked!" )
-}
+const exampleEmail = ["dinkarkhattar@gmail.com"];
+const exampleUser = ["Dinkar Khattar"];
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -49,8 +45,19 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Login() {
+function Login(props) {
   const classes = useStyles();
+
+  let login = (response) => {
+    console.log(response)
+    if (exampleEmail.includes(response.email)) {
+      props.updateLoggedIn(true)
+    }
+    else {
+      exampleUser.push(response.name);
+      exampleEmail.push(response.email);
+    }
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -64,12 +71,11 @@ function Login() {
             </Typography>
 
             <div id="fbbutton">
-              <FacebookLoginWithButton
+              <FacebookLogin
               appId="1436766753144072"
               autoLoad
               fields="name,email,picture"
-              onClick={componentClicked}
-              callback={responseFacebook}
+              callback={login}
               icon="fa-facebook"
               />
             </div>

@@ -18,16 +18,13 @@ function App() {
 	return (
 		<div className="App">
 			<Router>
-				{isLoggedIn && <Sidebar />}
+				{isLoggedIn && <Sidebar updateLoggedIn={setLoggedIn}/>}
 				<Switch>
 					<Route exact path="/">
-						<Login />
-					</Route>
-          <Route exact path="/SignUp">
-						<SignUp />
-					</Route>
-					<Route path="/home">
-						<Home />
+						{isLoggedIn ?
+							(<Home />) :
+							(<Login updateLoggedIn={setLoggedIn}/>)
+						}
 					</Route>
 					<Route path="/meeting">
 						<Meeting />
