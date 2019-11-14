@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+
+import './DayView.css';
 
 function DayView(props) {
 	function formatDate(date) {
@@ -19,12 +21,20 @@ function DayView(props) {
 
 	function renderEvent(event) {
 		return (
-			<ListItem>
-				<ListItemText>
-					<div>{`${formatTime(event.startDate)} to ${formatTime(event.endDate)}`}</div>
-					<div>{event.summary}</div>
-				</ListItemText>
-			</ListItem>
+			<Fragment>
+				<ListItem>
+					<ListItemText>
+						<div className="agenda-item">
+							<div className="agenda-item-time">
+								<p>{formatTime(event.startDate)}</p>
+								<p>to</p>
+								<p>{formatTime(event.endDate)}</p>
+							</div>
+							<div className="agenda-item-summary">{event.summary}</div>
+						</div>
+					</ListItemText>
+				</ListItem>
+			</Fragment>
 		);
 	}
 	return (

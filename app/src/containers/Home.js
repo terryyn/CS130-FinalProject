@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Calendar from 'react-calendar';
 import Button from '@material-ui/core/Button';
+import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
+import Modal from '@material-ui/core/Modal';
 import ICAL from 'ical.js';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,13 +13,21 @@ import DayView from '../components/DayView';
 const useStyles = makeStyles({
 	grid: {
 		padding: '32px'
+	},
+	paper: {
+		position: 'absolute',
+		width: 400,
+		backgroundColor: 'white',
+		border: '2px solid #000'
 	}
 });
 
 function Home() {
 	const [ dateString, setDate ] = useState(new Date().toLocaleString());
 	const [ calendar, setCalendar ] = useState(null);
-	const [ showAddEvent, setAddEVent ] = useState(false);
+	const [ showAddEvent, setAddEvent ] = useState(false);
+
+	const classes = useStyles();
 
 	function getCalendar() {
 		// TODO: get from server
@@ -91,8 +101,31 @@ function Home() {
 		// TODO: change to get
 	}
 
+	function toggleAddEventModal() {
+		setAddEvent(!showAddEvent);
+	}
+
+	function renderAddEvent() {
+		return (
+			<Modal
+				aria-labelledby="simple-modal-title"
+				aria-describedby="simple-modal-description"
+				open={showAddEvent}
+				onClose={() => setAddEvent(false)}
+			>
+				<div className={classes.paper}>
+					<h2 id="simple-modal-title">Text in a modal</h2>
+					<p id="simple-modal-description">
+						Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+					</p>
+				</div>
+			</Modal>
+		);
+	}
+
 	return (
-		<Grid container spacing={3} className={useStyles().grid}>
+		<Grid container spacing={3} className={classes.grid}>
+			{renderAddEvent()}
 			<Grid item xs={12}>
 				<h1>My calendar</h1>
 			</Grid>
@@ -109,7 +142,7 @@ function Home() {
 					</Button>
 				</Grid>
 				<Grid item>
-					<Button variant="contained" color="primary" onClick={addEvent}>
+					<Button variant="contained" color="primary" onClick={toggleAddEventModal}>
 						Add event
 					</Button>
 				</Grid>
