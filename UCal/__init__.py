@@ -1,9 +1,11 @@
 import os
-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
+
+from dbmanager import DatabaseManager
+db_manager = DatabaseManager.getInstance()
 
 def create_app(test_config=None):
     # create and configure the app
