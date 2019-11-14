@@ -1,0 +1,16 @@
+.addevent {
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+	padding-left: 16px;
+}
+
+.addevent-field {
+	margin-top: 16px;
+}
+
+#starttime,
+#endtime {
+	display: inline;
+	margin-left: 20px;
+}
