@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flask_login import UserMixin, AnonymousUserMixin
-from . import db, login_manager
+from . import db
 
 class User(db.Model):
     '''
