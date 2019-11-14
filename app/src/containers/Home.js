@@ -7,6 +7,7 @@ import ICAL from 'ical.js';
 
 import { makeStyles } from '@material-ui/core/styles';
 
+import ImportICS from '../components/ImportICSForm';
 import StyleForm from '../components/AddEventForm';
 import DayView from '../components/DayView';
 
@@ -144,7 +145,7 @@ function Home() {
 				onClose={() => setImportICS(false)}
 			>
 				<div style={getModalStyle()} className={classes.paper}>
-					<StyleForm />
+					<ImportICS />
 				</div>
 			</Modal>
 		);
