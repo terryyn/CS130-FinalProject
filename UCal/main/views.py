@@ -6,13 +6,17 @@ import datetime
 
 def add_event_to_database(event_json):
     # match the json object names
-    new_event = Event(eventName=event_json[eventName], userID=event_json[userID], date=event_json[date], time=event_json[time], location=event_json[location], description=event_json[description], eventType=event_json[eventType], participants=event_json[participants])
+    new_event = Event(eventName=event_json['eventName'], date=event_json['date'], \
+                time=event_json['time'], location=event_json['location'], \
+                description=event_json['description'], \
+                eventType=event_json['eventType'], participants=event_json['participants'])
     db.session.add(new_event)
     db.session.commit()
     return new_event[id]
 
 def delete_event_from_database(eventID):
-    db.session.delete(Event.query.get(eventID))
+    target = Event.query.get(eventID)
+    db.session.delete(target)
     db.session.commit()
 
 def edit_event_in_database(eventID, changes_json):
@@ -24,6 +28,14 @@ def edit_event_in_database(eventID, changes_json):
     db.session.add(target)
     db.session.commit()
 
+def get_events_by_user(req_json):
+    # match the json object from client
+    userid = req_json['userid']
+    date = req_json['date']
+    occupied_events = Event.query \
+                    .join(Participation) \
+                    .filter_by(Participation.user_id=userid, Event.date=date).all()
+    return occupied_events
 
 #Assume the json has "meeting_name, participants, list of days, meet_duration, earliest meet time, latest meet time"
 #TODO: discuss the format of passed in earliest/latest meet time
@@ -110,6 +122,15 @@ def edit_event():
     return 'success'
     # return xx_template('success')
 
+# get event by userid + date
+@main.route('/getEventByUserAndDate', methods=['GET', 'POST']) 
+def get_events_by_user_and_date():
+    return events_on_date = get_events_by_user(request.form)
+
+# get event by eventID
+@main.route('/getEventById', methods=['GET', 'POST']) 
+def get_event_by_id():
+    return Event.query.get(request.form['eventID'])
 
 @main.route('/add-meeting', methods=['GET','POST']) 
 def add_meetings(): 
