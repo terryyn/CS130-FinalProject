@@ -1,21 +1,21 @@
+import os
+from flask import Flask
 from flask_login import UserMixin, AnonymousUserMixin
 from . import db, login_manager
 
-class User(UserMixin, db.Model):
+class User(db.Model):
     '''
     table users
     id | username | email | password_hash | is_instructor
     
     '''
-    __table_name__ = 'users'
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, index = True)
     email = db.Column(db.String(128), unique=True, index = True)
     password_hash = db.Column(db.String(128))
     participations = db.relationship('Participation', backref= 'user', lazy = 'dynamic')
 
-    def __init__(self, **kwargs):
-        super(User, self).__init__(**kwargs)
 
 class EventType:
     DEFAULT = 0
