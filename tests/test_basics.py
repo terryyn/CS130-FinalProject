@@ -1,3 +1,9 @@
+'''
+Some of the code is adapted from the book
+Flask Web Development
+Developing Web Applications with Python [Grinberg 2014-05-18]
+'''
+
 import unittest
 from flask import current_app
 from UCal import create_app, db
