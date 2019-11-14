@@ -4,12 +4,19 @@ from ..models import User, Event
 from flask import request
 import datetime
 
+def read_event_json(event_json):
+    # match the json object namesd
+    start_date = datetime.datetime.strptime(event_json['startdate'] , '%Y-%m-%d')
+    start_time = datetime.datetime.strptime(event_json['starttime'] , '%H:%M')
+    end_date = datetime.datetime.strptime(event_json['enddate'] , '%Y-%m-%d')
+    end_time = datetime.datetime.strptime(event_json['endtime'] , '%H:%M')
+    return Event(name=event_json['name'], startdate=start_date, \
+                starttime=start_time, location=event_json['location'], \
+                eventType=event_json['type'], enddate=end_date, \
+                endtime=end_time, description=event_json['description'])
+
 def add_event_to_database(event_json):
-    # match the json object names
-    new_event = Event(eventName=event_json['eventName'], date=event_json['date'], \
-                time=event_json['time'], location=event_json['location'], \
-                description=event_json['description'], \
-                eventType=event_json['eventType'], participants=event_json['participants'])
+    new_event = read_event_json(event_json)
     db.session.add(new_event)
     db.session.commit()
     return new_event[id]
