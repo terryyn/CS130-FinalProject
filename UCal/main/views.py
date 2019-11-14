@@ -6,9 +6,7 @@ from flask import request
 class Course:
     def __init__(self, course_name):
         self.course_name = course_name
-    
-    def getStudentsId(self):
-        return db_manager.get_students(self.course_name)
+        self.students_id = db_manager.get_students(self.course_name)
 
 @main.route('/', methods=['GET', 'POST']) 
 def index():
