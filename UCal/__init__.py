@@ -5,6 +5,9 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+from .dbmanager import DatabaseManager
+db_manager = DatabaseManager.getInstance()
+
 def create_app(config_name='dev'):
     # create and configure the app
     app = Flask(__name__)
