@@ -1,10 +1,10 @@
 import React from 'react';
-import App from './App.js';
+import Sidebar from './Sidebar.js';
 import renderer from 'react-test-renderer';
 
-describe('App', () =>{
+describe('Sidebar', () =>{
   test('snapshot renders', () => {
-    const component = renderer.create(<App/>);
+    const component = renderer.create(<Sidebar/>);
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });

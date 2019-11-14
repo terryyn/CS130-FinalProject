@@ -1,10 +1,10 @@
 import React from 'react';
-import App from './App.js';
+import ImportICSForm from './ImportICSForm.js';
 import renderer from 'react-test-renderer';
 
-describe('App', () =>{
+describe('ImportICSForm', () =>{
   test('snapshot renders', () => {
-    const component = renderer.create(<App/>);
+    const component = renderer.create(<ImportICSForm/>);
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });

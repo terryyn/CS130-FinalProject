@@ -50,18 +50,18 @@ class DatabaseManager():
                     eventType=event_json['type'], enddate=end_date, \
                     endtime=end_time, description=event_json['description'])
 
-    def add_event_to_database(self,event_json):
+    def add_event_to_database(self, event_json):
         new_event = read_event_json(event_json)
         db.session.add(new_event)
         db.session.commit()
         return new_event[id]
 
-    def delete_event_from_database(self,eventID):
+    def delete_event_from_database(self, eventID):
         target = Event.query.get(eventID)
         db.session.delete(target)
         db.session.commit()
 
-    def edit_event_in_database(self,eventID, changes_json):
+    def edit_event_in_database(self, eventID, changes_json):
         # match the json object names
         target = Event.query.get(eventID)
         for change in changes_json:
@@ -70,14 +70,22 @@ class DatabaseManager():
         db.session.add(target)
         db.session.commit()
 
-    def get_events_by_user(self,req_json):
+    def get_events_by_user(self, req_json):
         # match the json object from client
         userid = req_json['userid']
         date = req_json['date']
-        occupied_events = Event.query \
-                        .join(Participation) \
-                        .filter_by(user_id=userid, date=date).all()
+        occupied_events = Event.query.join(Participation) \
+                            .filter(Participation.user_id==userid, Event.startdate <= date & Event.enddate >= date) \
+                            .order_by(Event.startdate).all()
         return occupied_events
+
+    def get_students(self, course_name):
+        rows = Participation.query.join(Event) \
+                        .filter(Event.name==course_name).all()
+        students_id = []
+        for row in rows:
+            students_id.append(row.user_id)
+        return students_id
 
     #Assume the json has "meeting_name, participants, list of days, meet_duration, earliest meet time, latest meet time"
     #TODO: discuss the format of passed in earliest/latest meet time

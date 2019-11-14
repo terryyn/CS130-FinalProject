@@ -28,7 +28,7 @@ class Event(db.Model):
     '''
     event table:
 
-    id | name | startdate | starttime | location | eventType | endtime | enddate | description | partipations(meeting)
+    id | name | startdate | starttime | location | eventType | endtime | enddate | description | participations(meeting)
 
     '''
     __tablename__ = 'events'

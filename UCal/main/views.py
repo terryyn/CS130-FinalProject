@@ -3,6 +3,12 @@ from .. import db, db_manager
 from ..model import User, Event
 from flask import request, redirect, render_template
 
+class Course:
+    def __init__(self, course_name):
+        self.course_name = course_name
+    
+    def getStudentsId(self):
+        return db_manager.get_students(self.course_name)
 
 @main.route('/', methods=['GET', 'POST']) 
 def index():
