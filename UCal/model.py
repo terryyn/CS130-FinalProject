@@ -28,18 +28,19 @@ class Event(db.Model):
     '''
     event table:
 
-    id  | eventName |  date  |  time  |  location  |  description  |  eventType
+    id | name | startdate | starttime | location | eventType | endtime | enddate | description | partipations(meeting)
 
     '''
     __tablename__ = 'events'
     id = db.Column(db.Integer, primary_key=True)
-    eventName = db.Column(db.String(64))
-    # userID = db.Column(db.Integer, db.ForeignKey('users.id'))
-    date = db.Column(db.Date)
-    time = db.Column(db.Time)
+    name = db.Column(db.String(64))
+    startdate = db.Column(db.Date)
+    starttime = db.Column(db.Time)
     location = db.Column(db.String(64))
-    description = db.Column(db.String(64), nullable=True)
     eventType = db.Column(db.Integer, default=EventType.DEFAULT)
+    enddate = db.Column(db.Date)
+    endtime = db.Column(db.Time)
+    description = db.Column(db.String(64), nullable=True)
     participations = db.relationship('Participation', backref= 'event', lazy = 'dynamic')
 
 class Participation(db.Model):

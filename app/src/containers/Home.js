@@ -2,22 +2,44 @@ import React, { useEffect, useState, useMemo } from 'react';
 import Calendar from 'react-calendar';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import Modal from '@material-ui/core/Modal';
 import ICAL from 'ical.js';
 
 import { makeStyles } from '@material-ui/core/styles';
 
+import ImportICS from '../components/ImportICSForm';
+import StyleForm from '../components/AddEventForm';
 import DayView from '../components/DayView';
 
 const useStyles = makeStyles({
 	grid: {
 		padding: '32px'
+	},
+	paper: {
+		position: 'absolute',
+		width: 400,
+		backgroundColor: 'white',
+		borderRadius: '3px',
+		boxShadow:
+			'0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12)'
 	}
 });
+
+function getModalStyle() {
+	return {
+		top: '50%',
+		left: '50%',
+		transform: `translate(-50%, -50%)`
+	};
+}
 
 function Home() {
 	const [ dateString, setDate ] = useState(new Date().toLocaleString());
 	const [ calendar, setCalendar ] = useState(null);
-	const [ showAddEvent, setAddEVent ] = useState(false);
+	const [ showAddEvent, setAddEvent ] = useState(false);
+	const [ showImportICS, setImportICS ] = useState(false);
+
+	const classes = useStyles();
 
 	function getCalendar() {
 		// TODO: get from server
@@ -91,8 +113,48 @@ function Home() {
 		// TODO: change to get
 	}
 
+	function toggleAddEventModal() {
+		setAddEvent(!showAddEvent);
+	}
+
+	function toggleImportICSModal() {
+		setImportICS(!showImportICS);
+	}
+
+	function renderAddEvent() {
+		return (
+			<Modal
+				aria-labelledby="simple-modal-title"
+				aria-describedby="simple-modal-description"
+				open={showAddEvent}
+				onClose={() => setAddEvent(false)}
+			>
+				<div style={getModalStyle()} className={classes.paper}>
+					<StyleForm addEvent={addEvent} />
+				</div>
+			</Modal>
+		);
+	}
+
+	function renderImportICS() {
+		return (
+			<Modal
+				aria-labelledby="simple-modal-title"
+				aria-describedby="simple-modal-description"
+				open={showImportICS}
+				onClose={() => setImportICS(false)}
+			>
+				<div style={getModalStyle()} className={classes.paper}>
+					<ImportICS />
+				</div>
+			</Modal>
+		);
+	}
+
 	return (
-		<Grid container spacing={3} className={useStyles().grid}>
+		<Grid container spacing={3} className={classes.grid}>
+			{renderImportICS()}
+			{renderAddEvent()}
 			<Grid item xs={12}>
 				<h1>My calendar</h1>
 			</Grid>
@@ -104,12 +166,12 @@ function Home() {
 			</Grid>
 			<Grid container justify="space-evenly" item xs={9} spacing={3}>
 				<Grid item>
-					<Button variant="contained" color="default">
+					<Button variant="contained" color="default" onClick={toggleImportICSModal}>
 						Import .ics file
 					</Button>
 				</Grid>
 				<Grid item>
-					<Button variant="contained" color="primary" onClick={addEvent}>
+					<Button variant="contained" color="primary" onClick={toggleAddEventModal}>
 						Add event
 					</Button>
 				</Grid>
