@@ -8,6 +8,17 @@ from flask import request
 def index():
     return 'To be integrated with frontend'
 
+@main.route('/signUp', methods=['GET','POST']) 
+def sign_up():
+    return db_manager.sign_up(request.form)
+    # return xx_template(json_post)
+
+@main.route('/logIn', methods=['POST']) 
+def log_in():
+    user_id = db_manager.log_in(request.form)
+    return user_id
+    # return xx_template(json_post)
+
 @main.route('/addEvent', methods=['GET', 'POST']) 
 def add_event():
     eventID = db_manager.add_event_to_database(request.form)
