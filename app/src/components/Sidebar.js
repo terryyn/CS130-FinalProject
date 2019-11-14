@@ -18,7 +18,7 @@ const useStyles = makeStyles({
 
 function Sidebar(props) {
 	let signOut = () => {
-		props.updateLoggedIn(false);
+		props.setLoggedIn(false);
 	}
 	
 	return (

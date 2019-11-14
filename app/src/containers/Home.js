@@ -33,7 +33,7 @@ function getModalStyle() {
 	};
 }
 
-function Home() {
+function Home(props) {
 	const [ dateString, setDate ] = useState(new Date().toLocaleString());
 	const [ calendar, setCalendar ] = useState(null);
 	const [ showAddEvent, setAddEvent ] = useState(false);
@@ -156,7 +156,7 @@ function Home() {
 			{renderImportICS()}
 			{renderAddEvent()}
 			<Grid item xs={12}>
-				<h1>My calendar</h1>
+				<h1>{props.currentUser}'s calendar</h1>
 			</Grid>
 			<Grid item xs={9}>
 				<DayView date={dateString} events={events} />

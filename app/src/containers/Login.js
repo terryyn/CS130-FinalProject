@@ -49,13 +49,16 @@ function Login(props) {
   const classes = useStyles();
 
   let login = (response) => {
-    console.log(response)
+    console.log(response);
     if (exampleEmail.includes(response.email)) {
-      props.updateLoggedIn(true)
+      props.setLoggedIn(true);
+      props.setUser(response.name);
     }
     else {
       exampleUser.push(response.name);
       exampleEmail.push(response.email);
+      props.setLoggedIn(true);
+      props.setUser(response.name);
     }
   }
 

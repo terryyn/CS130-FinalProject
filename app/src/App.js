@@ -15,15 +15,17 @@ import './App.css';
 function App() {
 	const [ isLoggedIn, setLoggedIn ] = useState(false);
 
+	const [ currentUser, setUser ] = useState("");
+
 	return (
 		<div className="App">
 			<Router>
-				{isLoggedIn && <Sidebar updateLoggedIn={setLoggedIn}/>}
+				{isLoggedIn && <Sidebar setLoggedIn={setLoggedIn}/>}
 				<Switch>
 					<Route exact path="/">
 						{isLoggedIn ?
-							(<Home />) :
-							(<Login updateLoggedIn={setLoggedIn}/>)
+							(<Home currentUser={currentUser}/>) :
+							(<Login setLoggedIn={setLoggedIn} setUser={setUser}/>)
 						}
 					</Route>
 					<Route path="/meeting">
