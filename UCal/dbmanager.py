@@ -19,7 +19,7 @@ class DatabaseManager():
             DatabaseManager.__instance = self
 
     def read_event_json(event_json):
-        # match the json object namesd
+        # match the json object names
         start_date = datetime.datetime.strptime(event_json['startdate'] , '%Y-%m-%d')
         start_time = datetime.datetime.strptime(event_json['starttime'] , '%H:%M')
         end_date = datetime.datetime.strptime(event_json['enddate'] , '%Y-%m-%d')
@@ -53,10 +53,18 @@ class DatabaseManager():
         # match the json object from client
         userid = req_json['userid']
         date = req_json['date']
-        occupied_events = Event.query \
-                        .join(Participation) \
-                        .filter_by(Participation.user_id=userid, Event.date=date).all()
+        occupied_events = Event.query.join(Participation) \
+                            .filter(Participation.user_id==userid, Event.startdate <= date & Event.enddate >= date) \
+                            .order_by(Event.startdate).all()
         return occupied_events
+
+    def get_students(course_name):
+        rows = Participation.query.join(Event) \
+                        .filter(Event.name==course_name).all()
+        students_id = []
+        for row in rows:
+            students_id.append(row.user_id)
+        return students_id
 
     #Assume the json has "meeting_name, participants, list of days, meet_duration, earliest meet time, latest meet time"
     #TODO: discuss the format of passed in earliest/latest meet time
