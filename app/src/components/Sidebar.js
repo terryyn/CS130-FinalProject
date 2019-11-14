@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -16,7 +16,11 @@ const useStyles = makeStyles({
 	}
 });
 
-function Sidebar() {
+function Sidebar(props) {
+	let signOut = () => {
+		props.updateLoggedIn(false);
+	}
+	
 	return (
 		<Drawer open variant="permanent" className={useStyles().list} classes={{ paper: useStyles().list }}>
 			<List>
@@ -28,7 +32,7 @@ function Sidebar() {
 						<CalendarToday />
 					</ListItemIcon>
 					<ListItemText>
-						<Link to="/home">Home</Link>
+						<Link to="/">Home</Link>
 					</ListItemText>
 				</ListItem>
 				<ListItem>
@@ -45,7 +49,7 @@ function Sidebar() {
 						<ExitToApp />
 					</ListItemIcon>
 					<ListItemText>
-						<Link to="/">Sign out</Link>
+						<Link onClick={signOut} to="/">Sign out</Link>
 					</ListItemText>
 				</ListItem>
 			</List>
