@@ -1,7 +1,7 @@
 from . import main
 from .. import db, db_manager
 from ..model import User, Event
-from flask import request
+from flask import request, redirect, render_template
 
 
 @main.route('/', methods=['GET', 'POST']) 
@@ -10,14 +10,17 @@ def index():
 
 @main.route('/signUp', methods=['GET','POST']) 
 def sign_up():
-    return db_manager.sign_up(request.form)
-    # return xx_template(json_post)
+    if request.method == 'POST':
+        db_manager.sign_up(request.form)
+        return "rendering login template"
+    return "rendering signup template"
 
-@main.route('/logIn', methods=['POST']) 
+@main.route('/logIn', methods=['GET','POST']) 
 def log_in():
-    user_id = db_manager.log_in(request.form)
-    return user_id
-    # return xx_template(json_post)
+    if request.method == 'POST':
+        user_id = db_manager.log_in(request.form)
+        return "rendering index template with user id"
+    return "rendering login template"
 
 @main.route('/addEvent', methods=['GET', 'POST']) 
 def add_event():
