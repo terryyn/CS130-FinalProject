@@ -92,11 +92,20 @@ function Login(props) {
     <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper} id="main">
+            <Typography variant="h4" id="text1" gutterBottom>
+              Calendar of the Bruins
+            </Typography>
+            <Typography variant="h4" id="text2" gutterBottom>
+              by the Bruins
+            </Typography>
+            <Typography variant="h4" id="text3" gutterBottom>
+              for the Bruins
+            </Typography>
             <Avatar className={classes.avatar}>
             <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-            Sign in
+            {newUser ? ('Sign up') : 'Sign in'}
             </Typography>
 
             <div id="fbbutton">
@@ -180,7 +189,7 @@ function Login(props) {
                   color="primary"
                   className={classes.submit}
               >
-                  Sign In
+                  {newUser ? ('Sign up') : 'Sign in'}
               </Button>
               <Grid container>
                   <Grid item xs>

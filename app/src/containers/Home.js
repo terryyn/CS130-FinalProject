@@ -159,7 +159,7 @@ function Home(props) {
 				{renderImportICS()}
 				{renderAddEvent()}
 				<Grid item xs={12}>
-					<h1>{props.currentUser}'s calendar</h1>
+					<h1>{props.currentUser.replace(/ .*/, '')}'s calendar</h1>
 				</Grid>
 				<Grid item xs={9}>
 					<DayView date={dateString} events={events} />
