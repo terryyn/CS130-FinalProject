@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import FacebookLogin from 'react-facebook-login';
 import '../styles/login.css';
 import App from '../App'
+import Server from '../server'
 
 const exampleEmail = ["dinkarkhattar@gmail.com"];
 const exampleUser = ["Dinkar Khattar"];
@@ -46,6 +47,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Login(props) {
+  const [ newUser, setNewUser ] = useState(false);
+  const [ name, setName ] = useState('');
+  const [ email, setEmail ] = useState('');
+  const [ password, setPassword ] = useState('');
+  const [ isInstructor, setIsInstructor ] = useState(false);
+
+
+
   const classes = useStyles();
 
   let login = (response) => {
@@ -53,14 +62,31 @@ function Login(props) {
     if (exampleEmail.includes(response.email)) {
       props.setLoggedIn(true);
       props.setUser(response.name);
+      props.setUserPhotoUrl(response.picture.data.url);
     }
     else {
       exampleUser.push(response.name);
       exampleEmail.push(response.email);
       props.setLoggedIn(true);
       props.setUser(response.name);
+      props.setUserPhoto(response.picture.data.url);
     }
   }
+
+  let regularLogin = (event) => {
+    event.preventDefault();
+    const form = {'username': name, 'email': email, 'password': password, 'isInstructor': isInstructor};
+    const server = new Server();
+    server.createUser(form);
+  }
+
+  let isNewUser = () => {
+    if (newUser) {
+      setNewUser(false);
+    } else {
+      setNewUser(true);
+    }
+	}
 
   return (
     <Container component="main" maxWidth="xs">
@@ -86,7 +112,20 @@ function Login(props) {
             <hr />
 
             <div id="regLogin">
-              <form className={classes.form} noValidate>
+              <form className={classes.form} onSubmit={regularLogin} noValidate>
+              {newUser &&
+                  <TextField
+                    autoComplete="name"
+                    name="name"
+                    variant="outlined"
+                    required
+                    fullWidth
+                    id="name"
+                    label="Name"
+                    autoFocus
+                    onInput={ e=>setName(e.target.value)}
+                  />
+              }
               <TextField
                   variant="outlined"
                   margin="normal"
@@ -97,6 +136,7 @@ function Login(props) {
                   name="email"
                   autoComplete="email"
                   autoFocus
+                  onInput={ e=>setEmail(e.target.value)}
               />
               <TextField
                   variant="outlined"
@@ -108,11 +148,31 @@ function Login(props) {
                   type="password"
                   id="password"
                   autoComplete="current-password"
+                  onInput={ e=>setPassword(e.target.value)}
               />
-              <FormControlLabel
-                  control={<Checkbox value="remember" color="primary" />}
-                  label="Remember me"
-              />
+              <div class="new-user">
+                {newUser &&
+                  <FormControlLabel
+                    control={<Checkbox checked={isInstructor} value="isInstructor" color="primary" />}
+                    label="Are you an instructor?"
+                    onChange={ e=>{
+                        if (isInstructor) {
+                          setIsInstructor(false)
+                        }
+                        else {
+                          setIsInstructor(true)
+                        }
+                      }
+                    }
+                  />
+                }
+              </div>
+              { !newUser &&
+                <FormControlLabel
+                    control={<Checkbox value="remember" color="primary" />}
+                    label="Remember me"
+                />
+              }
               <Button
                   type="submit"
                   fullWidth
@@ -129,9 +189,18 @@ function Login(props) {
                   </Link>
                   </Grid>
                   <Grid item>
-                  <Link to="/SignUp">
-                      {"Don't have an account? Sign Up"}
-                  </Link>
+                  {!newUser ?
+                    (
+                      <Link onClick={isNewUser}>
+                        {"Don't have an account? Sign Up"}
+                      </Link>
+                    ) :
+                    (
+                      <Link onClick={isNewUser}>
+                        {"Have an account? Sign In"}
+                      </Link>
+                    )
+                  }
                   </Grid>
               </Grid>
               </form>

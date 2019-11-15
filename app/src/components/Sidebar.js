@@ -9,6 +9,8 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
 
 const useStyles = makeStyles({
 	list: {
@@ -44,6 +46,14 @@ function Sidebar(props) {
 					</ListItemText>
 				</ListItem>
 				<Divider />
+				<ListItem>
+					<ListItemAvatar>
+						<Avatar alt="User Photo" src={props.currentUserPhotoUrl} />
+					</ListItemAvatar>
+					<ListItemText>
+						<Link to="/profile">Profile</Link>
+					</ListItemText>
+				</ListItem>
 				<ListItem>
 					<ListItemIcon>
 						<ExitToApp />
