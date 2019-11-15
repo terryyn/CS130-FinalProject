@@ -17,7 +17,7 @@ def index():
 @main.route('/signUp', methods=['GET','POST']) 
 def sign_up():
     if request.method == 'POST':
-        db_manager.sign_up(request.form)
+        db_manager.add_user(request.form)
         return "rendering login template"
     return "rendering signup template"
 
@@ -52,7 +52,7 @@ def edit_event():
 # get event by userid + date
 @main.route('/getEventByUserAndDate', methods=['GET', 'POST']) 
 def get_events_by_user_and_date():
-    events_on_date = get_events_by_user(request.form)
+    events_on_date = db_manager.get_events_by_user_and_date(request.form)
     return events_on_date
 
 # get event by eventID

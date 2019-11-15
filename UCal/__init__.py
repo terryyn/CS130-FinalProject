@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_cors import CORS
 db = SQLAlchemy()
 
 from .dbmanager import DatabaseManager
@@ -28,6 +28,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    CORS(app)
     db.init_app(app)
 
     from .main import main as main_blueprint

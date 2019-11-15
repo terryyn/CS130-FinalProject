@@ -18,7 +18,7 @@ class DatabaseManager():
         else:
             DatabaseManager.__instance = self
 
-    def sign_up(self,user_json):
+    def add_user(self,user_json):
         has_user = User.query.filter(db.or_(User.username == user_json['username'], User.email == user_json['email'])).first()
         if not has_user:
             new_user = User(username=user_json['username'], \
@@ -33,10 +33,10 @@ class DatabaseManager():
     def log_in(self,user_json):
         current_user = User.query.filter_by(username = user_json['username']).first()
         if not current_user:
-            return -1
+            return None
         if check_password_hash(current_user.password_hash, user_json['password']):
-            return current_user.id
-        return -1
+            return current_user
+        return None
         
 
     def read_event_json(self,event_json):
@@ -70,7 +70,7 @@ class DatabaseManager():
         db.session.add(target)
         db.session.commit()
 
-    def get_events_by_user(self, req_json):
+    def get_events_by_user_and_date(self, req_json):
         # match the json object from client
         userid = req_json['userid']
         date = req_json['date']
