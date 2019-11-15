@@ -3,7 +3,6 @@ import unittest
 from unittest.mock import Mock, patch
 import json
 from UCal import create_app, db, db_manager
-<<<<<<< HEAD
 from UCal.model import User, Event, EventType, Participation
 
 def get_meeting_json():
@@ -12,8 +11,8 @@ def get_meeting_json():
         'participants' : ['Joe Bruin','Josephine Bruin'], 
         'possible_days': [datetime.datetime(2019,12,10),datetime.datetime(2019,12,13)],
         'meet_duration': 60,
-        'earliest_meet_time': datetime.datetime(hour=9,minute=30),
-        'latest_meet_time': datetime.datetime(hour=19,minute=0)
+        'earliest_meet_time': datetime.time(hour=9,minute=30),
+        'latest_meet_time': datetime.time(hour=19,minute=0)
     }
 
 def get_user1_info():

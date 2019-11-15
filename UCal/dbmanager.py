@@ -89,14 +89,15 @@ class DatabaseManager():
             students_id.append(row.user_id)
         return students_id
 
+    '''
+        Assume the json has "meeting_name, participants, list of days, meet_duration, earliest meet time, latest meet time"
+        meeting_name : string, pariticipants : List[string], possible_days: List[datetime.datetime], meet_duration: int,
+        earliest_meet_time: datetime.datetime, latest_meet_time: datetime.datetime
+    '''
     #TODO: discuss the format of passed in earliest/latest meet time
     #TODO: consider cases where there are events before earliest meeting time or lastest meet time
     def find_available_meeting_time(self,event_json):
-    '''
-    Assume the json has "meeting_name, participants, list of days, meet_duration, earliest meet time, latest meet time"
-    meeting_name : string, pariticipants : List[string], possible_days: List[datetime.datetime], meet_duration: int,
-    earliest_meet_time: datetime.datetime, latest_meet_time: datetime.datetime
-    '''
+    
         meeting_name = event_json['meeting_name']
         participants = event_json['participants']
         possible_days = event_json['possible_days']

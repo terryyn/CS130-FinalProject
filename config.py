@@ -18,7 +18,7 @@ class DevConfig(BasicConfig):
 class TestConfig(BasicConfig):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
-        'sqlite://' + os.path.join(cur_dir, 'data-test.sqlite')
+        'sqlite://'
 
 class ProdConfig(BasicConfig):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
