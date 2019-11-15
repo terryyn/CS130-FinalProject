@@ -21,10 +21,12 @@ class DatabaseManager():
     def add_user(self,user_json):
         has_user = User.query.filter(db.or_(User.username == user_json['username'], User.email == user_json['email'])).first()
         if not has_user:
-            new_user = User(username=user_json['username'], \
-                                email=user_json['email'], \
-                                password_hash=generate_password_hash(user_json['password'], \
-                                is_instructor = user_json['is_instructor']))
+            new_user = User(
+                username=user_json['username'],
+                email=user_json['email'],
+                password_hash=generate_password_hash(user_json['password']),
+                is_instructor=user_json['is_instructor'],
+            )
             db.session.add(new_user)
             db.session.commit()
             return True
@@ -51,7 +53,7 @@ class DatabaseManager():
                     endtime=end_time, description=event_json['description'])
 
     def add_event_to_database(self, event_json):
-        new_event = read_event_json(event_json)
+        new_event = self.read_event_json(event_json)
         db.session.add(new_event)
         db.session.commit()
         return new_event[id]
@@ -87,16 +89,20 @@ class DatabaseManager():
             students_id.append(row.user_id)
         return students_id
 
-    #Assume the json has "meeting_name, participants, list of days, meet_duration, earliest meet time, latest meet time"
     #TODO: discuss the format of passed in earliest/latest meet time
     #TODO: consider cases where there are events before earliest meeting time or lastest meet time
     def find_available_meeting_time(self,event_json):
+    '''
+    Assume the json has "meeting_name, participants, list of days, meet_duration, earliest meet time, latest meet time"
+    meeting_name : string, pariticipants : List[string], possible_days: List[datetime.datetime], meet_duration: int,
+    earliest_meet_time: datetime.datetime, latest_meet_time: datetime.datetime
+    '''
         meeting_name = event_json['meeting_name']
         participants = event_json['participants']
-        possible_days = event_json('possible_days')
-        meet_duration = event_json('meet_duration')
-        earliest_meet_time = event_json('earliest_meet_time')
-        lastest_meet_time = event_json('lastest_meet_time')
+        possible_days = event_json['possible_days']
+        meet_duration = event_json['meet_duration']
+        earliest_meet_time = event_json['earliest_meet_time']
+        latest_meet_time = event_json['latest_meet_time']
 
         occupied_events = db.session.query(Event.id, Event.date, Event.time) \
                                 .filter(Event.date.in_(possible_days)) \
