@@ -16,6 +16,7 @@ function App() {
 
 	const [ currentUser, setUser ] = useState("");
 	const [ currentUserPhotoUrl, setUserPhotoUrl ] = useState("");
+	const [ currentUserEmail, setUserEmail ] = useState("");
 
 	return (
 		<div className="App">
@@ -25,11 +26,11 @@ function App() {
 					<Route exact path="/">
 						{isLoggedIn ?
 							(<Home currentUser={currentUser}/>) :
-							(<Login setLoggedIn={setLoggedIn} setUserPhotoUrl={setUserPhotoUrl} setUser={setUser}/>)
+							(<Login setLoggedIn={setLoggedIn} setUserPhotoUrl={setUserPhotoUrl} setUser={setUser} setUserEmail={setUserEmail}/>)
 						}
 					</Route>
 					<Route path="/profile">
-						<Profile />
+						<Profile currentUser={currentUser} currentUserPhotoUrl={currentUserPhotoUrl} currentUserEmail={currentUserEmail} setUser={setUser}/>
 					</Route>
 					<Route path="/meeting">
 						<Meeting />
@@ -38,6 +39,6 @@ function App() {
 			</Router>
 		</div>
 	);
-}
+}	
 
 export default App;

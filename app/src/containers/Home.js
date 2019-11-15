@@ -11,7 +11,7 @@ import ImportICS from '../components/ImportICSForm';
 import StyleForm from '../components/AddEventForm';
 import DayView from '../components/DayView';
 
-import '../styles/home.css'
+import '../styles/home.css';
 
 const useStyles = makeStyles({
 	grid: {
@@ -38,6 +38,7 @@ function getModalStyle() {
 function Home(props) {
 	const [ dateString, setDate ] = useState(new Date().toLocaleString());
 	const [ calendar, setCalendar ] = useState(null);
+	const [ events, setEvents ] = useState([]);
 	const [ showAddEvent, setAddEvent ] = useState(false);
 	const [ showImportICS, setImportICS ] = useState(false);
 
@@ -91,7 +92,7 @@ function Home(props) {
 	}
 
 	useEffect(() => getCalendar(), []);
-	const events = useMemo(() => getEvents(), [ calendar, dateString ]);
+	useEffect(() => setEvents(getEvents()), [ calendar, dateString ]);
 
 	function onChangeDate(date) {
 		setDate(date.toLocaleString());
@@ -113,6 +114,8 @@ function Home(props) {
 		// Refetch calendar
 		setCalendar(comp.toJSON());
 		// TODO: change to get
+		setEvents(getEvents());
+		setAddEvent(false);
 	}
 
 	function toggleAddEventModal() {

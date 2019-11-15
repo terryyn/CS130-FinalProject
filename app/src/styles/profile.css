@@ -1,0 +1,19 @@
+.profile-card {
+    height: 30%;
+    width: 50%;
+    margin: 4%;
+}
+
+#editButton {
+    margin-left: auto;
+}
+
+#content-fields {
+    display: flex;
+    flex-flow: column;
+}
+
+#instructor-toggle {
+    margin-left: 0.1%;
+    margin-top: 1%;
+}
