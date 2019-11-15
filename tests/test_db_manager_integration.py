@@ -75,3 +75,19 @@ class DBManagerIntegrationTestCase(unittest.TestCase):
         event1_info = get_event_info()
         event_id = db_manager.add_event_to_database(event1_info)
         assert event_id != None
+
+    def testFindMeetingTime(self):
+        user1_info = get_user1_info()
+        user2_info = get_user2_info()
+        db_manager.add_user(user1_info)
+        db_manager.add_user(user2_info)
+        event1_info = get_event_info()
+        event_id = db_manager.add_event_to_database(event1_info)
+        event2_info = get_event_info()
+        event2_info['name'] = user2_info['username']
+        event2_info['starttime'] = '14:30'
+        event2_info['endtime'] = '18:30'
+        db_manager.add_event_to_database(event1_info)
+        db_manager.add_event_to_database(event2_info)
+        time_slots = db_manager.find_available_meeting_time(get_meeting_json())
+        assert time_slots != None

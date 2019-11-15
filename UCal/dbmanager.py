@@ -97,7 +97,6 @@ class DatabaseManager():
     #TODO: discuss the format of passed in earliest/latest meet time
     #TODO: consider cases where there are events before earliest meeting time or lastest meet time
     def find_available_meeting_time(self,event_json):
-    
         meeting_name = event_json['meeting_name']
         participants = event_json['participants']
         possible_days = event_json['possible_days']
