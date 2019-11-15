@@ -1,10 +1,10 @@
 import React from 'react';
-import App from './App.js';
+import Meeting from './Meeting.js';
 import renderer from 'react-test-renderer';
 
-describe('App', () =>{
+describe('Meeting page', () =>{
   test('snapshot renders', () => {
-    const component = renderer.create(<App/>);
+    const component = renderer.create(<Meeting/>);
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });

@@ -1,29 +1,35 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Switch, Route, Link, Redirect, useHistory, useLocation } from 'react-router-dom';
 
-import Grid from '@material-ui/core/Grid';
 
 import Login from './containers/Login';
 import Meeting from './containers/Meeting';
+import Profile from './containers/Profile';
 import Home from './containers/Home';
 
 import Sidebar from './components/Sidebar';
 
-import './App.css';
+import './styles/App.css';
 
 function App() {
-	const [ isLoggedIn, setLoggedIn ] = useState(true);
+	const [ isLoggedIn, setLoggedIn ] = useState(false);
+
+	const [ currentUser, setUser ] = useState("");
+	const [ currentUserPhotoUrl, setUserPhotoUrl ] = useState("");
 
 	return (
 		<div className="App">
 			<Router>
-				{isLoggedIn && <Sidebar />}
+				{isLoggedIn && <Sidebar setLoggedIn={setLoggedIn} currentUserPhotoUrl={currentUserPhotoUrl}/>}
 				<Switch>
 					<Route exact path="/">
-						<Login />
+						{isLoggedIn ?
+							(<Home currentUser={currentUser}/>) :
+							(<Login setLoggedIn={setLoggedIn} setUserPhotoUrl={setUserPhotoUrl} setUser={setUser}/>)
+						}
 					</Route>
-					<Route path="/home">
-						<Home />
+					<Route path="/profile">
+						<Profile />
 					</Route>
 					<Route path="/meeting">
 						<Meeting />

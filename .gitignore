@@ -1,4 +1,5 @@
 venv/
 UCal/__pycache__
+UCal/main/__pycache__
 .DS_Store
 data.sqlite

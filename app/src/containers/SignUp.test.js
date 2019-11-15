@@ -1,10 +1,10 @@
 import React from 'react';
-import App from './App.js';
+import SignUp from './SignUp.js';
 import renderer from 'react-test-renderer';
 
-describe('App', () =>{
+describe('SignUp page', () =>{
   test('snapshot renders', () => {
-    const component = renderer.create(<App/>);
+    const component = renderer.create(<SignUp/>);
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -9,6 +9,8 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
 
 const useStyles = makeStyles({
 	list: {
@@ -16,7 +18,11 @@ const useStyles = makeStyles({
 	}
 });
 
-function Sidebar() {
+function Sidebar(props) {
+	let signOut = () => {
+		props.setLoggedIn(false);
+	}
+	
 	return (
 		<Drawer open variant="permanent" className={useStyles().list} classes={{ paper: useStyles().list }}>
 			<List>
@@ -28,7 +34,7 @@ function Sidebar() {
 						<CalendarToday />
 					</ListItemIcon>
 					<ListItemText>
-						<Link to="/home">Home</Link>
+						<Link to="/">Home</Link>
 					</ListItemText>
 				</ListItem>
 				<ListItem>
@@ -41,11 +47,19 @@ function Sidebar() {
 				</ListItem>
 				<Divider />
 				<ListItem>
+					<ListItemAvatar>
+						<Avatar alt="User Photo" src={props.currentUserPhotoUrl} />
+					</ListItemAvatar>
+					<ListItemText>
+						<Link to="/profile">Profile</Link>
+					</ListItemText>
+				</ListItem>
+				<ListItem>
 					<ListItemIcon>
 						<ExitToApp />
 					</ListItemIcon>
 					<ListItemText>
-						<Link to="/">Sign out</Link>
+						<Link onClick={signOut} to="/">Sign out</Link>
 					</ListItemText>
 				</ListItem>
 			</List>
