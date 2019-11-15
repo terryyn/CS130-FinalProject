@@ -2,7 +2,7 @@ from config import config
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_cors import CORS
 db = SQLAlchemy()
 
 from .dbmanager import DatabaseManager
@@ -14,6 +14,7 @@ def create_app(config_name='dev'):
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
+    CORS(app)
     db.init_app(app)
 
     from .main import main as main_blueprint
