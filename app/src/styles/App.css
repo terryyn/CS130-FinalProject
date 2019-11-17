@@ -1,4 +1,16 @@
+html, body, #root{
+	height: 100%;
+	width: 100%;
+}
+
+:root {
+	--mdc-theme-primary: #fcb8ab;
+	--mdc-theme-secondary: #feeae6;
+}
+
 .App {
+	height: 100%;
+	width: 100%;
 	display: flex;
 }
 
