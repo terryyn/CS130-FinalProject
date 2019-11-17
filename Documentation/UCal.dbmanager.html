@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module UCal.dbmanager</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="UCal.html"><font color="#ffffff">UCal</font></a>.dbmanager</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/Jill/Documents/study/2019Fall/CS130/CS130-FinalProject/UCal/dbmanager.py">/Users/Jill/Documents/study/2019Fall/CS130/CS130-FinalProject/UCal/dbmanager.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="datetime.html">datetime</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="UCal.dbmanager.html#DatabaseManager">DatabaseManager</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DatabaseManager">class <strong>DatabaseManager</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="DatabaseManager-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Virtually&nbsp;private&nbsp;constructor.</tt></dd></dl>
+
+<dl><dt><a name="DatabaseManager-add_event_to_database"><strong>add_event_to_database</strong></a>(self, event_json)</dt><dd><tt>Takes&nbsp;in&nbsp;a&nbsp;json-converted&nbsp;dict&nbsp;including&nbsp;8&nbsp;fields&nbsp;about&nbsp;an&nbsp;event:<br>
+name:&nbsp;string,&nbsp;startdate:&nbsp;string,&nbsp;starttime:&nbsp;string,&nbsp;location:&nbsp;string,<br>
+type:&nbsp;string,&nbsp;enddate:&nbsp;string,&nbsp;endtime:&nbsp;string,&nbsp;description:&nbsp;string<br>
+Returns&nbsp;the&nbsp;event&nbsp;id&nbsp;of&nbsp;the&nbsp;event&nbsp;added.</tt></dd></dl>
+
+<dl><dt><a name="DatabaseManager-add_user"><strong>add_user</strong></a>(self, user_json)</dt><dd><tt>Takes&nbsp;in&nbsp;a&nbsp;json-converted&nbsp;dict&nbsp;including&nbsp;4&nbsp;fields&nbsp;about&nbsp;a&nbsp;user:<br>
+username:&nbsp;string,&nbsp;email:&nbsp;string,<br>
+password:&nbsp;string,&nbsp;is_instructor:&nbsp;string<br>
+Returns&nbsp;True&nbsp;when&nbsp;the&nbsp;user&nbsp;with&nbsp;the&nbsp;same&nbsp;username&nbsp;or&nbsp;email&nbsp;does&nbsp;not<br>
+exist&nbsp;in&nbsp;database&nbsp;and&nbsp;a&nbsp;new&nbsp;user&nbsp;is&nbsp;created.<br>
+Returns&nbsp;False&nbsp;otherwise.</tt></dd></dl>
+
+<dl><dt><a name="DatabaseManager-delete_event_from_database"><strong>delete_event_from_database</strong></a>(self, eventID)</dt><dd><tt>Takes&nbsp;in&nbsp;the&nbsp;event&nbsp;id&nbsp;of&nbsp;the&nbsp;event&nbsp;and&nbsp;deletes&nbsp;the&nbsp;event.<br>
+No&nbsp;return&nbsp;value.</tt></dd></dl>
+
+<dl><dt><a name="DatabaseManager-edit_event_in_database"><strong>edit_event_in_database</strong></a>(self, eventID, changes_json)</dt><dd><tt>Takes&nbsp;in&nbsp;the&nbsp;event&nbsp;id&nbsp;of&nbsp;the&nbsp;event&nbsp;and&nbsp;a&nbsp;json-converted&nbsp;dict&nbsp;same&nbsp;as<br>
+the&nbsp;argument&nbsp;of&nbsp;add_event_to_database&nbsp;containing&nbsp;the&nbsp;updated&nbsp;info<br>
+No&nbsp;return&nbsp;value.</tt></dd></dl>
+
+<dl><dt><a name="DatabaseManager-find_available_meeting_time"><strong>find_available_meeting_time</strong></a>(self, event_json)</dt><dd><tt>Takes&nbsp;in&nbsp;the&nbsp;json-converted&nbsp;dict&nbsp;containing:<br>
+meeting_name&nbsp;:&nbsp;string,&nbsp;pariticipants&nbsp;:&nbsp;List[string],<br>
+possible_days:&nbsp;List[datetime.datetime],&nbsp;meet_duration:&nbsp;int,<br>
+earliest_meet_time:&nbsp;datetime.datetime,<br>
+latest_meet_time:&nbsp;datetime.datetime<br>
+Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;possible&nbsp;meeting&nbsp;time,&nbsp;in&nbsp;the&nbsp;format:<br>
+[{date:&nbsp;[(start_time_1,&nbsp;end_time_1),(start_time_2,&nbsp;end_time_2)]},...]</tt></dd></dl>
+
+<dl><dt><a name="DatabaseManager-get_events_by_user_and_date"><strong>get_events_by_user_and_date</strong></a>(self, req_json)</dt><dd><tt>Takes&nbsp;in&nbsp;a&nbsp;json-converted&nbsp;dict&nbsp;containing&nbsp;the&nbsp;userid&nbsp;and&nbsp;date<br>
+requested.&nbsp;Return&nbsp;the&nbsp;list&nbsp;of&nbsp;events&nbsp;satisfying&nbsp;the&nbsp;condition.</tt></dd></dl>
+
+<dl><dt><a name="DatabaseManager-get_students"><strong>get_students</strong></a>(self, course_name)</dt><dd><tt>Takes&nbsp;in&nbsp;the&nbsp;course&nbsp;name&nbsp;string.<br>
+Return&nbsp;a&nbsp;list&nbsp;of&nbsp;student&nbsp;ids&nbsp;enrolled&nbsp;in&nbsp;the&nbsp;course.</tt></dd></dl>
+
+<dl><dt><a name="DatabaseManager-log_in"><strong>log_in</strong></a>(self, user_json)</dt><dd><tt>Takes&nbsp;in&nbsp;a&nbsp;json-converted&nbsp;dict&nbsp;including&nbsp;2&nbsp;fields&nbsp;about&nbsp;a&nbsp;user:<br>
+username:&nbsp;string,&nbsp;password:&nbsp;string<br>
+Checks&nbsp;if&nbsp;a&nbsp;user&nbsp;exists&nbsp;in&nbsp;the&nbsp;database&nbsp;and&nbsp;if&nbsp;the&nbsp;password&nbsp;is&nbsp;correct.<br>
+If&nbsp;exists&nbsp;and&nbsp;correct,&nbsp;returns&nbsp;the&nbsp;User&nbsp;<a href="builtins.html#object">object</a>;&nbsp;Otherwise,&nbsp;None.</tt></dd></dl>
+
+<dl><dt><a name="DatabaseManager-read_event_json"><strong>read_event_json</strong></a>(self, event_json)</dt><dd><tt>Takes&nbsp;in&nbsp;a&nbsp;json-converted&nbsp;dict&nbsp;including&nbsp;8&nbsp;fields&nbsp;about&nbsp;an&nbsp;event:<br>
+name:&nbsp;string,&nbsp;startdate:&nbsp;string,&nbsp;starttime:&nbsp;string,&nbsp;location:&nbsp;string,<br>
+type:&nbsp;string,&nbsp;enddate:&nbsp;string,&nbsp;endtime:&nbsp;string,&nbsp;description:&nbsp;string<br>
+Returns&nbsp;an&nbsp;Event&nbsp;<a href="builtins.html#object">object</a>&nbsp;initiated&nbsp;with&nbsp;the&nbsp;above&nbsp;information</tt></dd></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="DatabaseManager-getInstance"><strong>getInstance</strong></a>()</dt><dd><tt>Static&nbsp;access&nbsp;method&nbsp;for&nbsp;database&nbsp;manager.&nbsp;<br>
+Only&nbsp;initialized&nbsp;once&nbsp;to&nbsp;enforce&nbsp;the&nbsp;Singleton&nbsp;design&nbsp;pattern.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>db</strong> = &lt;SQLAlchemy engine=None&gt;</td></tr></table>
+</body></html>

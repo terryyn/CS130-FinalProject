@@ -1,13 +1,20 @@
 from . import main
-from .. import db, db_manager
-from ..model import User, Event
+from .. import db_manager
 from flask import request, redirect, render_template
 
+
 class Course:
+    '''
+    A Course object represents a course indicated by course_name.
+    Has one member variable and one member function.
+    '''
     def __init__(self, course_name):
         self.course_name = course_name
-    
+
     def getStudentsId(self):
+        '''
+        Returns the list of students enrolled in this course.
+        '''
         return db_manager.get_students(self.course_name)
 
 @main.route('/', methods=['GET', 'POST']) 
@@ -37,7 +44,7 @@ def add_event():
     return json_post
     # return xx_template(json_post)
 
-@main.route('/deleteEvent', methods=['GET', 'POST']) 
+@main.route('/deleteEvent', methods=['GET', 'POST'])
 def delete_event():
     db_manager.delete_event_from_database(request.form['eventID'])
     return 'success'
@@ -49,15 +56,19 @@ def edit_event():
     return 'success'
     # return xx_template('success')
 
-# get event by userid + date
 @main.route('/getEventByUserAndDate', methods=['GET', 'POST']) 
 def get_events_by_user_and_date():
+    '''
+    get event by userid + date
+    '''
     events_on_date = db_manager.get_events_by_user_and_date(request.form)
     return events_on_date
 
-# get event by eventID
-@main.route('/getEventById', methods=['GET', 'POST']) 
+@main.route('/getEventById', methods=['GET', 'POST'])
 def get_event_by_id():
+    '''
+    get event by eventID
+    '''
     return Event.query.get(request.form['eventID'])
 
 @main.route('/schedule-meeting', methods=['GET','POST']) 
