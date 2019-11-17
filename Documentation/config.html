@@ -1,0 +1,136 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module config</title>
+<meta charset="utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>config</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/Jill/Documents/study/2019Fall/CS130/CS130-FinalProject/config.py">/Users/Jill/Documents/study/2019Fall/CS130/CS130-FinalProject/config.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="os.html">os</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="config.html#BasicConfig">BasicConfig</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="config.html#DevConfig">DevConfig</a>
+</font></dt><dt><font face="helvetica, arial"><a href="config.html#ProdConfig">ProdConfig</a>
+</font></dt><dt><font face="helvetica, arial"><a href="config.html#TestConfig">TestConfig</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="BasicConfig">class <strong>BasicConfig</strong></a></font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Static methods defined here:<br>
+<dl><dt><a name="BasicConfig-init_app"><strong>init_app</strong></a>(app)</dt></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>SECRET_KEY</strong> = 'hard to guess string'</dl>
+
+<dl><dt><strong>SQLALCHEMY_RECORD_QUERIES</strong> = True</dl>
+
+<dl><dt><strong>SQLALCHEMY_TRACK_MODIFICATIONS</strong> = False</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DevConfig">class <strong>DevConfig</strong></a>(<a href="config.html#BasicConfig">BasicConfig</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Data and other attributes defined here:<br>
+<dl><dt><strong>DEBUG</strong> = True</dl>
+
+<dl><dt><strong>SQLALCHEMY_DATABASE_URI</strong> = 'sqlite:////Users/Jill/Documents/study/2019Fall/CS130/CS130-FinalProject/data-dev.sqlite'</dl>
+
+<hr>
+Static methods inherited from <a href="config.html#BasicConfig">BasicConfig</a>:<br>
+<dl><dt><a name="DevConfig-init_app"><strong>init_app</strong></a>(app)</dt></dl>
+
+<hr>
+Data and other attributes inherited from <a href="config.html#BasicConfig">BasicConfig</a>:<br>
+<dl><dt><strong>SECRET_KEY</strong> = 'hard to guess string'</dl>
+
+<dl><dt><strong>SQLALCHEMY_RECORD_QUERIES</strong> = True</dl>
+
+<dl><dt><strong>SQLALCHEMY_TRACK_MODIFICATIONS</strong> = False</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ProdConfig">class <strong>ProdConfig</strong></a>(<a href="config.html#BasicConfig">BasicConfig</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Class methods defined here:<br>
+<dl><dt><a name="ProdConfig-init_app"><strong>init_app</strong></a>(cls, app)<font color="#909090"><font face="helvetica, arial"> from __builtin__.classobj</font></font></dt></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>SQLALCHEMY_DATABASE_URI</strong> = 'sqlite:////Users/Jill/Documents/study/2019Fall/CS130/CS130-FinalProject/data.sqlite'</dl>
+
+<hr>
+Data and other attributes inherited from <a href="config.html#BasicConfig">BasicConfig</a>:<br>
+<dl><dt><strong>SECRET_KEY</strong> = 'hard to guess string'</dl>
+
+<dl><dt><strong>SQLALCHEMY_RECORD_QUERIES</strong> = True</dl>
+
+<dl><dt><strong>SQLALCHEMY_TRACK_MODIFICATIONS</strong> = False</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="TestConfig">class <strong>TestConfig</strong></a>(<a href="config.html#BasicConfig">BasicConfig</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Data and other attributes defined here:<br>
+<dl><dt><strong>SQLALCHEMY_DATABASE_URI</strong> = 'sqlite://'</dl>
+
+<dl><dt><strong>TESTING</strong> = True</dl>
+
+<hr>
+Static methods inherited from <a href="config.html#BasicConfig">BasicConfig</a>:<br>
+<dl><dt><a name="TestConfig-init_app"><strong>init_app</strong></a>(app)</dt></dl>
+
+<hr>
+Data and other attributes inherited from <a href="config.html#BasicConfig">BasicConfig</a>:<br>
+<dl><dt><strong>SECRET_KEY</strong> = 'hard to guess string'</dl>
+
+<dl><dt><strong>SQLALCHEMY_RECORD_QUERIES</strong> = True</dl>
+
+<dl><dt><strong>SQLALCHEMY_TRACK_MODIFICATIONS</strong> = False</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>config</strong> = {'dev': &lt;class config.DevConfig&gt;, 'production': &lt;class config.ProdConfig&gt;, 'test': &lt;class config.TestConfig&gt;}<br>
+<strong>cur_dir</strong> = '/Users/Jill/Documents/study/2019Fall/CS130/CS130-FinalProject'</td></tr></table>
+</body></html>
