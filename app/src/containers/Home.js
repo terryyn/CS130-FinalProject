@@ -15,7 +15,8 @@ import '../styles/home.css';
 
 const useStyles = makeStyles({
 	grid: {
-		padding: '32px'
+		padding: '2.5%',
+		width: '100%'
 	},
 	paper: {
 		position: 'absolute',
@@ -157,32 +158,34 @@ function Home(props) {
 	}
 
 	return (
-		<div class="home">
-			<Grid container spacing={3} className={classes.grid}>
-				{renderImportICS()}
-				{renderAddEvent()}
-				<Grid item xs={12}>
-					<h1>{props.currentUser.replace(/ .*/, '')}'s calendar</h1>
-				</Grid>
-				<Grid item xs={9}>
-					<DayView date={dateString} events={events} />
-				</Grid>
-				<Grid item xs={3}>
-					<Calendar onChange={onChangeDate} value={new Date(dateString)} />
-				</Grid>
-				<Grid container justify="space-evenly" item xs={9} spacing={3}>
-					<Grid item>
-						<Button variant="contained" color="default" onClick={toggleImportICSModal}>
-							Import .ics file
-						</Button>
+		<div id="home">
+			<div id="day-view">
+				<Grid container spacing={3} className={classes.grid}>
+					{renderImportICS()}
+					{renderAddEvent()}
+					<Grid item xs={12}>
+						<h1 id="name-h1">{props.currentUser.replace(/ .*/, '')}'s Day</h1>
 					</Grid>
-					<Grid item>
-						<Button variant="contained" color="primary" onClick={toggleAddEventModal}>
-							Add event
-						</Button>
+					<Grid item xs={9} id="event-grid">
+						<DayView date={dateString} events={events} />
+					</Grid>
+					<Grid container justify="space-evenly" item xs={9} spacing={3}>
+						<Grid item>
+							<Button variant="contained" color="default" onClick={toggleImportICSModal}>
+								Import .ics file
+							</Button>
+						</Grid>
+						<Grid item>
+							<Button variant="contained" color="primary" onClick={toggleAddEventModal}>
+								Add event
+							</Button>
+						</Grid>
 					</Grid>
 				</Grid>
-			</Grid>
+			</div>
+			<div id="calendar">
+				<Calendar onChange={onChangeDate} value={new Date(dateString)} />
+			</div>
 		</div>
 	);
 }

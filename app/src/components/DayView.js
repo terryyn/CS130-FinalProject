@@ -10,8 +10,22 @@ import './DayView.css';
 
 function DayView(props) {
 	function formatDate(date) {
-		const mmddyy = date.split(',')[0];
-		return mmddyy;
+		const mmddyy = date.split(',')[0].split('/');
+		var full_date = "";
+		if (mmddyy[0]=="1") full_date += "January";
+		else if (mmddyy[0]=="2") full_date += "February";
+		else if (mmddyy[0]=="3") full_date += "March";
+		else if (mmddyy[0]=="4") full_date += "April";
+		else if (mmddyy[0]=="5") full_date += "May";
+		else if (mmddyy[0]=="6") full_date += "June";
+		else if (mmddyy[0]=="7") full_date += "July";
+		else if (mmddyy[0]=="6") full_date += "August";
+		else if (mmddyy[0]=="7") full_date += "September";
+		else if (mmddyy[0]=="10") full_date += "October";
+		else if (mmddyy[0]=="11") full_date += "November";
+		else if (mmddyy[0]=="12") full_date += "December";
+		full_date += " " + mmddyy[1] + " " + mmddyy[2];
+		return full_date;
 	}
 
 	function formatTime(time) {

@@ -32,3 +32,10 @@ html, body, #root{
 .App-link {
 	color: #09d3ac;
 }
+
+#main-home {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-flow: row-reverse;
+}

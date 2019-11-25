@@ -1,0 +1,36 @@
+#sidebar {
+    background-color:rgb(237, 237, 237);
+    height: 100%;
+    width: 17%;
+}
+
+#divider {
+    width: 95%;
+}
+
+#heading {
+    margin-top: 20%;
+    margin-left: 10%;
+    height: 10%;
+    color: 3f3f3f;
+}
+
+#navlist {
+    margin-top: 20%;
+    margin-left: 5%;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-around;
+    height: 30%;
+}
+
+.navlink {
+    text-decoration: none;
+    color: #7f7f7f;
+}
+
+.navlink-selected {
+    text-decoration: none;
+    color: #616161;
+    font-weight: bold;
+}
