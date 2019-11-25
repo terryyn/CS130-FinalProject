@@ -25,21 +25,35 @@ function App() {
 					<Route exact path="/">
 						{isLoggedIn ?
 							(
-								<div id="main-home">
-									<Home currentUser={currentUser}/>
+								<div id="main-page">
 									<Sidebar setLoggedIn={setLoggedIn} currentUserPhotoUrl={currentUserPhotoUrl} currentPage={"home"}/>
+									<Home currentUser={currentUser}/>
 								</div>
 							) :
 							(<Login setLoggedIn={setLoggedIn} setUserPhotoUrl={setUserPhotoUrl} setUser={setUser} setUserEmail={setUserEmail}/>)
 						}
 					</Route>
 					<Route path="/profile">
-						{isLoggedIn && <Sidebar setLoggedIn={setLoggedIn} currentUserPhotoUrl={currentUserPhotoUrl} currentPage={"profile"}/>}
-						<Profile currentUser={currentUser} currentUserPhotoUrl={currentUserPhotoUrl} currentUserEmail={currentUserEmail} setUser={setUser}/>
+						{isLoggedIn ?
+							(
+								<div id="main-page">
+									<Sidebar setLoggedIn={setLoggedIn} currentUserPhotoUrl={currentUserPhotoUrl} currentPage={"profile"}/>
+									<Profile currentUser={currentUser} currentUserPhotoUrl={currentUserPhotoUrl} currentUserEmail={currentUserEmail} setUser={setUser}/>
+								</div>
+							) :
+							(<Login setLoggedIn={setLoggedIn} setUserPhotoUrl={setUserPhotoUrl} setUser={setUser} setUserEmail={setUserEmail}/>)
+						}
 					</Route>
 					<Route path="/meeting">
-						{isLoggedIn && <Sidebar setLoggedIn={setLoggedIn} currentUserPhotoUrl={currentUserPhotoUrl} currentPage={"meeting"}/>}
-						<Meeting />
+						{isLoggedIn ?
+							(
+								<div id="main-page">
+									<Sidebar setLoggedIn={setLoggedIn} currentUserPhotoUrl={currentUserPhotoUrl} currentPage={"meeting"}/>
+									<Meeting />
+								</div>
+							) :
+							(<Login setLoggedIn={setLoggedIn} setUserPhotoUrl={setUserPhotoUrl} setUser={setUser} setUserEmail={setUserEmail}/>)
+						}
 					</Route>
 				</Switch>
 			</Router>

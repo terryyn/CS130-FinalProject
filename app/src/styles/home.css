@@ -10,7 +10,16 @@
 }
 
 #day-view {
+    height: 100%;
     width: 70%;
+    display: flex;
+    flex-flow: column;
+}
+
+#grid, #buttons {
+    width: 100%;
+    margin: 0;
+    padding: 3%;
 }
 
 #calendar {

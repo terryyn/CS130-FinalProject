@@ -6,7 +6,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import './DayView.css';
+import '../styles/DayView.css';
 
 function DayView(props) {
 	function formatDate(date) {
@@ -29,8 +29,27 @@ function DayView(props) {
 	}
 
 	function formatTime(time) {
-		const date = time.toJSDate().toString();
-		return date;
+		const date = time.toJSDate();
+		var hours = date.getHours();
+		var minutes = date.getMinutes();
+		var strampm;
+		if (hours >= 12) {
+			strampm= "PM";
+		} else {
+			strampm= "AM";
+		}
+		hours = hours % 12;
+		if (hours == 0) {
+			hours = 12;
+		}
+		if (hours < 10) {
+			hours = "0" + hours
+		}
+		if (minutes < 10) {
+			minutes = "0" + minutes
+		}
+		var ret = hours + ":" + minutes + " " + strampm;
+		return ret;
 	}
 
 	function renderEvent(event) {
@@ -38,13 +57,15 @@ function DayView(props) {
 			<Fragment>
 				<ListItem>
 					<ListItemText>
-						<div className="agenda-item">
+						<div className="agenda-item general">
+							<div className="agenda-item-summary">
+								{event.summary}
+							</div>
 							<div className="agenda-item-time">
 								<p>{formatTime(event.startDate)}</p>
 								<p>to</p>
 								<p>{formatTime(event.endDate)}</p>
 							</div>
-							<div className="agenda-item-summary">{event.summary}</div>
 						</div>
 					</ListItemText>
 				</ListItem>

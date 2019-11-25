@@ -14,10 +14,6 @@ import DayView from '../components/DayView';
 import '../styles/home.css';
 
 const useStyles = makeStyles({
-	grid: {
-		padding: '2.5%',
-		width: '100%'
-	},
 	paper: {
 		position: 'absolute',
 		width: 400,
@@ -54,16 +50,16 @@ function Home(props) {
 			'VERSION:2.0',
 			'BEGIN:VEVENT',
 			'DTSTAMP:20190205T191224Z',
-			'DTSTART:20191112T070000Z',
-			'DTEND:20191112T110000Z',
-			'SUMMARY:Planning meeting',
+			'DTSTART:20191112T210000Z',
+			'DTEND:20191112T220000Z',
+			'SUMMARY:Test Event 1',
 			'UID:4088E990AD89CB3DBB484909',
 			'END:VEVENT',
 			'BEGIN:VEVENT',
-			'DTSTAMP:20190205T191224Z',
-			'DTSTART:20191113T070000Z',
-			'DTEND:20191113T110000Z',
-			'SUMMARY:Planning meeting 2',
+			'DTSTAMP:20191112T191224Z',
+			'DTSTART:20191112T180000Z',
+			'DTEND:20191113T200000Z',
+			'SUMMARY:Test Event 2',
 			'UID:4088E990AD89CB3DBB484909',
 			'END:VEVENT',
 			'END:VCALENDAR'
@@ -79,7 +75,6 @@ function Home(props) {
 		const comp = new ICAL.Component(calendar);
 		const currDate = new Date(dateString).toDateString();
 		const vevents = comp.getAllSubcomponents('vevent');
-
 		const events = [];
 		vevents.forEach((vevent) => {
 			const event = new ICAL.Event(vevent);
@@ -88,6 +83,9 @@ function Home(props) {
 			if (dtstart === currDate || dtend === currDate) {
 				events.push(event);
 			}
+		});
+		events.sort(function(first, second) {
+			return first.startDate._time.hour - second.startDate._time.hour;
 		});
 		return events;
 	}
@@ -160,7 +158,7 @@ function Home(props) {
 	return (
 		<div id="home">
 			<div id="day-view">
-				<Grid container spacing={3} className={classes.grid}>
+				<Grid container spacing={3} id="grid">
 					{renderImportICS()}
 					{renderAddEvent()}
 					<Grid item xs={12}>
@@ -169,17 +167,17 @@ function Home(props) {
 					<Grid item xs={9} id="event-grid">
 						<DayView date={dateString} events={events} />
 					</Grid>
-					<Grid container justify="space-evenly" item xs={9} spacing={3}>
-						<Grid item>
-							<Button variant="contained" color="default" onClick={toggleImportICSModal}>
-								Import .ics file
-							</Button>
-						</Grid>
-						<Grid item>
-							<Button variant="contained" color="primary" onClick={toggleAddEventModal}>
-								Add event
-							</Button>
-						</Grid>
+				</Grid>
+				<Grid container justify="space-evenly" alignItems="flex-end" item xs={12} spacing={3} id="buttons">
+					<Grid item>
+						<Button variant="contained" color="default" onClick={toggleImportICSModal}>
+							Import .ics file
+						</Button>
+					</Grid>
+					<Grid item>
+						<Button variant="contained" color="primary" onClick={toggleAddEventModal}>
+							Add event
+						</Button>
 					</Grid>
 				</Grid>
 			</div>

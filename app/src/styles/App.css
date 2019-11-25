@@ -33,9 +33,9 @@ html, body, #root{
 	color: #09d3ac;
 }
 
-#main-home {
+#main-page {
 	height: 100%;
 	width: 100%;
 	display: flex;
-	flex-flow: row-reverse;
+	flex-flow: row;
 }
