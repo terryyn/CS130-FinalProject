@@ -3,7 +3,10 @@ import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from .model import Event, User, Participation
+from flask_login import login_user, login_required, current_user, logout_user
 
+def convertToBool(x):
+    return x.lower()=='true'
 
 class DatabaseManager():
     __instance = None
@@ -35,9 +38,7 @@ class DatabaseManager():
         exist in database and a new user is created.
         Returns False otherwise.
         '''
-        #TODO is_instructor should be converted to boolean?
         has_user = User.query.filter(db.or_(
-            User.username == user_json['username'],
             User.email == user_json['email']
         )).first()
         if not has_user:
@@ -45,7 +46,7 @@ class DatabaseManager():
                 username=user_json['username'],
                 email=user_json['email'],
                 password_hash=generate_password_hash(user_json['password']),
-                is_instructor=user_json['is_instructor'],
+                is_instructor=convertToBool(user_json['is_instructor']),
             )
             db.session.add(new_user)
             db.session.commit()
@@ -60,15 +61,47 @@ class DatabaseManager():
         If exists and correct, returns the User object; Otherwise, None.
         '''
         current_user = User.query.filter_by(
-            username=user_json['username']
+            email=user_json['email']
             ).first()
         if not current_user:
+            return -1
+        remember = convertToBool(user_json['remember'])
+        if check_password_hash(current_user.password_hash, user_json['password']):
+            login_user(current_user, remember=remember)
+            return {'name': current_user.username, 'email': current_user.email, 'is_instructor': current_user.is_instructor}
+        else:
+            return -2
+        return -3
+    
+    def auth(self):
+        if current_user.is_authenticated:
+            return {'name': current_user.username, 'email': current_user.email, 'is_instructor': current_user.is_instructor}
+        else:
             return None
-        if check_password_hash(
-            current_user.password_hash, user_json['password']
-        ):
-            return current_user
-        return None
+    
+    @login_required
+    def logout(self):
+        logout_user()
+    
+    @login_required
+    def get_username(self):
+        return current_user.username
+
+    @login_required
+    def edit_user(self, user_json):
+        '''
+        Takes in a json-converted dict including 4 fields about a user:
+        username: string, email: string,
+        password: string, is_instructor: string
+        Updates existing user info in the database.
+        '''
+        current_user.username = user_json['username']
+        current_user.email = user_json['email']
+        current_user.is_instructor = convertToBool(user_json['is_instructor'])
+        if (len(user_json['password'])>2) :
+            current_user.password_hash = str(generate_password_hash(user_json['password']))
+        db.session.commit()
+        return True
 
     def read_event_json(self, event_json):
         '''
@@ -238,3 +271,9 @@ class DatabaseManager():
                     )
 
         return all_possible_time_slots
+    
+    def clear_all(self):
+        meta = db.metadata
+        for table in reversed(meta.sorted_tables):
+            db.session.execute(table.delete())
+        db.session.commit()

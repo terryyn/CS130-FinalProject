@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route, Link, Redirect, useHistory, useLocation } from 'react-router-dom';
 
 
@@ -6,17 +6,34 @@ import Login from './containers/Login';
 import Meeting from './containers/Meeting';
 import Profile from './containers/Profile';
 import Home from './containers/Home';
-
 import Sidebar from './components/Sidebar';
 
 import './styles/App.css';
 
-function App() {
-	const [ isLoggedIn, setLoggedIn ] = useState(true);
+import Server from './server';
+const server = new Server();
 
-	const [ currentUser, setUser ] = useState("Test");
+function App() {
+	const [ isLoggedIn, setLoggedIn ] = useState(false);
+	const [ tryLogin, setTryLogin ] = useState(true);
+
+	const [ currentUser, setUser ] = useState("");
 	const [ currentUserPhotoUrl, setUserPhotoUrl ] = useState("https://www.gstatic.com/images/branding/product/2x/photos_96dp.png");
-	const [ currentUserEmail, setUserEmail ] = useState("test@test.com");
+	const [ currentUserEmail, setUserEmail ] = useState("");
+	const [ currentIsInstructor, setcurrentIsInstructor ] = useState(false);
+
+	useEffect(() => {
+		if (tryLogin) {
+			server.authenticateUser().then(data => {
+				if (data!="fail") {
+					setLoggedIn(true);
+					setUserEmail(data.email);
+					setUser(data.name);
+					setcurrentIsInstructor(data.is_instructor);
+				}
+			})
+		}
+	});
 
 	return (
 		<div className="App">
@@ -25,34 +42,42 @@ function App() {
 					<Route exact path="/">
 						{isLoggedIn ?
 							(
+								<Redirect to='/home' />
+							) :
+							(<Login setLoggedIn={setLoggedIn} setTryLogin={setTryLogin} setUserPhotoUrl={setUserPhotoUrl} setUser={setUser} setUserEmail={setUserEmail} setcurrentIsInstructor={setcurrentIsInstructor}/>)
+						}
+					</Route>
+					<Route path="/home">
+						{isLoggedIn ?
+							(
 								<div id="main-page">
-									<Sidebar setLoggedIn={setLoggedIn} currentUserPhotoUrl={currentUserPhotoUrl} currentPage={"home"}/>
+									<Sidebar setLoggedIn={setLoggedIn} setTryLogin={setTryLogin} currentUserPhotoUrl={currentUserPhotoUrl} currentPage={"home"}/>
 									<Home currentUser={currentUser}/>
 								</div>
 							) :
-							(<Login setLoggedIn={setLoggedIn} setUserPhotoUrl={setUserPhotoUrl} setUser={setUser} setUserEmail={setUserEmail}/>)
+							(<Redirect to='/' />)
 						}
 					</Route>
 					<Route path="/profile">
 						{isLoggedIn ?
 							(
 								<div id="main-page">
-									<Sidebar setLoggedIn={setLoggedIn} currentUserPhotoUrl={currentUserPhotoUrl} currentPage={"profile"}/>
-									<Profile currentUser={currentUser} currentUserPhotoUrl={currentUserPhotoUrl} currentUserEmail={currentUserEmail} setUser={setUser}/>
+									<Sidebar setLoggedIn={setLoggedIn} setTryLogin={setTryLogin} currentUserPhotoUrl={currentUserPhotoUrl} currentPage={"profile"}/>
+									<Profile currentUser={currentUser} currentUserPhotoUrl={currentUserPhotoUrl} currentUserEmail={currentUserEmail} currentIsInstructor={currentIsInstructor} setUser={setUser} setUserPhotoUrl={setUserPhotoUrl} setUserEmail={setUserEmail} setcurrentIsInstructor={setcurrentIsInstructor}/>
 								</div>
 							) :
-							(<Login setLoggedIn={setLoggedIn} setUserPhotoUrl={setUserPhotoUrl} setUser={setUser} setUserEmail={setUserEmail}/>)
+							(<Redirect to='/' />)
 						}
 					</Route>
 					<Route path="/meeting">
 						{isLoggedIn ?
 							(
 								<div id="main-page">
-									<Sidebar setLoggedIn={setLoggedIn} currentUserPhotoUrl={currentUserPhotoUrl} currentPage={"meeting"}/>
+									<Sidebar setLoggedIn={setLoggedIn} setTryLogin={setTryLogin} currentUserPhotoUrl={currentUserPhotoUrl} currentPage={"meeting"}/>
 									<Meeting />
 								</div>
 							) :
-							(<Login setLoggedIn={setLoggedIn} setUserPhotoUrl={setUserPhotoUrl} setUser={setUser} setUserEmail={setUserEmail}/>)
+							(<Redirect to='/' />)
 						}
 					</Route>
 				</Switch>

@@ -14,6 +14,10 @@ import Server from '../server';
 
 import '../styles/home.css';
 
+import Server from '../server';
+const server = new Server();
+
+
 const useStyles = makeStyles({
 	paper: {
 		position: 'absolute',

@@ -1,24 +1,27 @@
 # flake8 compatible
 import os
 from flask import Flask
-from flask_login import UserMixin, AnonymousUserMixin
+from flask_login import UserMixin
 from . import db
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     '''
     The user table contains the following columns:
     id | username | email | password_hash | is_instructor
     '''
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, index = True)
+    username = db.Column(db.String(64), index = True)
     email = db.Column(db.String(128), unique=True, index = True)
     password_hash = db.Column(db.String(128))
     is_instructor = db.Column(db.Boolean)
     participations = db.relationship(
         'Participation', backref='user', lazy='dynamic'
     )
+
+    def is_authenticated(self):
+        return True
 
 
 class EventType:

@@ -14,9 +14,14 @@ import Typography from '@material-ui/core/Typography';
 
 import '../styles/sidebar.css';
 
+import Server from '../server';
+const server = new Server();
+
 function Sidebar(props) {
 	let signOut = () => {
 		props.setLoggedIn(false);
+		props.setTryLogin(false);
+		server.logoutUser();
 	}
 	
 	return (
@@ -36,8 +41,8 @@ function Sidebar(props) {
 					</ListItemIcon>
 					<ListItemText>
 						{props.currentPage=="home" ?
-							(<Link class="navlink-selected" to="/">Home</Link>) :
-							(<Link class="navlink" to="/">Home</Link>)
+							(<Link class="navlink-selected" to="/home">Home</Link>) :
+							(<Link class="navlink" to="/home">Home</Link>)
 						}
 					</ListItemText>
 				</ListItem>

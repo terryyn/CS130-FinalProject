@@ -16,6 +16,22 @@ class Server {
 		return this.perform('post', '/signUp', form);
 	}
 
+	loginUser(form) {
+		return this.perform('post', '/logIn', form);
+	}
+
+	authenticateUser() {
+		return this.perform('get', '/auth');
+	}
+
+	logoutUser() {
+		return this.perform('get', '/logOut');
+	}
+
+	editUser(form) {
+		return this.perform('post', '/editUser', form);
+	}
+
 	addEvent(form) {
 		return this.perform('post', '/addEvent', form);
 	}
@@ -24,27 +40,14 @@ class Server {
 		return this.perform('get', '/getEventByUserAndDate', form);
 	}
 
-	//   deleteKudo(repo) {
-	//     return this.perform('delete', `/kudos/${repo.id}`);
-	//   }
-
-	//   updateKudo(repo) {
-	//     return this.perform('put', `/kudos/${repo.id}`, repo);
-	//   }
-
-	//   getKudos() {
-	//     return this.perform('get', '/kudos');
-	//   }
-
-	//   getKudo(repo) {
-	//     return this.perform('get', `/kudo/${repo.id}`);
-	//   }
-
-	async perform(method, resource, data) {
+	async perform(method, resource, data = {}) {
+		console.log(method, 'request to:', resource, 'with:');
+		console.log(data);
 		return client({
+			withCredentials: true,
 			method,
 			url: resource,
-			data
+			data: data
 			//   headers: {
 			//     Authorization: `Bearer ${this.accessToken}`
 			//   }
