@@ -16,6 +16,9 @@ import Switch from '@material-ui/core/Switch';
 
 import '../styles/profile.css'
 
+import Server from '../server';
+const server = new Server();
+
 const useStyles = makeStyles(theme => ({
   title: {
     fontSize: 14,
@@ -36,13 +39,19 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+function toString(b) {
+    if (b) return 'true'
+    else return 'false'
+}
+
 function Profile(props) {
     const [ editInfo, setEditInfo ] = useState(false);
     const [open, setOpen] = React.useState(false);
 
     const [name, setName] = React.useState(props.currentUser);
     const [email, setEmail] = React.useState(props.currentUserEmail);
-    const [isInstructor, setIsInstructor] = React.useState(false);
+    const [instructor, setInstructor] = React.useState(props.currentIsInstructor);
+    const [password, setPassword] = React.useState("");
     
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -54,8 +63,13 @@ function Profile(props) {
     let enableEdit = () => {
         if (editInfo) {
             setOpen(true);
-            setEditInfo(false);
             props.setUser(name);
+            props.setUserEmail(email);
+            props.setcurrentIsInstructor(instructor);
+            const form = {'username': name, 'email': email, 'password': password, 'is_instructor': toString(instructor)};
+            server.editUser(form).then( data => {
+                setEditInfo(false);
+            });
         }
         else {
             setEditInfo(true);
@@ -96,17 +110,31 @@ function Profile(props) {
                         }}
                         onInput={ e=>setEmail(e.target.value)}
                     />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        fullWidth
+                        InputProps={{
+                            readOnly: !editInfo,
+                        }}
+                        className={classes.textField}
+                        label="Password"
+                        type="password"
+                        id="password"
+                        defaultValue={password}
+                        onInput={ e=>setPassword(e.target.value)}
+                    />
                     <FormControlLabel
                         id="instructor-toggle"
                         control={
                             <Switch 
-                                checked={isInstructor} 
+                                checked={instructor} 
                                 onChange={ e=>{
-                                    if (isInstructor) {
-                                        setIsInstructor(false)
+                                    if (instructor) {
+                                        setInstructor(false)
                                     }
                                     else {
-                                        setIsInstructor(true)
+                                        setInstructor(true)
                                     }
                                     }
                                 }

@@ -13,6 +13,10 @@ import DayView from '../components/DayView';
 
 import '../styles/home.css';
 
+import Server from '../server';
+const server = new Server();
+
+
 const useStyles = makeStyles({
 	paper: {
 		position: 'absolute',
