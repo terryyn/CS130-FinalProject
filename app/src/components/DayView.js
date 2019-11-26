@@ -5,6 +5,7 @@ import CardContent from '@material-ui/core/CardContent';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Typography from '@material-ui/core/Typography';
 
 import '../styles/DayView.css';
 
@@ -58,13 +59,16 @@ function DayView(props) {
 				<ListItem>
 					<ListItemText>
 						<div className="agenda-item general">
+							<div className="agenda-item-time">
+								<Typography variant="subtitle1" gutterBottom>
+									{formatTime(event.startDate)}
+								</Typography>
+								<Typography variant="subtitle1" gutterBottom>
+									{formatTime(event.endDate)}
+								</Typography>
+							</div>
 							<div className="agenda-item-summary">
 								{event.summary}
-							</div>
-							<div className="agenda-item-time">
-								<p>{formatTime(event.startDate)}</p>
-								<p>to</p>
-								<p>{formatTime(event.endDate)}</p>
 							</div>
 						</div>
 					</ListItemText>
