@@ -43,17 +43,22 @@ function Home(props) {
 	const [ showAddEvent, setAddEvent ] = useState(false);
 	const [ showImportICS, setImportICS ] = useState(false);
 
-	const [ startTime, setStart ] = useState(null);
-	const [ endTime, setEnd ] = useState(null);
+	const [ startTime, setStartTime ] = useState(null);
+	const [ startDate, setStartDate ] = useState(null);
+	const [ endTime, setEndTime ] = useState(null);
+	const [ endDate, setEndDate ] = useState(null);
+
 	const [ eventName, setName ] = useState('');
 	const [ eventLocation, setLocation ] = useState('');
 	const [ eventType, setType ] = useState(-1);
 	const [ eventDesc, setDesc ] = useState('');
+	const server = new Server();
 
 	const classes = useStyles();
 
 	function getCalendar() {
 		// TODO: get from server
+
 		const sampleICS = [
 			'BEGIN:VCALENDAR',
 			'CALSCALE:GREGORIAN',
@@ -79,7 +84,7 @@ function Home(props) {
 		setCalendar(parsed);
 	}
 
-	function getEvents() {
+	function getEventsFromICS() {
 		// Get events and filter based on date
 		console.log('getting events');
 		if (!calendar) return [];
@@ -101,14 +106,33 @@ function Home(props) {
 		return events;
 	}
 
-	useEffect(() => getCalendar(), []);
-	useEffect(() => setEvents(getEvents()), [ calendar, dateString ]);
+	useEffect(() => getEventsFromDate(dateString), []);
+
+	function getEventsFromDate(date) {
+		return server.getEventByUserAndDate(date, exampleID);
+	}
 
 	function onChangeDate(date) {
 		setDate(date.toLocaleString());
+		setEvents(getEventsFromDate(date));
 	}
 
 	function addEvent() {
+		const form = {
+			startdate: startDate,
+			starttime: startTime,
+			enddate: endDate,
+			endtime: endTime,
+			location: eventLocation,
+			name: eventName,
+			type: eventType,
+			description: eventDesc
+		};
+
+		server.addEvent(form);
+	}
+
+	function addEventFromICS() {
 		// Update current calendar object
 		const comp = new ICAL.Component(calendar);
 		var vevent = new ICAL.Component('vevent'),
@@ -124,7 +148,7 @@ function Home(props) {
 		// Refetch calendar
 		setCalendar(comp.toJSON());
 		// TODO: change to get
-		setEvents(getEvents());
+		setEvents(getEventsFromICS());
 		setAddEvent(false);
 	}
 
@@ -147,11 +171,14 @@ function Home(props) {
 				<div style={getModalStyle()} className={classes.paper}>
 					<StyleForm
 						addEvent={addEvent}
-						setStart={setStart}
-						setEnd={setEnd}
+						setStartTime={setStartTime}
+						setStartDate={setStartDate}
+						setEndTime={setEndTime}
+						setEndDate={setEndDate}
 						setName={setName}
 						setLocation={setLocation}
 						setType={setType}
+						type={eventType}
 						setDesc={setDesc}
 					/>
 				</div>

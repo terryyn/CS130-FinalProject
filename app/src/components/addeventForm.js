@@ -21,30 +21,6 @@ const styles = {
 class AddEventForm extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			starttime: null,
-			endtime: null
-		};
-	}
-
-	handleStartDateChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ startdate: value }));
-	}
-
-	handleStartTimeChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ starttime: value }));
-	}
-
-	handleEndDateChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ enddate: value }));
-	}
-
-	handleEndTimeChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ endtime: value }));
 	}
 
 	render() {
@@ -59,7 +35,7 @@ class AddEventForm extends Component {
 							type="date"
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
-							onChange={this.handleStartDateChange}
+							onChange={(e) => this.props.setStartDate(e.target.value)}
 						/>
 						<div id="starttime">
 							<TextField
@@ -67,7 +43,7 @@ class AddEventForm extends Component {
 								type="time"
 								variant="outlined"
 								InputProps={{ classes: { input: this.props.classes.textField } }}
-								onChange={this.handleStartTimeChange}
+								onChange={(e) => this.props.setStartTime(e.target.value)}
 							/>
 						</div>
 					</div>
@@ -79,7 +55,7 @@ class AddEventForm extends Component {
 							type="date"
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
-							onChange={this.handleEndDateChange}
+							onChange={(e) => this.props.setEndDate(e.target.value)}
 						/>
 						<div id="endtime">
 							<TextField
@@ -87,7 +63,7 @@ class AddEventForm extends Component {
 								type="time"
 								variant="outlined"
 								InputProps={{ classes: { input: this.props.classes.textField } }}
-								onChange={this.handleEndTimeChange}
+								onChange={(e) => this.props.setEndTime(e.target.value)}
 							/>
 						</div>
 					</div>
@@ -120,7 +96,7 @@ class AddEventForm extends Component {
 							id="type-input"
 							label="Type"
 							onChange={(e) => this.props.setType(e.target.value)}
-							value={this.state.type}
+							value={this.props.type}
 						>
 							<MenuItem value={1}>Class</MenuItem>
 							<MenuItem value={2}>Exam</MenuItem>
