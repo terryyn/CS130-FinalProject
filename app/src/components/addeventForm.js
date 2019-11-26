@@ -22,25 +22,9 @@ class AddEventForm extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			name: '',
-			startdate: '',
-			starttime: '',
-			location: '',
-			type: '',
-			endtime: '',
-			enddate: '',
-			description: ''
+			starttime: null,
+			endtime: null
 		};
-
-		this.handleStartDateChange = this.handleStartDateChange.bind(this);
-		this.handleStartTimeChange = this.handleStartTimeChange.bind(this);
-		this.handleEndDateChange = this.handleEndDateChange.bind(this);
-		this.handleEndTimeChange = this.handleEndTimeChange.bind(this);
-		this.handleNameChange = this.handleNameChange.bind(this);
-		this.handleLocationChange = this.handleLocationChange.bind(this);
-		this.handleTypeChange = this.handleTypeChange.bind(this);
-		this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
-		this.submit = this.submit.bind(this);
 	}
 
 	handleStartDateChange(e) {
@@ -61,29 +45,6 @@ class AddEventForm extends Component {
 	handleEndTimeChange(e) {
 		let value = e.target.value;
 		this.setState((prev) => ({ endtime: value }));
-	}
-
-	handleNameChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ name: value }));
-	}
-
-	handleLocationChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ location: value }));
-	}
-
-	handleTypeChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ type: value }));
-	}
-
-	handleDescriptionChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ description: value }));
-	}
-
-	submit(e) {
 	}
 
 	render() {
@@ -139,7 +100,7 @@ class AddEventForm extends Component {
 							title={'name'}
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
-							onChange={this.handleNameChange}
+							onChange={(e) => this.props.setName(e.target.value)}
 						/>
 					</div>
 
@@ -149,13 +110,18 @@ class AddEventForm extends Component {
 							id="location-input"
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
-							onChange={this.handleLocationChange}
+							onChange={(e) => this.props.setLocation(e.target.value)}
 						/>
 					</div>
 
 					<div className="addevent-field" id="type">
 						<InputLabel id="type-label">Type</InputLabel>
-						<Select id="type-input" label="Type" onChange={this.handleTypeChange} value={this.state.type}>
+						<Select
+							id="type-input"
+							label="Type"
+							onChange={(e) => this.props.setType(e.target.value)}
+							value={this.state.type}
+						>
 							<MenuItem value={1}>Class</MenuItem>
 							<MenuItem value={2}>Exam</MenuItem>
 							<MenuItem value={3}>Office Hour</MenuItem>
@@ -172,13 +138,13 @@ class AddEventForm extends Component {
 							variant="outlined"
 							rows="2"
 							margin="normal"
-							onChange={this.handleDescriptionChange}
+							onChange={(e) => this.props.setDesc(e.target.value)}
 						/>
 					</div>
 
 					<div id="submit">
 						<Button
-							onClick={this.submit}
+							onClick={this.props.addEvent}
 							variant="contained"
 							title={'Submit'}
 							id="submit-button"

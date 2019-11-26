@@ -8,8 +8,9 @@ import ICAL from 'ical.js';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ImportICS from '../components/ImportICSForm';
-import StyleForm from '../components/AddEventForm';
+import StyleForm from '../components/addeventForm';
 import DayView from '../components/DayView';
+import Server from '../server';
 
 import '../styles/home.css';
 
@@ -32,12 +33,22 @@ function getModalStyle() {
 	};
 }
 
+// TODO: Use context to store this
+const exampleID = 1;
+
 function Home(props) {
 	const [ dateString, setDate ] = useState(new Date().toLocaleString());
 	const [ calendar, setCalendar ] = useState(null);
 	const [ events, setEvents ] = useState([]);
 	const [ showAddEvent, setAddEvent ] = useState(false);
 	const [ showImportICS, setImportICS ] = useState(false);
+
+	const [ startTime, setStart ] = useState(null);
+	const [ endTime, setEnd ] = useState(null);
+	const [ eventName, setName ] = useState('');
+	const [ eventLocation, setLocation ] = useState('');
+	const [ eventType, setType ] = useState(-1);
+	const [ eventDesc, setDesc ] = useState('');
 
 	const classes = useStyles();
 
@@ -134,7 +145,15 @@ function Home(props) {
 				onClose={() => setAddEvent(false)}
 			>
 				<div style={getModalStyle()} className={classes.paper}>
-					<StyleForm addEvent={addEvent} />
+					<StyleForm
+						addEvent={addEvent}
+						setStart={setStart}
+						setEnd={setEnd}
+						setName={setName}
+						setLocation={setLocation}
+						setType={setType}
+						setDesc={setDesc}
+					/>
 				</div>
 			</Modal>
 		);
