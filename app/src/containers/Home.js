@@ -8,7 +8,7 @@ import ICAL from 'ical.js';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ImportICS from '../components/ImportICSForm';
-import StyleForm from '../components/AddEventForm';
+import StyleForm from '../components/addeventForm';
 import DayView from '../components/DayView';
 
 import '../styles/home.css';
