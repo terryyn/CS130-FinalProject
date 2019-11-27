@@ -17,7 +17,6 @@ import '../styles/home.css';
 import Server from '../server';
 const server = new Server();
 
-
 const useStyles = makeStyles({
 	paper: {
 		position: 'absolute',
@@ -113,7 +112,8 @@ function Home(props) {
 	useEffect(() => getEventsFromDate(dateString), []);
 
 	function getEventsFromDate(date) {
-		return server.getEventByUserAndDate(date, exampleID);
+		const newEvents = server.getEventByUserAndDate(date, exampleID);
+		setEvents(newEvents);
 	}
 
 	function onChangeDate(date) {
