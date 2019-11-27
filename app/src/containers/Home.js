@@ -14,9 +14,6 @@ import Server from '../server';
 
 import '../styles/home.css';
 
-import Server from '../server';
-const server = new Server();
-
 const useStyles = makeStyles({
 	paper: {
 		position: 'absolute',
@@ -44,6 +41,8 @@ function Home(props) {
 	const [ calendar, setCalendar ] = useState(null);
 	const [ events, setEvents ] = useState([]);
 	const [ showAddEvent, setAddEvent ] = useState(false);
+	const [ showEditEvent, setEditEvent ] = useState(false);
+
 	const [ showImportICS, setImportICS ] = useState(false);
 
 	const [ startTime, setStartTime ] = useState(null);
@@ -55,6 +54,9 @@ function Home(props) {
 	const [ eventLocation, setLocation ] = useState('');
 	const [ eventType, setType ] = useState(-1);
 	const [ eventDesc, setDesc ] = useState('');
+
+	const [ selectedEvent, setSelected ] = useState(-1);
+
 	const server = new Server();
 
 	const classes = useStyles();
@@ -109,10 +111,11 @@ function Home(props) {
 		return events;
 	}
 
-	useEffect(() => getEventsFromDate(dateString), []);
+	useEffect(() => getEventsFromDate(new Date()), []);
 
 	function getEventsFromDate(date) {
-		const newEvents = server.getEventByUserAndDate(date, exampleID);
+		const form = { date };
+		const newEvents = server.getEventByUserAndDate(form);
 		setEvents(newEvents);
 	}
 
@@ -134,6 +137,28 @@ function Home(props) {
 		};
 
 		server.addEvent(form);
+	}
+
+	function deleteEvent(id) {
+		const form = {
+			eventID: id
+		};
+		server.deleteEvent(form);
+	}
+
+	function editEvent(id) {
+		const form = {
+			eventID: id,
+			startdate: startDate,
+			starttime: startTime,
+			enddate: endDate,
+			endtime: endTime,
+			location: eventLocation,
+			name: eventName,
+			type: eventType,
+			description: eventDesc
+		};
+		server.editEvent(form);
 	}
 
 	function addEventFromICS() {
@@ -160,6 +185,11 @@ function Home(props) {
 		setAddEvent(!showAddEvent);
 	}
 
+	function toggleEditEventModal(id) {
+		setSelected(id);
+		setEditEvent(!showEditEvent);
+	}
+
 	function toggleImportICSModal() {
 		setImportICS(!showImportICS);
 	}
@@ -175,6 +205,32 @@ function Home(props) {
 				<div style={getModalStyle()} className={classes.paper}>
 					<StyleForm
 						addEvent={addEvent}
+						setStartTime={setStartTime}
+						setStartDate={setStartDate}
+						setEndTime={setEndTime}
+						setEndDate={setEndDate}
+						setName={setName}
+						setLocation={setLocation}
+						setType={setType}
+						type={eventType}
+						setDesc={setDesc}
+					/>
+				</div>
+			</Modal>
+		);
+	}
+
+	function renderEditEvent() {
+		return (
+			<Modal
+				aria-labelledby="simple-modal-title"
+				aria-describedby="simple-modal-description"
+				open={showEditEvent}
+				onClose={() => setEditEvent(false)}
+			>
+				<div style={getModalStyle()} className={classes.paper}>
+					<StyleForm
+						addEvent={(selectedEvent) => editEvent(selectedEvent)}
 						setStartTime={setStartTime}
 						setStartDate={setStartDate}
 						setEndTime={setEndTime}
@@ -211,11 +267,17 @@ function Home(props) {
 				<Grid container spacing={3} id="grid">
 					{renderImportICS()}
 					{renderAddEvent()}
+					{renderEditEvent()}
 					<Grid item xs={12}>
 						<h1 id="name-h1">{props.currentUser.replace(/ .*/, '')}'s Day</h1>
 					</Grid>
 					<Grid item xs={9} id="event-grid">
-						<DayView date={dateString} events={events} />
+						<DayView
+							date={dateString}
+							events={events}
+							editEvent={toggleEditEventModal}
+							deleteEvent={deleteEvent}
+						/>
 					</Grid>
 				</Grid>
 				<Grid container justify="space-evenly" alignItems="flex-end" item xs={12} spacing={3} id="buttons">

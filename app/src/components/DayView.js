@@ -69,6 +69,8 @@ function DayView(props) {
 							</div>
 							<div className="agenda-item-summary">{event.summary}</div>
 						</div>
+						<div onClick={(id) => props.deleteEvent(id)}>delete</div>
+						<div onClick={(id) => props.editEvent(id)}>edit</div>
 					</ListItemText>
 				</ListItem>
 			</Fragment>
@@ -78,7 +80,7 @@ function DayView(props) {
 		<Card>
 			<CardHeader title={formatDate(props.date)} />
 			<CardContent>
-				<List>{props.events.map((event, id) => renderEvent(event, id))}</List>
+				<List>{props.events.map((event) => renderEvent(event, event.id))}</List>
 			</CardContent>
 		</Card>
 	);

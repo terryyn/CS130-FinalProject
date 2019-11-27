@@ -36,6 +36,14 @@ class Server {
 		return this.perform('post', '/addEvent', form);
 	}
 
+	deleteEvent(form) {
+		return this.perform('post', '/deleteEvent', form);
+	}
+
+	editEvent(form) {
+		return this.perform('post', '/deleteEvent', form);
+	}
+
 	getEventByUserAndDate(form) {
 		return this.perform('get', '/getEventByUserAndDate', form);
 	}
