@@ -124,25 +124,50 @@ class DatabaseManager():
             eventType=event_json['type'], enddate=end_date,
             endtime=end_time, description=event_json['description'])
 
+    @login_required
     def add_event_to_database(self, event_json):
         '''
         Takes in a json-converted dict including 8 fields about an event:
         name: string, startdate: string, starttime: string, location: string,
         type: string, enddate: string, endtime: string, description: string
-        Returns the event id of the event added.
+        Returns the event id of the event added, or the existing event.
         '''
         new_event = self.read_event_json(event_json)
-        db.session.add(new_event)
-        db.session.commit()
-        return new_event[id]
+        old_event = Event.query.filter(Event.name == new_event.name, \
+                    Event.startdate == new_event.startdate, \
+                    Event.starttime == new_event.starttime, \
+                    Event.starttime == new_event.starttime, \
+                    Event.location == new_event.location, \
+                    Event.type == new_event.type, \
+                    Event.enddate == new_event.enddate, \
+                    Event.endtime == new_event.endtime, \
+                    Event.description == new_event.description)
+        real_event_to_add = old_event
+        if not old_event:
+            db.session.add(new_event)
+            real_event_to_add = new_event
 
+        db.session.add(Participation(event_id=real_event_to_add.id, user_id=current_user.id))
+        db.session.commit()
+        return real_event_to_add.id
+
+    @login_required
     def delete_event_from_database(self, eventID):
         '''
         Takes in the event id of the event and deletes the event.
         No return value.
         '''
-        target = Event.query.get(eventID)
-        db.session.delete(target)
+        target_event = Event.query.get(eventID)
+
+        #first checks how many users are related to this event
+        num_of_participants = Participation.query.filter(Participation.event_id == target_event.id).count()
+        current_participation = Participation.query.filter(Participation.event_id == target_event, \
+                            Participation.user_id == current_user.id)
+
+        if num_of_participants == 1:
+            db.session.delete(target_event)
+
+        db.session.delete(current_participation)
         db.session.commit()
 
     def edit_event_in_database(self, eventID, changes_json):
