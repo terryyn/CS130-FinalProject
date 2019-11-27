@@ -1,7 +1,18 @@
-.profile-card {
-    height: 30%;
+#profile-card {
+    height: 100%;
+    width: 83%;
+    display: flex;
+    flex-flow: column;
+}
+
+#name-h1 {
+    color: #3f3f3f;
+    padding: 3%;
+}
+
+#user-info {
     width: 50%;
-    margin: 4%;
+    padding: 3%;
 }
 
 #editButton {
@@ -11,6 +22,18 @@
 #content-fields {
     display: flex;
     flex-flow: column;
+}
+
+#content-container {
+    background: rgb(73, 76, 89);
+}
+
+#user-info .MuiCardActions-root button {
+    color: white;
+}
+
+#user-info label, #user-info input, #user-info span {
+    color: white !important;
 }
 
 #instructor-toggle {

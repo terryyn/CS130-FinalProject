@@ -8,11 +8,28 @@
     width: 95%;
 }
 
-#heading {
+#sidebar-heading {
     margin-top: 20%;
     margin-left: 10%;
     height: 10%;
-    color: 3f3f3f;
+    display: flex;
+    flex-flow: row;
+}
+
+#c1 {
+    color: #2774AE;
+}
+
+#c2 {
+    color: #FFD100;
+}
+
+#c3 {
+    color: #2774AE;
+}
+
+#c4 {
+    color: #FFD100;
 }
 
 #navlist {

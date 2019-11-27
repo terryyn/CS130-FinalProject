@@ -1,0 +1,11 @@
+#meeting-card {
+    height: 100%;
+    width: 83%;
+    display: flex;
+    flex-flow: column;
+}
+
+#name-h1 {
+    color: #3f3f3f;
+    padding: 3%;
+}

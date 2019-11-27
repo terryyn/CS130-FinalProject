@@ -10,6 +10,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 
+import '../styles/meeting.css'
+
 const useStyles = makeStyles({
 	grid: {
 		padding: '32px'
@@ -163,21 +165,27 @@ function Meeting() {
 	}
 
 	return (
-		<Grid container spacing={3} className={classes.grid}>
-			<Grid item xs={8}>
-				<h1>Create a meeting</h1>
-				<div style={{ display: 'flex', flexDirection: 'column' }}>
-					{renderCreateMeeting()}
-					{renderInviteFriends()}
-					<Button variant="contained" color="primary" onClick={getAvailableTimes}>
-						Find available times
-					</Button>
-				</div>
-			</Grid>
-			<Grid item xs={4}>
-				{renderAvailableTimes()}
-			</Grid>
-		</Grid>
+		<div id="meeting-card">
+			<div>
+				<h1 id="name-h1">Create a meeting</h1>
+			</div>
+			<div id="meeting-content">
+				<Grid container spacing={3} className={classes.grid}>
+					<Grid item xs={8}>
+						<div style={{ display: 'flex', flexDirection: 'column' }}>
+							{renderCreateMeeting()}
+							{renderInviteFriends()}
+							<Button variant="contained" color="primary" onClick={getAvailableTimes}>
+								Find available times
+							</Button>
+						</div>
+					</Grid>
+					<Grid item xs={4}>
+						{renderAvailableTimes()}
+					</Grid>
+				</Grid>
+			</div>
+		</div>
 	);
 }
 

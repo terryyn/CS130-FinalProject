@@ -78,87 +78,89 @@ function Profile(props) {
 
     const classes = useStyles();
     return (
-        <div class="profile-card">
-            <Typography variant="h5">
-                Profile Settings
-            </Typography>
-            <Card>
-                <CardContent id="content-fields">
-                    <TextField
-                        id="name"
-                        label="Name"
-                        defaultValue={name}
-                        className={classes.textField}
-                        margin="normal"
-                        variant="outlined"
-                        fullWidth
-                        InputProps={{
-                            readOnly: !editInfo,
-                        }}
-                        onInput={ e=>{setName(e.target.value)}}
-                    />
-                    <TextField
-                        id="email"
-                        label="Email"
-                        defaultValue={email}
-                        className={classes.textField}
-                        margin="normal"
-                        variant="outlined"
-                        fullWidth
-                        InputProps={{
-                            readOnly: !editInfo,
-                        }}
-                        onInput={ e=>setEmail(e.target.value)}
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        InputProps={{
-                            readOnly: !editInfo,
-                        }}
-                        className={classes.textField}
-                        label="Password"
-                        type="password"
-                        id="password"
-                        defaultValue={password}
-                        onInput={ e=>setPassword(e.target.value)}
-                    />
-                    <FormControlLabel
-                        id="instructor-toggle"
-                        control={
-                            <Switch 
-                                checked={instructor} 
-                                onChange={ e=>{
-                                    if (instructor) {
-                                        setInstructor(false)
+        <div id="profile-card">
+            <div>
+                <h1 id="name-h1">Profile Settings</h1>
+            </div>
+            <div id="user-info">
+                <Card id="content-container">
+                    <CardContent id="content-fields">
+                        <TextField
+                            id="name"
+                            label="Name"
+                            defaultValue={name}
+                            className={classes.textField}
+                            margin="normal"
+                            variant="outlined"
+                            fullWidth
+                            InputProps={{
+                                readOnly: !editInfo,
+                            }}
+                            onInput={ e=>{setName(e.target.value)}}
+                        />
+                        <TextField
+                            id="email"
+                            label="Email"
+                            defaultValue={email}
+                            className={classes.textField}
+                            margin="normal"
+                            variant="outlined"
+                            fullWidth
+                            InputProps={{
+                                readOnly: !editInfo,
+                            }}
+                            onInput={ e=>setEmail(e.target.value)}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            fullWidth
+                            InputProps={{
+                                readOnly: !editInfo,
+                            }}
+                            className={classes.textField}
+                            label="Password"
+                            type="password"
+                            id="password"
+                            defaultValue={password}
+                            onInput={ e=>setPassword(e.target.value)}
+                        />
+                        <FormControlLabel
+                            id="instructor-toggle"
+                            control={
+                                <Switch 
+                                    checked={instructor} 
+                                    onChange={ e=>{
+                                        if (instructor) {
+                                            setInstructor(false)
+                                        }
+                                        else {
+                                            setInstructor(true)
+                                        }
+                                        }
                                     }
-                                    else {
-                                        setInstructor(true)
-                                    }
-                                    }
-                                }
-                            />
+                                />
+                            }
+                            label="Instructor"
+                            disabled={!editInfo}
+                        />
+                    </CardContent>
+                    <CardActions disableSpacing>
+                        {editInfo ?
+                            (
+                                <IconButton color="white" size="small" id="editButton" onClick={enableEdit}>
+                                    <CheckIcon />
+                                </IconButton>
+                            ) :
+                            (
+                                <IconButton color="white" size="small" id="editButton" onClick={enableEdit}>
+                                    <EditIcon />
+                                </IconButton>
+                            )
                         }
-                        label="Instructor"
-                        disabled={!editInfo}
-                    />
-                </CardContent>
-                <CardActions disableSpacing>
-                    {editInfo ?
-                        (
-                            <IconButton color="primary" size="small" id="editButton" onClick={enableEdit}>
-                                <CheckIcon />
-                            </IconButton>
-                        ) :
-                        (
-                            <IconButton color="primary" size="small" id="editButton" onClick={enableEdit}>
-                                <EditIcon />
-                            </IconButton>
-                        )
-                    }
-                </CardActions>
-            </Card>
+                    </CardActions>
+                </Card>
+            </div>
             <Snackbar
                 anchorOrigin={{
                 vertical: 'bottom',

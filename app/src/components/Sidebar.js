@@ -26,9 +26,18 @@ function Sidebar(props) {
 	
 	return (
 		<div id="sidebar">
-			<div id="heading">
-				<Typography variant="h4" gutterBottom>
-					UCal
+			<div id="sidebar-heading">
+				<Typography variant="h4" gutterBottom id="c1">
+					U
+				</Typography>
+				<Typography variant="h4" gutterBottom id="c2">
+					C
+				</Typography>
+				<Typography variant="h4" gutterBottom id="c3">
+					a
+				</Typography>
+				<Typography variant="h4" gutterBottom id="c4">
+					l
 				</Typography>
 			</div>
 			<List id="navlist">

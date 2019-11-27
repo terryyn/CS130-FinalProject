@@ -18,7 +18,7 @@ function App() {
 	const [ tryLogin, setTryLogin ] = useState(true);
 
 	const [ currentUser, setUser ] = useState("");
-	const [ currentUserPhotoUrl, setUserPhotoUrl ] = useState("https://www.gstatic.com/images/branding/product/2x/photos_96dp.png");
+	const [ currentUserPhotoUrl, setUserPhotoUrl ] = useState("https://cdn2.iconfinder.com/data/icons/animal-outline-icons-set/144/Dog-512.png");
 	const [ currentUserEmail, setUserEmail ] = useState("");
 	const [ currentIsInstructor, setcurrentIsInstructor ] = useState(false);
 
