@@ -51,7 +51,7 @@ def log_in():
 
 @main.route('/auth', methods=['GET']) 
 def auth():
-    print request.cookies
+    print (request.cookies)
     if request.method == 'GET':
         user_info = db_manager.auth()
         if (user_info is not None):
