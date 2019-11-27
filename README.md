@@ -9,10 +9,13 @@ Backend python code used flake8 linter.
 
 ## Start python flask server:
 python run_server.py db upgrade (this command initialize/upgrade your database)
+
 python run_server.py runserver
 
-If anyone changes database schema, please run the following commands to update and keep track of the database changes:
+**If anyone changes database schema, please run the following commands to update and keep track of the database changes:**
+
 
 python run_server.py db migrate -m "commit message"
+
 python python run_server.py db upgrade
 
