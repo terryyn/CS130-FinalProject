@@ -140,6 +140,8 @@ function Home(props) {
 			course: course
 		};
 
+		console.log(form);
+
 		server.addEvent(form).then(() => {
 			getEventsFromDate(new Date(dateString));
 			toggleAddEventModal();

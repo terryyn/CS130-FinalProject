@@ -61,6 +61,7 @@ class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     course = db.Column(db.String(64), default=None)
+    guests = db.Column(db.String(), default=None)
     startdate = db.Column(db.Date)
     starttime = db.Column(db.Time)
     location = db.Column(db.String(64))

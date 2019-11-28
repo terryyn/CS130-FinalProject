@@ -51,7 +51,7 @@
     width: 60%;
 }
 
-#description {
+#description-and-loc {
     width: 40%;
 }
 
@@ -72,16 +72,16 @@
     border-bottom: 2px solid white !important;
 }
 
-#description label, #description textarea {
-    color: white;
+#description-and-loc label, #description-and-loc textarea, #description-and-loc input {
+    color: white !important;
 }
 
-#description fieldset {
-    border-color: white;
+#description-and-loc fieldset {
+    border-color: white !important;
 }
 
-#guest-form label, #guest-form textarea {
-    color: white;
+#guest-form label, #guest-form textarea, #guest-form input {
+    color: white !important;
 }
 
 #guest-form fieldset{

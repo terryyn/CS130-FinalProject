@@ -23,6 +23,9 @@ import Divider from '@material-ui/core/Divider';
 import '../styles/meeting.css'
 import { withTheme } from '@material-ui/styles';
 
+import Server from '../server';
+const server = new Server();
+
 const useStyles = makeStyles(theme =>({
 	grid: {
 		height: '100%',
@@ -55,8 +58,9 @@ function Meeting() {
 	const [ endDate, setEndDate ] = useState(new Date());
 
 	const [ meetingDes, setMeetingDes ] = useState("");
+	const [ meetingLoc, setMeetingLoc ] = useState("");
+	const [ meetingName, setMeetingName ] = useState("");
 
-	const [ commasepGuests, setCommasepGuests ] = useState("");
 	const [ guests, setGuests ] = useState([]);
 	const [ course, setCourse ] = useState("");
 
@@ -76,20 +80,27 @@ function Meeting() {
 		setMeetingDes(desc.target.value);
 	};
 
-	const handleGuestsChange = guestsInput => {
-		setCommasepGuests(guestsInput.target.value);
-		commasepGuests = commasepGuests.replace(/\s/g, '');
-    	setGuests(commasepGuests.split(','));
+	const handleMeetingLocChange = desc => {
+		setMeetingLoc(desc.target.value);
+	};
+
+	const handleMeetingNameChange = desc => {
+		setMeetingName(desc.target.value);
+	};
+
+	const handleGuestsChange = desc => {
+		setGuests(desc.target.value);
+		setCourse("");
 	};
 
 	const handleCourseChange = courseInput => {
 		setCourse(courseInput.target.value);
+		setGuests("");
 	};
 
 	const submitMeeting = (startDateMeeting, endDateMeeting) => {
 		setSuccess(true);
-		console.log(startDateMeeting);
-		console.log(endDateMeeting);
+		addEvent(startDateMeeting, endDateMeeting);
 	};
 
 	const handleClose = () => {
@@ -104,6 +115,42 @@ function Meeting() {
 	const handleCustomEndDate = date => {
 		setCustomEndDate(date);
 	};
+
+	function formatDate(d) {
+		var month = '' + (d.getMonth() + 1);
+		var day = '' + d.getDate();
+		var year = d.getFullYear();
+	
+		if (month.length < 2) 
+			month = '0' + month;
+		if (day.length < 2) 
+			day = '0' + day;
+	
+		return [year, month, day].join('-');
+	}
+
+	function formateTime(d) {
+		var datetext = d.toTimeString();
+		var datetext = datetext.split(' ')[0];
+		return datetext.substring(0, 5);
+	}
+
+	async function addEvent(start, end) {
+		const form = {
+			startdate: formatDate(start),
+			starttime: formateTime(start),
+			enddate: formatDate(end),
+			endtime: formateTime(end),
+			location: meetingLoc,
+			name: meetingName,
+			type: 7,
+			description: meetingDes,
+			course: course,
+			guests: guests
+		};
+
+		server.addEvent(form);
+	}
 
 
 	function renderCreateMeeting() {
@@ -161,7 +208,16 @@ function Meeting() {
 									/>
 								</div>
 							</div>
-							<div className="meeting-field" id="description">
+							<div className="meeting-field" id="description-and-loc">
+								<TextField
+									id="outlined-multiline-flexible"
+									label="Name"
+									value={meetingName}
+									onChange={handleMeetingNameChange}
+									className={classes.textField}
+									margin="normal"
+									variant="outlined"
+								/>
 								<TextField
 									id="outlined-multiline-flexible"
 									label="Description"
@@ -169,6 +225,15 @@ function Meeting() {
 									rowsMax="4"
 									value={meetingDes}
 									onChange={handleMeetingDesChange}
+									className={classes.textField}
+									margin="normal"
+									variant="outlined"
+								/>
+								<TextField
+									id="outlined-multiline-flexible"
+									label="Location"
+									value={meetingLoc}
+									onChange={handleMeetingLocChange}
 									className={classes.textField}
 									margin="normal"
 									variant="outlined"
@@ -205,7 +270,7 @@ function Meeting() {
 							className={classes.textField}
 							margin="normal"
 							variant="outlined"
-							value={commasepGuests}
+							value={guests}
 							onChange={handleGuestsChange}
 						/>
 					</form>

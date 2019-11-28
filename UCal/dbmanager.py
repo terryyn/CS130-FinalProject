@@ -133,6 +133,12 @@ class DatabaseManager():
                 starttime=start_time, location=event_json['location'],
                 eventType=event_json['type'], enddate=end_date,
                 endtime=end_time, description=event_json['description'], course=event_json['course'])
+        elif event_json['guests']!='':
+            return Event(
+                name=event_json['name'], startdate=start_date,
+                starttime=start_time, location=event_json['location'],
+                eventType=event_json['type'], enddate=end_date,
+                endtime=end_time, description=event_json['description'], guests=event_json['guests'])
         else:
             return Event(
                 name=event_json['name'], startdate=start_date,
@@ -140,6 +146,15 @@ class DatabaseManager():
                 eventType=event_json['type'], enddate=end_date,
                 endtime=end_time, description=event_json['description'])
     
+    def getUsersWithEmail(self, guests):
+        ret = []
+        emails = guests.split(',')
+        for i in range(len(emails)):
+            emails[i] = emails[i].strip()
+            user = User.query.filter_by(email=emails[i]).first()
+            ret.append(user)
+        return ret
+
     def getUsersWithCourse(self, course):
         ret = []
         users = User.query.all()
@@ -186,12 +201,18 @@ class DatabaseManager():
                     pass
         except:
             pass
-
-        ps = Participation.query.all()
-        for p in ps:
-            print p.event_id
-            print p.user_id
-            print '.'
+        
+        #Try to send notifications to guests if guests exists
+        try:
+            users_to_notify = self.getUsersWithEmail(new_event.guests)
+            for u in users_to_notify:
+                try:
+                    db.session.add(Participation(event_id=event_id, user_id=u.id))
+                    db.session.commit()
+                except sqlalchemy.exc.IntegrityError:
+                    pass
+        except:
+            pass
             
         try:
             db.session.add(Participation(event_id=event_id, user_id=current_user.id))
