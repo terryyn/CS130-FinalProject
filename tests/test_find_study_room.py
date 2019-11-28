@@ -5,6 +5,7 @@ import json
 from UCal import create_app, db, db_manager
 from UCal.model import User, Event, EventType, Participation
 from UCal.roomfinder import RoomFinder
+from datetime import datetime, date, time, timedelta
 
 def get_meeting_json():
     return {
@@ -30,5 +31,7 @@ class findStudyRoomTestCase(unittest.TestCase):
         self.app_context.pop()
     
     def testFindAtLeastOneStudyRoom(self):
-        studyRoom = self.finder.findRoom(get_meeting_json())
+        starttime = datetime(year=2019, month=11, day=28, hour=14)
+        endtime = datetime(year=2019, month=11, day=28, hour=17)
+        studyRoom = self.finder.find_room(5, [(starttime, endtime)], 30)
         assert studyRoom!= None
