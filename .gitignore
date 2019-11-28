@@ -4,3 +4,4 @@ venv/
 
 # SQLite databases
 *.sqlite
+data-dev.sqlite
