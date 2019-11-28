@@ -24,6 +24,10 @@
     flex-flow: column;
 }
 
+#content-fields fieldset {
+    border-color: white !important;
+}
+
 #content-container {
     background: rgb(73, 76, 89);
 }
