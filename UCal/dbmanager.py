@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from .model import Event, User, Participation
 from flask_login import login_user, login_required, current_user, logout_user
+import sqlalchemy
 
 def convertToBool(x):
     return x.lower()=='true'
@@ -152,10 +153,13 @@ class DatabaseManager():
             db.session.commit()
             event_id = new_event.id
         else:
-            event_id = old_event.id
+            event_id = old_event.one_or_none().id
 
-        db.session.add(Participation(event_id=event_id, user_id=current_user.id))
-        db.session.commit()
+        try:
+            db.session.add(Participation(event_id=event_id, user_id=current_user.id))
+            db.session.commit()
+        except sqlalchemy.exc.IntegrityError:
+            pass
         return event_id
 
     @login_required
@@ -197,7 +201,8 @@ class DatabaseManager():
         '''
         # match the json object from client
         userid = current_user.id
-        date = req_json['date']
+        date_str = req_json['date']
+        date = datetime.datetime.strptime(date_str, '%a %b %d %Y').date()
         occupied_events = Event.query.join(Participation).filter(
             Participation.user_id == userid,
             Event.startdate <= date, Event.enddate >= date

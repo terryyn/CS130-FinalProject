@@ -30,9 +30,7 @@ function DayView(props) {
 	}
 
 	function formatTime(time) {
-		const date = time.toJSDate();
-		var hours = date.getHours();
-		var minutes = date.getMinutes();
+		var [ hours, minutes, seconds ] = time.split(':');
 		var strampm;
 		if (hours >= 12) {
 			strampm = 'PM';
@@ -46,9 +44,6 @@ function DayView(props) {
 		if (hours < 10) {
 			hours = '0' + hours;
 		}
-		if (minutes < 10) {
-			minutes = '0' + minutes;
-		}
 		var ret = hours + ':' + minutes + ' ' + strampm;
 		return ret;
 	}
@@ -61,13 +56,13 @@ function DayView(props) {
 						<div className="agenda-item general">
 							<div className="agenda-item-time">
 								<Typography variant="subtitle1" gutterBottom>
-									{formatTime(event.startDate)}
+									{formatTime(event.starttime)}
 								</Typography>
 								<Typography variant="subtitle1" gutterBottom>
-									{formatTime(event.endDate)}
+									{formatTime(event.endtime)}
 								</Typography>
 							</div>
-							<div className="agenda-item-summary">{event.summary}</div>
+							<div className="agenda-item-summary">{event.name}</div>
 						</div>
 						<div onClick={(id) => props.deleteEvent(id)}>delete</div>
 						<div onClick={(id) => props.editEvent(id)}>edit</div>

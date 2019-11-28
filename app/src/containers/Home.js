@@ -124,7 +124,7 @@ function Home(props) {
 		setEvents(getEventsFromDate(date));
 	}
 
-	function addEvent() {
+	async function addEvent() {
 		const form = {
 			startdate: startDate,
 			starttime: startTime,
@@ -136,7 +136,10 @@ function Home(props) {
 			description: eventDesc
 		};
 
-		server.addEvent(form);
+		server.addEvent(form).then(() => {
+			getEventsFromDate(new Date(dateString));
+			toggleAddEventModal();
+		});
 	}
 
 	function deleteEvent(id) {

@@ -107,7 +107,8 @@ def get_events_by_user_and_date():
     get event by userid + date
     '''
     events_on_date = db_manager.get_events_by_user_and_date(request.get_json(force=True))
-    return json.dumps({'events': events_on_date})
+    events_json = [event.as_dict() for event in events_on_date]
+    return json.dumps({'events': events_json})
 
 @main.route('/getEventById', methods=['GET', 'POST'])
 def get_event_by_id():

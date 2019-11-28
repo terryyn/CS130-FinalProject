@@ -43,6 +43,17 @@ class Event(db.Model):
     endtime | enddate | description | participations(meeting)
     '''
     __tablename__ = 'events'
+    def as_dict(self):
+       return {'id': self.id,
+               'name': self.name,
+               'startdate': str(self.startdate),
+               'starttime': str(self.starttime),
+               'enddate': str(self.enddate),
+               'endtime': str(self.endtime),
+               'location': self.location,
+               'eventType': self.eventType,
+               'description': self.description}
+       
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     startdate = db.Column(db.Date)
