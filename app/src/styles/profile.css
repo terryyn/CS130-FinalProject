@@ -44,3 +44,34 @@
     margin-left: 0.1%;
     margin-top: 1%;
 }
+
+#courses-container {
+    width: 60%;
+    margin-right: 8px;
+    margin-left: 8px;
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+#courses-container > div > div:before {
+    background-color: white !important;
+}
+
+.MuiChip-deletable {
+    background: rgb(73, 76, 89) !important;
+    border: 1px solid white !important;
+}
+
+#courses-container > div > div:hover:before {
+    height: 1px;
+    background-color: white !important;
+}
+
+#courses-container svg {
+    color: white;
+}
+
+.WAMuiChipInput-standard-628:after {
+    height: 2px;
+    background-color: white !important;
+}

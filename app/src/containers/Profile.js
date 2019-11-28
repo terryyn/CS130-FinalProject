@@ -13,6 +13,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import { green } from '@material-ui/core/colors';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import ChipInput from 'material-ui-chip-input'
 
 import '../styles/profile.css'
 
@@ -25,6 +26,9 @@ const useStyles = makeStyles(theme => ({
   },
   pos: {
     marginBottom: 12,
+  },
+  chip: {
+    margin: theme.spacing(0.5),
   },
   textField: {
     marginLeft: theme.spacing(1),
@@ -46,16 +50,29 @@ function toString(b) {
 
 function Profile(props) {
     const [ editInfo, setEditInfo ] = useState(false);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
 
-    const [name, setName] = React.useState(props.currentUser);
-    const [email, setEmail] = React.useState(props.currentUserEmail);
-    const [instructor, setInstructor] = React.useState(props.currentIsInstructor);
-    const [password, setPassword] = React.useState("");
+    const [name, setName] = useState(props.currentUser);
+    const [email, setEmail] = useState(props.currentUserEmail);
+    const [instructor, setInstructor] = useState(props.currentIsInstructor);
+    const [password, setPassword] = useState("");
+    const [courses, setCourses] = useState(props.currentCourses);
+    
+    const handleDeleteChip = (label, index) => {
+        setCourses(courses => courses.filter(chip => chip !== label));
+    };
+
+    const handleAddChip = (chip) => {
+        if (chip!='') {
+            var newCourses = courses;
+            newCourses.push(chip);
+            setCourses(newCourses);
+        }
+    };
     
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
-            return;
+            setOpen(false);
         }
         setOpen(false);
     };
@@ -66,7 +83,8 @@ function Profile(props) {
             props.setUser(name);
             props.setUserEmail(email);
             props.setcurrentIsInstructor(instructor);
-            const form = {'username': name, 'email': email, 'password': password, 'is_instructor': toString(instructor)};
+            props.setCurrentCourses(courses);
+            const form = {'username': name, 'email': email, 'password': password, 'is_instructor': toString(instructor), 'courses': courses.join()};
             server.editUser(form).then( data => {
                 setEditInfo(false);
             });
@@ -125,6 +143,15 @@ function Profile(props) {
                             defaultValue={password}
                             onInput={ e=>setPassword(e.target.value)}
                         />
+                        <div id="courses-container">
+                            <ChipInput
+                                label="Courses"
+                                disabled={!editInfo}
+                                value={courses}
+                                onAdd={(chip) => handleAddChip(chip)}
+                                onDelete={(chip, index) => handleDeleteChip(chip, index)}
+                            />
+                        </div>
                         <FormControlLabel
                             id="instructor-toggle"
                             control={
