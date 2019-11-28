@@ -80,7 +80,7 @@ function DayView(props) {
 		<Card>
 			<CardHeader title={formatDate(props.date)} />
 			<CardContent>
-				<List>{props.events.map((event) => renderEvent(event, event.id))}</List>
+				<List>{props.events.length > 0 && props.events.map((event) => renderEvent(event, event.id))}</List>
 			</CardContent>
 		</Card>
 	);

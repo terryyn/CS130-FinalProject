@@ -33,9 +33,6 @@ function getModalStyle() {
 	};
 }
 
-// TODO: Use context to store this
-const exampleID = 1;
-
 function Home(props) {
 	const [ dateString, setDate ] = useState(new Date().toLocaleString());
 	const [ calendar, setCalendar ] = useState(null);
@@ -52,7 +49,7 @@ function Home(props) {
 
 	const [ eventName, setName ] = useState('');
 	const [ eventLocation, setLocation ] = useState('');
-	const [ eventType, setType ] = useState(-1);
+	const [ eventType, setType ] = useState(1);
 	const [ eventDesc, setDesc ] = useState('');
 
 	const [ selectedEvent, setSelected ] = useState(-1);
@@ -113,10 +110,13 @@ function Home(props) {
 
 	useEffect(() => getEventsFromDate(new Date()), []);
 
-	function getEventsFromDate(date) {
-		const form = { date };
-		const newEvents = server.getEventByUserAndDate(form);
-		setEvents(newEvents);
+	async function getEventsFromDate(date) {
+		const newDateStr = date.toDateString();
+		const form = { date: newDateStr };
+		server.getEventByUserAndDate(form).then((events) => {
+			console.log('events', events);
+			setEvents(events['events'] ? events['events'] : []);
+		});
 	}
 
 	function onChangeDate(date) {

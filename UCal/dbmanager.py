@@ -1,5 +1,6 @@
 # flake8 compatible
 import datetime
+import time
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from .model import Event, User, Participation
@@ -112,12 +113,16 @@ class DatabaseManager():
         '''
         start_date = datetime.datetime.strptime(
             event_json['startdate'], '%Y-%m-%d'
-        )
+        ).date()
         start_time = datetime.datetime.strptime(
             event_json['starttime'], '%H:%M'
-        )
-        end_date = datetime.datetime.strptime(event_json['enddate'], '%Y-%m-%d')
-        end_time = datetime.datetime.strptime(event_json['endtime'], '%H:%M')
+        ).time()
+        end_date = datetime.datetime.strptime(
+            event_json['enddate'], '%Y-%m-%d'
+        ).date()
+        end_time = datetime.datetime.strptime(
+            event_json['endtime'], '%H:%M'
+        ).time()
         return Event(
             name=event_json['name'], startdate=start_date,
             starttime=start_time, location=event_json['location'],
@@ -138,18 +143,20 @@ class DatabaseManager():
                     Event.starttime == new_event.starttime, \
                     Event.starttime == new_event.starttime, \
                     Event.location == new_event.location, \
-                    Event.type == new_event.type, \
+                    Event.eventType == new_event.eventType, \
                     Event.enddate == new_event.enddate, \
                     Event.endtime == new_event.endtime, \
                     Event.description == new_event.description)
-        real_event_to_add = old_event
-        if not old_event:
+        if not old_event.count():
             db.session.add(new_event)
-            real_event_to_add = new_event
+            db.session.commit()
+            event_id = new_event.id
+        else:
+            event_id = old_event.id
 
-        db.session.add(Participation(event_id=real_event_to_add.id, user_id=current_user.id))
+        db.session.add(Participation(event_id=event_id, user_id=current_user.id))
         db.session.commit()
-        return real_event_to_add.id
+        return event_id
 
     @login_required
     def delete_event_from_database(self, eventID):
@@ -189,11 +196,11 @@ class DatabaseManager():
         requested. Return the list of events satisfying the condition.
         '''
         # match the json object from client
-        userid = req_json['userid']
+        userid = current_user.id
         date = req_json['date']
         occupied_events = Event.query.join(Participation).filter(
             Participation.user_id == userid,
-            Event.startdate <= date & Event.enddate >= date
+            Event.startdate <= date, Event.enddate >= date
         ).order_by(Event.startdate).all()
         return occupied_events
 

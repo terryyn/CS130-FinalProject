@@ -45,7 +45,7 @@ class Server {
 	}
 
 	getEventByUserAndDate(form) {
-		return this.perform('get', '/getEventByUserAndDate', form);
+		return this.perform('post', '/getEventByUserAndDate', form);
 	}
 
 	async perform(method, resource, data = {}) {
