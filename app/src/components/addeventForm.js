@@ -26,7 +26,7 @@ class AddEventForm extends Component {
 	render() {
 		return (
 			<div className="addevent">
-				<h1 className="addevent-title">Add an event</h1>
+				<h1 className="addevent-title">{this.props.edit ? 'Edit this event' : 'Add an event'}</h1>
 				<form className="addevent-form" onSubmit={this.submit}>
 					<div className="addevent-field" id="start">
 						<InputLabel id="start-label">Start</InputLabel>
@@ -126,7 +126,7 @@ class AddEventForm extends Component {
 							id="submit-button"
 							style={buttonStyle}
 						>
-							Create Event
+							{this.props.edit ? 'Edit Event' : 'Create Event'}
 						</Button>
 					</div>
 				</form>

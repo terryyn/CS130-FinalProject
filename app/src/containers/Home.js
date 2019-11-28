@@ -146,7 +146,9 @@ function Home(props) {
 		const form = {
 			eventID: id
 		};
-		server.deleteEvent(form);
+		server.deleteEvent(form).then(() => {
+			getEventsFromDate(new Date(dateString));
+		});
 	}
 
 	function editEvent(id) {
@@ -243,6 +245,7 @@ function Home(props) {
 						setType={setType}
 						type={eventType}
 						setDesc={setDesc}
+						edit
 					/>
 				</div>
 			</Modal>
