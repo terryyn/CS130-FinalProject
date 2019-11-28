@@ -85,6 +85,7 @@ function Login(props) {
                 props.setUserEmail(data.email);
                 props.setUser(data.name);
                 props.setcurrentIsInstructor(data.is_instructor);
+                if ('courses' in data) if (data.courses != '') props.setCurrentCourses(data.courses.split(','));
             }
         })
     };

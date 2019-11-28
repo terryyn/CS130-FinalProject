@@ -16,6 +16,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(128), unique=True, index = True)
     password_hash = db.Column(db.String(128))
     is_instructor = db.Column(db.Boolean)
+    courses =  db.Column(db.String(1024), default='')
     participations = db.relationship(
         'Participation', backref='user', lazy='dynamic'
     )
@@ -31,9 +32,12 @@ class EventType:
     '''
     DEFAULT = 0
     COURSE = 1
-    MEETING = 2
-    EXAM = 3
-    ASSIGNMENT = 4
+    DISCUSSION = 2
+    OH = 3
+    EXAM = 4
+    DEADLINE = 5
+    MEETING = 6
+    MEETING_TENTATIVE = 7
 
 
 class Event(db.Model):
@@ -43,8 +47,21 @@ class Event(db.Model):
     endtime | enddate | description | participations(meeting)
     '''
     __tablename__ = 'events'
+    def as_dict(self):
+       return {'id': self.id,
+               'name': self.name,
+               'startdate': str(self.startdate),
+               'starttime': str(self.starttime),
+               'enddate': str(self.enddate),
+               'endtime': str(self.endtime),
+               'location': self.location,
+               'eventType': self.eventType,
+               'description': self.description}
+       
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
+    course = db.Column(db.String(64), default=None)
+    guests = db.Column(db.String(), default=None)
     startdate = db.Column(db.Date)
     starttime = db.Column(db.Time)
     location = db.Column(db.String(64))

@@ -1,7 +1,638 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Meeting page snapshot renders 1`] = `
-<p>
-  Create meeting
-</p>
+<div
+  className="MuiGrid-root makeStyles-grid-1 MuiGrid-container MuiGrid-spacing-xs-3"
+>
+  <div
+    className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-8"
+  >
+    <h1>
+      Create a meeting
+    </h1>
+    <div
+      style={
+        Object {
+          "display": "flex",
+          "flexDirection": "column",
+        }
+      }
+    >
+      <div
+        className="MuiPaper-root MuiPaper-elevation1 MuiCard-root MuiPaper-rounded"
+      >
+        <div
+          className="addevent"
+        >
+          <div
+            className="MuiCardHeader-root"
+          >
+            <div
+              className="MuiCardHeader-content"
+            >
+              <span
+                className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              >
+                Select range
+              </span>
+            </div>
+          </div>
+          <div
+            className="MuiCardContent-root"
+          >
+            <form
+              className="addevent-form"
+              onSubmit={[Function]}
+            >
+              <div
+                className="addevent-field"
+                id="start"
+              >
+                <label
+                  className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated"
+                  id="start-label"
+                >
+                  Start range
+                </label>
+                <div
+                  className="MuiFormControl-root MuiTextField-root"
+                >
+                  <div
+                    className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-formControl"
+                    onClick={[Function]}
+                  >
+                    <input
+                      aria-invalid={false}
+                      autoFocus={false}
+                      className="MuiInputBase-input MuiOutlinedInput-input"
+                      disabled={false}
+                      id="startdate-input"
+                      onAnimationStart={[Function]}
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onFocus={[Function]}
+                      required={false}
+                      type="date"
+                    />
+                    <fieldset
+                      aria-hidden={true}
+                      className="PrivateNotchedOutline-root-235 MuiOutlinedInput-notchedOutline"
+                      style={
+                        Object {
+                          "paddingLeft": 8,
+                        }
+                      }
+                    >
+                      <legend
+                        className="PrivateNotchedOutline-legend-236"
+                        style={
+                          Object {
+                            "width": 0.01,
+                          }
+                        }
+                      >
+                        <span
+                          dangerouslySetInnerHTML={
+                            Object {
+                              "__html": "&#8203;",
+                            }
+                          }
+                        />
+                      </legend>
+                    </fieldset>
+                  </div>
+                </div>
+                <div
+                  id="starttime"
+                >
+                  <div
+                    className="MuiFormControl-root MuiTextField-root"
+                  >
+                    <div
+                      className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-formControl"
+                      onClick={[Function]}
+                    >
+                      <input
+                        aria-invalid={false}
+                        autoFocus={false}
+                        className="MuiInputBase-input MuiOutlinedInput-input"
+                        disabled={false}
+                        id="starttime-input"
+                        onAnimationStart={[Function]}
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        onFocus={[Function]}
+                        required={false}
+                        type="time"
+                      />
+                      <fieldset
+                        aria-hidden={true}
+                        className="PrivateNotchedOutline-root-235 MuiOutlinedInput-notchedOutline"
+                        style={
+                          Object {
+                            "paddingLeft": 8,
+                          }
+                        }
+                      >
+                        <legend
+                          className="PrivateNotchedOutline-legend-236"
+                          style={
+                            Object {
+                              "width": 0.01,
+                            }
+                          }
+                        >
+                          <span
+                            dangerouslySetInnerHTML={
+                              Object {
+                                "__html": "&#8203;",
+                              }
+                            }
+                          />
+                        </legend>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                className="addevent-field"
+                id="end"
+              >
+                <label
+                  className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated"
+                  id="end-label"
+                >
+                  End range
+                </label>
+                <div
+                  className="MuiFormControl-root MuiTextField-root"
+                >
+                  <div
+                    className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-formControl"
+                    onClick={[Function]}
+                  >
+                    <input
+                      aria-invalid={false}
+                      autoFocus={false}
+                      className="MuiInputBase-input MuiOutlinedInput-input"
+                      disabled={false}
+                      id="enddate-input"
+                      onAnimationStart={[Function]}
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onFocus={[Function]}
+                      required={false}
+                      type="date"
+                    />
+                    <fieldset
+                      aria-hidden={true}
+                      className="PrivateNotchedOutline-root-235 MuiOutlinedInput-notchedOutline"
+                      style={
+                        Object {
+                          "paddingLeft": 8,
+                        }
+                      }
+                    >
+                      <legend
+                        className="PrivateNotchedOutline-legend-236"
+                        style={
+                          Object {
+                            "width": 0.01,
+                          }
+                        }
+                      >
+                        <span
+                          dangerouslySetInnerHTML={
+                            Object {
+                              "__html": "&#8203;",
+                            }
+                          }
+                        />
+                      </legend>
+                    </fieldset>
+                  </div>
+                </div>
+                <div
+                  id="endtime"
+                >
+                  <div
+                    className="MuiFormControl-root MuiTextField-root"
+                  >
+                    <div
+                      className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-formControl"
+                      onClick={[Function]}
+                    >
+                      <input
+                        aria-invalid={false}
+                        autoFocus={false}
+                        className="MuiInputBase-input MuiOutlinedInput-input"
+                        disabled={false}
+                        id="endtime-input"
+                        onAnimationStart={[Function]}
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        onFocus={[Function]}
+                        required={false}
+                        type="time"
+                      />
+                      <fieldset
+                        aria-hidden={true}
+                        className="PrivateNotchedOutline-root-235 MuiOutlinedInput-notchedOutline"
+                        style={
+                          Object {
+                            "paddingLeft": 8,
+                          }
+                        }
+                      >
+                        <legend
+                          className="PrivateNotchedOutline-legend-236"
+                          style={
+                            Object {
+                              "width": 0.01,
+                            }
+                          }
+                        >
+                          <span
+                            dangerouslySetInnerHTML={
+                              Object {
+                                "__html": "&#8203;",
+                              }
+                            }
+                          />
+                        </legend>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                className="addevent-field"
+                id="name"
+              >
+                <label
+                  className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated"
+                  id="name-label"
+                >
+                  Name
+                </label>
+                <div
+                  className="MuiFormControl-root MuiTextField-root"
+                  title="name"
+                >
+                  <div
+                    className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-formControl"
+                    onClick={[Function]}
+                  >
+                    <input
+                      aria-invalid={false}
+                      autoFocus={false}
+                      className="MuiInputBase-input MuiOutlinedInput-input"
+                      disabled={false}
+                      id="name-input"
+                      onAnimationStart={[Function]}
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onFocus={[Function]}
+                      required={true}
+                      type="text"
+                    />
+                    <fieldset
+                      aria-hidden={true}
+                      className="PrivateNotchedOutline-root-235 MuiOutlinedInput-notchedOutline"
+                      style={
+                        Object {
+                          "paddingLeft": 8,
+                        }
+                      }
+                    >
+                      <legend
+                        className="PrivateNotchedOutline-legend-236"
+                        style={
+                          Object {
+                            "width": 0.01,
+                          }
+                        }
+                      >
+                        <span
+                          dangerouslySetInnerHTML={
+                            Object {
+                              "__html": "&#8203;",
+                            }
+                          }
+                        />
+                      </legend>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div
+        className="MuiPaper-root MuiPaper-elevation1 MuiCard-root MuiPaper-rounded"
+        style={
+          Object {
+            "marginTop": "16px",
+          }
+        }
+      >
+        <div
+          className="addevent"
+        >
+          <div
+            className="MuiCardHeader-root"
+          >
+            <div
+              className="MuiCardHeader-content"
+            >
+              <span
+                className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+              >
+                Invite up to 4 friends
+              </span>
+            </div>
+          </div>
+          <div
+            className="MuiCardContent-root"
+          >
+            <form
+              className="addevent-form"
+              onSubmit={[Function]}
+            >
+              <div
+                className="addevent-field"
+                id="name"
+              >
+                <label
+                  className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated"
+                  id="name-label"
+                >
+                  Name
+                </label>
+                <div
+                  className="MuiFormControl-root MuiTextField-root"
+                  title="name"
+                >
+                  <div
+                    className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-formControl"
+                    onClick={[Function]}
+                  >
+                    <input
+                      aria-invalid={false}
+                      autoFocus={false}
+                      className="MuiInputBase-input MuiOutlinedInput-input"
+                      disabled={false}
+                      id="name-input"
+                      onAnimationStart={[Function]}
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onFocus={[Function]}
+                      required={true}
+                      type="text"
+                    />
+                    <fieldset
+                      aria-hidden={true}
+                      className="PrivateNotchedOutline-root-235 MuiOutlinedInput-notchedOutline"
+                      style={
+                        Object {
+                          "paddingLeft": 8,
+                        }
+                      }
+                    >
+                      <legend
+                        className="PrivateNotchedOutline-legend-236"
+                        style={
+                          Object {
+                            "width": 0.01,
+                          }
+                        }
+                      >
+                        <span
+                          dangerouslySetInnerHTML={
+                            Object {
+                              "__html": "&#8203;",
+                            }
+                          }
+                        />
+                      </legend>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+              <div
+                className="addevent-field"
+                id="name"
+              >
+                <label
+                  className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated"
+                  id="name-label"
+                >
+                  Name
+                </label>
+                <div
+                  className="MuiFormControl-root MuiTextField-root"
+                  title="name"
+                >
+                  <div
+                    className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-formControl"
+                    onClick={[Function]}
+                  >
+                    <input
+                      aria-invalid={false}
+                      autoFocus={false}
+                      className="MuiInputBase-input MuiOutlinedInput-input"
+                      disabled={false}
+                      id="name-input"
+                      onAnimationStart={[Function]}
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onFocus={[Function]}
+                      required={true}
+                      type="text"
+                    />
+                    <fieldset
+                      aria-hidden={true}
+                      className="PrivateNotchedOutline-root-235 MuiOutlinedInput-notchedOutline"
+                      style={
+                        Object {
+                          "paddingLeft": 8,
+                        }
+                      }
+                    >
+                      <legend
+                        className="PrivateNotchedOutline-legend-236"
+                        style={
+                          Object {
+                            "width": 0.01,
+                          }
+                        }
+                      >
+                        <span
+                          dangerouslySetInnerHTML={
+                            Object {
+                              "__html": "&#8203;",
+                            }
+                          }
+                        />
+                      </legend>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+              <div
+                className="addevent-field"
+                id="name"
+              >
+                <label
+                  className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated"
+                  id="name-label"
+                >
+                  Name
+                </label>
+                <div
+                  className="MuiFormControl-root MuiTextField-root"
+                  title="name"
+                >
+                  <div
+                    className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-formControl"
+                    onClick={[Function]}
+                  >
+                    <input
+                      aria-invalid={false}
+                      autoFocus={false}
+                      className="MuiInputBase-input MuiOutlinedInput-input"
+                      disabled={false}
+                      id="name-input"
+                      onAnimationStart={[Function]}
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onFocus={[Function]}
+                      required={true}
+                      type="text"
+                    />
+                    <fieldset
+                      aria-hidden={true}
+                      className="PrivateNotchedOutline-root-235 MuiOutlinedInput-notchedOutline"
+                      style={
+                        Object {
+                          "paddingLeft": 8,
+                        }
+                      }
+                    >
+                      <legend
+                        className="PrivateNotchedOutline-legend-236"
+                        style={
+                          Object {
+                            "width": 0.01,
+                          }
+                        }
+                      >
+                        <span
+                          dangerouslySetInnerHTML={
+                            Object {
+                              "__html": "&#8203;",
+                            }
+                          }
+                        />
+                      </legend>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+              <div
+                className="addevent-field"
+                id="name"
+              >
+                <label
+                  className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated"
+                  id="name-label"
+                >
+                  Name
+                </label>
+                <div
+                  className="MuiFormControl-root MuiTextField-root"
+                  title="name"
+                >
+                  <div
+                    className="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-formControl"
+                    onClick={[Function]}
+                  >
+                    <input
+                      aria-invalid={false}
+                      autoFocus={false}
+                      className="MuiInputBase-input MuiOutlinedInput-input"
+                      disabled={false}
+                      id="name-input"
+                      onAnimationStart={[Function]}
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onFocus={[Function]}
+                      required={true}
+                      type="text"
+                    />
+                    <fieldset
+                      aria-hidden={true}
+                      className="PrivateNotchedOutline-root-235 MuiOutlinedInput-notchedOutline"
+                      style={
+                        Object {
+                          "paddingLeft": 8,
+                        }
+                      }
+                    >
+                      <legend
+                        className="PrivateNotchedOutline-legend-236"
+                        style={
+                          Object {
+                            "width": 0.01,
+                          }
+                        }
+                      >
+                        <span
+                          dangerouslySetInnerHTML={
+                            Object {
+                              "__html": "&#8203;",
+                            }
+                          }
+                        />
+                      </legend>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <button
+        className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary"
+        disabled={false}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onDragLeave={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
+        onTouchStart={[Function]}
+        tabIndex={0}
+        type="button"
+      >
+        <span
+          className="MuiButton-label"
+        >
+          Find available times
+        </span>
+      </button>
+    </div>
+  </div>
+  <div
+    className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-4"
+  />
+</div>
 `;

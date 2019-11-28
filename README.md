@@ -17,5 +17,5 @@ python run_server.py runserver
 
 python run_server.py db migrate -m "commit message"
 
-python python run_server.py db upgrade
+python run_server.py db upgrade
 
