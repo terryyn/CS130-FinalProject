@@ -1,9 +1,11 @@
 # flake8 compatible
 import datetime
+import time
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
-from .model import Event, User, Participation
+from .model import Event, User, Participation, EventType
 from flask_login import login_user, login_required, current_user, logout_user
+import sqlalchemy
 
 def convertToBool(x):
     return x.lower()=='true'
@@ -75,7 +77,7 @@ class DatabaseManager():
     
     def auth(self):
         if current_user.is_authenticated:
-            return {'name': current_user.username, 'email': current_user.email, 'is_instructor': current_user.is_instructor}
+            return {'name': current_user.username, 'email': current_user.email, 'is_instructor': current_user.is_instructor, 'courses': current_user.courses}
         else:
             return None
     
@@ -100,6 +102,9 @@ class DatabaseManager():
         current_user.is_instructor = convertToBool(user_json['is_instructor'])
         if (len(user_json['password'])>2) :
             current_user.password_hash = str(generate_password_hash(user_json['password']))
+        if (user_json['courses']!=''):
+            current_user.courses = user_json['courses']
+
         db.session.commit()
         return True
 
@@ -112,37 +117,127 @@ class DatabaseManager():
         '''
         start_date = datetime.datetime.strptime(
             event_json['startdate'], '%Y-%m-%d'
-        )
+        ).date()
         start_time = datetime.datetime.strptime(
             event_json['starttime'], '%H:%M'
-        )
-        end_date = datetime.datetime.strptime(event_json['enddate'], '%Y-%m-%d')
-        end_time = datetime.datetime.strptime(event_json['endtime'], '%H:%M')
-        return Event(
-            name=event_json['name'], startdate=start_date,
-            starttime=start_time, location=event_json['location'],
-            eventType=event_json['type'], enddate=end_date,
-            endtime=end_time, description=event_json['description'])
+        ).time()
+        end_date = datetime.datetime.strptime(
+            event_json['enddate'], '%Y-%m-%d'
+        ).date()
+        end_time = datetime.datetime.strptime(
+            event_json['endtime'], '%H:%M'
+        ).time()
+        if event_json['course']!='':
+            return Event(
+                name=event_json['name'], startdate=start_date,
+                starttime=start_time, location=event_json['location'],
+                eventType=event_json['type'], enddate=end_date,
+                endtime=end_time, description=event_json['description'], course=event_json['course'])
+        elif event_json['guests']!='':
+            return Event(
+                name=event_json['name'], startdate=start_date,
+                starttime=start_time, location=event_json['location'],
+                eventType=event_json['type'], enddate=end_date,
+                endtime=end_time, description=event_json['description'], guests=event_json['guests'])
+        else:
+            return Event(
+                name=event_json['name'], startdate=start_date,
+                starttime=start_time, location=event_json['location'],
+                eventType=event_json['type'], enddate=end_date,
+                endtime=end_time, description=event_json['description'])
+    
+    def getUsersWithEmail(self, guests):
+        ret = []
+        emails = guests.split(',')
+        for i in range(len(emails)):
+            emails[i] = emails[i].strip()
+            user = User.query.filter_by(email=emails[i]).first()
+            ret.append(user)
+        return ret
 
+    def getUsersWithCourse(self, course):
+        ret = []
+        users = User.query.all()
+        for u in users:
+            if u.courses!='' and u.id!=current_user.id:
+                courses = u.courses.split(',')
+                if course in courses:
+                    ret.append(u)
+        return ret
+
+    @login_required
     def add_event_to_database(self, event_json):
         '''
         Takes in a json-converted dict including 8 fields about an event:
         name: string, startdate: string, starttime: string, location: string,
         type: string, enddate: string, endtime: string, description: string
-        Returns the event id of the event added.
+        Returns the event id of the event added, or the existing event.
         '''
         new_event = self.read_event_json(event_json)
-        db.session.add(new_event)
-        db.session.commit()
-        return new_event[id]
+        old_event = Event.query.filter(Event.name == new_event.name, \
+                    Event.startdate == new_event.startdate, \
+                    Event.starttime == new_event.starttime, \
+                    Event.starttime == new_event.starttime, \
+                    Event.location == new_event.location, \
+                    Event.eventType == new_event.eventType, \
+                    Event.enddate == new_event.enddate, \
+                    Event.endtime == new_event.endtime, \
+                    Event.description == new_event.description)
+        if not old_event.count():
+            db.session.add(new_event)
+            db.session.commit()
+            event_id = new_event.id
+        else:
+            event_id = old_event.one_or_none().id
+        
+        #Try to send notifications to users if course exists
+        try:
+            users_to_notify = self.getUsersWithCourse(new_event.course)
+            for u in users_to_notify:
+                try:
+                    db.session.add(Participation(event_id=event_id, user_id=u.id))
+                    db.session.commit()
+                except sqlalchemy.exc.IntegrityError:
+                    pass
+        except:
+            pass
+        
+        #Try to send notifications to guests if guests exists
+        try:
+            users_to_notify = self.getUsersWithEmail(new_event.guests)
+            for u in users_to_notify:
+                try:
+                    db.session.add(Participation(event_id=event_id, user_id=u.id))
+                    db.session.commit()
+                except sqlalchemy.exc.IntegrityError:
+                    pass
+        except:
+            pass
+            
+        try:
+            db.session.add(Participation(event_id=event_id, user_id=current_user.id))
+            db.session.commit()
+        except sqlalchemy.exc.IntegrityError:
+            pass
+        return event_id
 
+    @login_required
     def delete_event_from_database(self, eventID):
         '''
         Takes in the event id of the event and deletes the event.
         No return value.
         '''
-        target = Event.query.get(eventID)
-        db.session.delete(target)
+        target_event = Event.query.get(eventID)
+
+        #first checks how many users are related to this event
+        num_of_participants = Participation.query.filter(Participation.event_id == target_event.id).count()
+        current_participation = Participation.query.filter(Participation.event_id == target_event, \
+                            Participation.user_id == current_user.id)
+
+        if num_of_participants == 1:
+            db.session.delete(target_event)
+
+        db.session.delete(current_participation)
         db.session.commit()
 
     def edit_event_in_database(self, eventID, changes_json):
@@ -164,11 +259,12 @@ class DatabaseManager():
         requested. Return the list of events satisfying the condition.
         '''
         # match the json object from client
-        userid = req_json['userid']
-        date = req_json['date']
+        userid = current_user.id
+        date_str = req_json['date']
+        date = datetime.datetime.strptime(date_str, '%a %b %d %Y').date()
         occupied_events = Event.query.join(Participation).filter(
             Participation.user_id == userid,
-            Event.startdate <= date & Event.enddate >= date
+            Event.startdate <= date, Event.enddate >= date
         ).order_by(Event.startdate).all()
         return occupied_events
 
@@ -184,6 +280,13 @@ class DatabaseManager():
         for row in rows:
             students_id.append(row.user_id)
         return students_id
+
+    def get_all_courses(self):
+        course_names = [ r.name for r in db.session.query(Event.name) \
+                            .join(Participation) \
+                            .filter(Participation.user_id == current_user.id) \
+                            .filter(Event.eventType == EventType.COURSE)]
+        return {"course_names" : course_names}
 
     # TODO: discuss the format of passed in earliest/latest meet time
     # TODO: consider cases where there are events before earliest meeting time or lastest meet time

@@ -2,7 +2,7 @@ from . import main
 from .. import db_manager
 from flask import request, redirect, render_template
 from flask_login import login_required
-
+import json
 
 class Course:
     '''
@@ -51,7 +51,7 @@ def log_in():
 
 @main.route('/auth', methods=['GET']) 
 def auth():
-    print request.cookies
+    print (request.cookies)
     if request.method == 'GET':
         user_info = db_manager.auth()
         if (user_info is not None):
@@ -101,13 +101,20 @@ def edit_event():
     return 'success'
     # return xx_template('success')
 
+@main.route('/getCourses', methods=['GET', 'POST'])
+@login_required
+def get_courses():
+    course_names = db_manager.get_all_courses()
+    return course_names
+    
 @main.route('/getEventByUserAndDate', methods=['GET', 'POST']) 
 def get_events_by_user_and_date():
     '''
     get event by userid + date
     '''
     events_on_date = db_manager.get_events_by_user_and_date(request.get_json(force=True))
-    return events_on_date
+    events_json = [event.as_dict() for event in events_on_date]
+    return json.dumps({'events': events_json})
 
 @main.route('/getEventById', methods=['GET', 'POST'])
 def get_event_by_id():
