@@ -1,9 +1,17 @@
 FROM ubuntu:latest
-COPY . .
+COPY ./UCal /UCal
+COPY ./migrations /migrations
+COPY ./config.py /config.py
+COPY ./run_server.py /run_server.py
+COPY ./requirements.txt /requirements.txt
+WORKDIR /
 RUN apt-get update -y && \
     apt-get install -y python-pip python-dev
-RUN pip install flask
-RUN pip install flask-cors
+RUN pip install -r requirements.txt
 
-RUN flask run
-RUN python init_db.py
+RUN python run_server.py db stamp heads
+RUN python run_server.py db migrate
+RUN python run_server.py db upgrade
+EXPOSE 5000
+ENTRYPOINT ["python"]
+CMD ["run_server.py" , "runserver"]

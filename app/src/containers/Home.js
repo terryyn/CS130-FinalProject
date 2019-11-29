@@ -137,7 +137,8 @@ function Home(props) {
 			name: eventName,
 			type: eventType,
 			description: eventDesc,
-			course: course
+			course: course,
+			guests: ''
 		};
 
 		console.log(form);
@@ -165,7 +166,8 @@ function Home(props) {
 			location: eventLocation,
 			name: eventName,
 			type: eventType,
-			description: eventDesc
+			description: eventDesc,
+			guests: ''
 		};
 		server.editEvent(form);
 	}
