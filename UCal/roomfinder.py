@@ -23,7 +23,7 @@ MONTH_DICT={
 
 
 class RoomFinder():
-    TIME_FORMAT_STR = "%I:%M%p %B %d, %Y"
+    TIME_FORMAT_STR = "%I:%M%p %A, %B %d, %Y "
     '''
     RoomFinder encapsulates all functions and variables related to
     finding a study room for a meeting.
@@ -44,9 +44,6 @@ class RoomFinder():
             self.driver.find_element_by_id("lid")
         ).select_by_visible_text("View All Locations")
 
-    def __del__(self):
-        self.driver.quit()
-
     '''
     Returns a tuple (datetime, string)
     Representing the available start times of 30 min blocks,
@@ -54,10 +51,11 @@ class RoomFinder():
     '''
     @classmethod
     def process_info_str(cls, info_str):
-        info_arr = info_str.split(" ", 5)[:5]
-        info_arr.pop(1)
-        info_str_reformat = " ".join(info_arr)
-        return datetime.strptime(info_str_reformat, cls.TIME_FORMAT_STR)
+        info_arr = info_str.split("-", 5)
+        return (
+            datetime.strptime(info_arr[0], cls.TIME_FORMAT_STR), 
+            info_arr[1].strip()
+        )
 
     '''
     Returns a list of available tuples (datetime, string)
@@ -71,7 +69,7 @@ class RoomFinder():
                 "s-lc-eq-avail"
             )
             return [
-                self. process_info_str(
+                self.process_info_str(
                     block_elem.get_attribute("innerText")
                 ) for block_elem in avail_block_elems
             ]
@@ -156,11 +154,8 @@ class RoomFinder():
                 cur_blocks = self.get_avail_blocks()
             # Append all blocks within cur req interval
             filtered_blocks += [
-                (
-                    start_time,
-                    start_time + timedelta(seconds=30*60),
-                    location
-                ) for (start_time, location) in cur_blocks
+                (start_time,location) 
+                for (start_time, location) in cur_blocks
                 if (
                     start_time >= req_start_time and
                     start_time + timedelta(seconds=30*60) <= req_end_time
@@ -169,9 +164,28 @@ class RoomFinder():
         return filtered_blocks
 
     def merge_avail_blocks(self, duration, blocks):
-        return []
+        if len(blocks) == 0:
+            return blocks
+        merged_blocks = []
+        cur_timeslot = [blocks[0]]
+        prev_block = blocks[0]
+        for i in range(1, len(blocks)):
+            cur_block = blocks[i]
+            if cur_block[0] - prev_block[0] == timedelta(minutes=30):
+                cur_timeslot.append(cur_block)
+            else:
+                cur_timeslot = []
+            if len(cur_timeslot) == duration:
+                merged_blocks.append(cur_timeslot.pop(0))
+            prev_block = cur_block
+        return merged_blocks
+
 
     '''
+    Takes in parameters: 
+        size: int, (meeting size)
+        datetimes: [(datetime, datetime)], (start time and end time)
+        duration: int (number of 30 minutes)
     Returns Tuple(Boolean, List[Tuple(datetime, datetime, string)])
     Boolean represents whether a timeslot equal to or longer than the duration
     of the meeting can be found.
@@ -185,7 +199,7 @@ class RoomFinder():
         if not self.handle_meeting_size(size):
             return []
         avail_blocks = self.get_filtered_avail_blocks(datetimes)
-        avail_timeslots = self.merge_avail_blocks(duration,avail_blocks)
+        avail_timeslots = self.merge_avail_blocks(duration, avail_blocks)
         if len(avail_timeslots) == 0:
             return (False, avail_blocks)
         return (True, avail_timeslots)

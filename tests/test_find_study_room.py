@@ -33,5 +33,5 @@ class findStudyRoomTestCase(unittest.TestCase):
     def testFindAtLeastOneStudyRoom(self):
         starttime = datetime(year=2019, month=11, day=28, hour=14)
         endtime = datetime(year=2019, month=11, day=28, hour=17)
-        studyRoom = self.finder.find_room(5, [(starttime, endtime)], 30)
+        studyRoom = self.finder.find_room(5, [(starttime, endtime)], 1)
         assert studyRoom!= None
