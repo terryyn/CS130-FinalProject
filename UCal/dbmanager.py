@@ -3,7 +3,7 @@ import datetime
 import time
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
-from .model import Event, User, Participation
+from .model import Event, User, Participation, EventType
 from flask_login import login_user, login_required, current_user, logout_user
 import sqlalchemy
 
@@ -280,6 +280,13 @@ class DatabaseManager():
         for row in rows:
             students_id.append(row.user_id)
         return students_id
+
+    def get_all_courses(self):
+        course_names = [ r.name for r in db.session.query(Event.name) \
+                            .join(Participation) \
+                            .filter(Participation.user_id == current_user.id) \
+                            .filter(Event.eventType == EventType.COURSE)]
+        return {"course_names" : course_names}
 
     # TODO: discuss the format of passed in earliest/latest meet time
     # TODO: consider cases where there are events before earliest meeting time or lastest meet time
