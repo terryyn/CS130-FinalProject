@@ -111,9 +111,19 @@ def get_courses():
 def get_events_by_user_and_date():
     '''
     get event by userid + date
+    takes in json: {"date": str}
     '''
     events_on_date = db_manager.get_events_by_user_and_date(request.get_json(force=True))
     events_json = [event.as_dict() for event in events_on_date]
+    return json.dumps({'events': events_json})
+
+@main.route('/filterEventByType', methods=['GET','POST'])
+def filter_event_by_type():
+    '''
+    takes in json: {'event_type': int}
+    '''
+    events_of_type = db_manager.get_events_by_type(request.get_json(force=True)['event_type'])
+    events_json = [event.as_dict() for event in events_of_type]
     return json.dumps({'events': events_json})
 
 @main.route('/getEventById', methods=['GET', 'POST'])

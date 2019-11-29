@@ -177,7 +177,6 @@ class DatabaseManager():
         old_event = Event.query.filter(Event.name == new_event.name, \
                     Event.startdate == new_event.startdate, \
                     Event.starttime == new_event.starttime, \
-                    Event.starttime == new_event.starttime, \
                     Event.location == new_event.location, \
                     Event.eventType == new_event.eventType, \
                     Event.enddate == new_event.enddate, \
@@ -267,6 +266,18 @@ class DatabaseManager():
             Event.startdate <= date, Event.enddate >= date
         ).order_by(Event.startdate).all()
         return occupied_events
+
+    def get_events_by_type(self, event_type):
+        '''
+        Takes in a event_type(int).
+        Return a list of events of this type
+        '''
+        userid = current_user.id
+        events_of_type = Event.query.join(Participation).filter(
+            Participation.user_id == userid,
+            Event.eventType == event_type
+        ).all()
+        return events_of_type
 
     def get_students(self, course_name):
         '''
