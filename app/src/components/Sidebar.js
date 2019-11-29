@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import List from '@material-ui/core/List';
 import { CalendarToday, ExitToApp, MeetingRoom } from '@material-ui/icons';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -26,9 +27,18 @@ function Sidebar(props) {
 	
 	return (
 		<div id="sidebar">
-			<div id="heading">
-				<Typography variant="h4" gutterBottom>
-					UCal
+			<div id="sidebar-heading">
+				<Typography variant="h4" gutterBottom id="c1">
+					U
+				</Typography>
+				<Typography variant="h4" gutterBottom id="c2">
+					C
+				</Typography>
+				<Typography variant="h4" gutterBottom id="c3">
+					a
+				</Typography>
+				<Typography variant="h4" gutterBottom id="c4">
+					l
 				</Typography>
 			</div>
 			<List id="navlist">
@@ -61,6 +71,14 @@ function Sidebar(props) {
 					</ListItemText>
 				</ListItem>
 				<Divider id="divider"/>
+				<ListItem>
+					<ListItemIcon>
+						<NotificationsIcon />
+					</ListItemIcon>
+					<ListItemText>
+						<Link class="navlink" to="/">Notifications</Link>
+					</ListItemText>
+				</ListItem>
 				<ListItem>
 					<ListItemAvatar>
 						<Avatar alt="User Photo" src={props.currentUserPhotoUrl} />

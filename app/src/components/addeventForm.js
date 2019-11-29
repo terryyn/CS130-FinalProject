@@ -98,13 +98,31 @@ class AddEventForm extends Component {
 							onChange={(e) => this.props.setType(e.target.value)}
 							value={this.props.type}
 						>
-							<MenuItem value={1}>Class</MenuItem>
-							<MenuItem value={2}>Exam</MenuItem>
-							<MenuItem value={3}>Office Hour</MenuItem>
-							<MenuItem value={4}>Club</MenuItem>
-							<MenuItem value={5}>Other</MenuItem>
+							<MenuItem value={0}>General</MenuItem>
+							<MenuItem value={1}>Course</MenuItem>
+							<MenuItem value={2}>Discussion</MenuItem>
+							<MenuItem value={3}>OH</MenuItem>
+							<MenuItem value={4}>Exam</MenuItem>
+							<MenuItem value={5}>Deadline</MenuItem>
 						</Select>
 					</div>
+
+					{this.props.currentIsInstructor &&
+						<div className="addevent-field" id="course">
+							<InputLabel id="type-label">Course</InputLabel>
+							<Select
+								id="course-input"
+								label="Course"
+								onChange={(e) => this.props.setCourse(e.target.value)}
+							>
+							{
+								this.props.courses.map( (c,index) => (
+									<MenuItem value={c}>{c}</MenuItem>
+								))
+							}
+							</Select>
+						</div>
+					}
 
 					<div className="addevent-field" id="description">
 						<InputLabel id="description-label">Description</InputLabel>

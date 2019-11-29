@@ -17,5 +17,11 @@ python run_server.py runserver
 
 python run_server.py db migrate -m "commit message"
 
-python python run_server.py db upgrade
+python run_server.py db upgrade
+
+## Run Dockerized Application
+
+docker-compose up -d --build
+
+Navigate to localhost:3000 to start using the app
 

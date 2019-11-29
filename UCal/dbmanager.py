@@ -3,7 +3,7 @@ import datetime
 import time
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
-from .model import Event, User, Participation
+from .model import Event, User, Participation, EventType
 from flask_login import login_user, login_required, current_user, logout_user
 import sqlalchemy
 
@@ -77,7 +77,7 @@ class DatabaseManager():
     
     def auth(self):
         if current_user.is_authenticated:
-            return {'name': current_user.username, 'email': current_user.email, 'is_instructor': current_user.is_instructor}
+            return {'name': current_user.username, 'email': current_user.email, 'is_instructor': current_user.is_instructor, 'courses': current_user.courses}
         else:
             return None
     
@@ -102,6 +102,9 @@ class DatabaseManager():
         current_user.is_instructor = convertToBool(user_json['is_instructor'])
         if (len(user_json['password'])>2) :
             current_user.password_hash = str(generate_password_hash(user_json['password']))
+        if (user_json['courses']!=''):
+            current_user.courses = user_json['courses']
+
         db.session.commit()
         return True
 
@@ -124,11 +127,43 @@ class DatabaseManager():
         end_time = datetime.datetime.strptime(
             event_json['endtime'], '%H:%M'
         ).time()
-        return Event(
-            name=event_json['name'], startdate=start_date,
-            starttime=start_time, location=event_json['location'],
-            eventType=event_json['type'], enddate=end_date,
-            endtime=end_time, description=event_json['description'])
+        if event_json['course']!='':
+            return Event(
+                name=event_json['name'], startdate=start_date,
+                starttime=start_time, location=event_json['location'],
+                eventType=event_json['type'], enddate=end_date,
+                endtime=end_time, description=event_json['description'], course=event_json['course'])
+        elif event_json['guests']!='':
+            return Event(
+                name=event_json['name'], startdate=start_date,
+                starttime=start_time, location=event_json['location'],
+                eventType=event_json['type'], enddate=end_date,
+                endtime=end_time, description=event_json['description'], guests=event_json['guests'])
+        else:
+            return Event(
+                name=event_json['name'], startdate=start_date,
+                starttime=start_time, location=event_json['location'],
+                eventType=event_json['type'], enddate=end_date,
+                endtime=end_time, description=event_json['description'])
+    
+    def getUsersWithEmail(self, guests):
+        ret = []
+        emails = guests.split(',')
+        for i in range(len(emails)):
+            emails[i] = emails[i].strip()
+            user = User.query.filter_by(email=emails[i]).first()
+            ret.append(user)
+        return ret
+
+    def getUsersWithCourse(self, course):
+        ret = []
+        users = User.query.all()
+        for u in users:
+            if u.courses!='' and u.id!=current_user.id:
+                courses = u.courses.split(',')
+                if course in courses:
+                    ret.append(u)
+        return ret
 
     @login_required
     def add_event_to_database(self, event_json):
@@ -154,7 +189,31 @@ class DatabaseManager():
             event_id = new_event.id
         else:
             event_id = old_event.one_or_none().id
-
+        
+        #Try to send notifications to users if course exists
+        try:
+            users_to_notify = self.getUsersWithCourse(new_event.course)
+            for u in users_to_notify:
+                try:
+                    db.session.add(Participation(event_id=event_id, user_id=u.id))
+                    db.session.commit()
+                except sqlalchemy.exc.IntegrityError:
+                    pass
+        except:
+            pass
+        
+        #Try to send notifications to guests if guests exists
+        try:
+            users_to_notify = self.getUsersWithEmail(new_event.guests)
+            for u in users_to_notify:
+                try:
+                    db.session.add(Participation(event_id=event_id, user_id=u.id))
+                    db.session.commit()
+                except sqlalchemy.exc.IntegrityError:
+                    pass
+        except:
+            pass
+            
         try:
             db.session.add(Participation(event_id=event_id, user_id=current_user.id))
             db.session.commit()
@@ -221,6 +280,13 @@ class DatabaseManager():
         for row in rows:
             students_id.append(row.user_id)
         return students_id
+
+    def get_all_courses(self):
+        course_names = [ r.name for r in db.session.query(Event.name) \
+                            .join(Participation) \
+                            .filter(Participation.user_id == current_user.id) \
+                            .filter(Event.eventType == EventType.COURSE)]
+        return {"course_names" : course_names}
 
     # TODO: discuss the format of passed in earliest/latest meet time
     # TODO: consider cases where there are events before earliest meeting time or lastest meet time

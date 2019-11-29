@@ -101,6 +101,12 @@ def edit_event():
     return 'success'
     # return xx_template('success')
 
+@main.route('/getCourses', methods=['GET', 'POST'])
+@login_required
+def get_courses():
+    course_names = db_manager.get_all_courses()
+    return course_names
+    
 @main.route('/getEventByUserAndDate', methods=['GET', 'POST']) 
 def get_events_by_user_and_date():
     '''
