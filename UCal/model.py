@@ -1,35 +1,46 @@
+# flake8 compatible
 import os
 from flask import Flask
-from flask_login import UserMixin, AnonymousUserMixin
+from flask_login import UserMixin
 from . import db
 
-class User(db.Model):
+
+class User(UserMixin, db.Model):
     '''
-    table users
+    The user table contains the following columns:
     id | username | email | password_hash | is_instructor
-    
     '''
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, index = True)
+    username = db.Column(db.String(64), index = True)
     email = db.Column(db.String(128), unique=True, index = True)
     password_hash = db.Column(db.String(128))
-    participations = db.relationship('Participation', backref= 'user', lazy = 'dynamic')
+    is_instructor = db.Column(db.Boolean)
+    participations = db.relationship(
+        'Participation', backref='user', lazy='dynamic'
+    )
+
+    def is_authenticated(self):
+        return True
 
 
 class EventType:
+    '''
+    The EventType class serves an enumeration indicating the
+    type of event as a field in event entries
+    '''
     DEFAULT = 0
     COURSE = 1
     MEETING = 2
     EXAM = 3
     ASSIGNMENT = 4
 
+
 class Event(db.Model):
     '''
-    event table:
-
-    id | name | startdate | starttime | location | eventType | endtime | enddate | description | participations(meeting)
-
+    The event table contains the following columns:
+    id | name | startdate | starttime | location | eventType |
+    endtime | enddate | description | participations(meeting)
     '''
     __tablename__ = 'events'
     id = db.Column(db.Integer, primary_key=True)
@@ -41,14 +52,21 @@ class Event(db.Model):
     enddate = db.Column(db.Date)
     endtime = db.Column(db.Time)
     description = db.Column(db.String(64), nullable=True)
-    participations = db.relationship('Participation', backref= 'event', lazy = 'dynamic')
+    participations = db.relationship(
+        'Participation', backref='event', lazy='dynamic'
+    )
+
 
 class Participation(db.Model):
     '''
-    participation table
-    event_id | user_id 
-
+    The participation table indicates the relationship between
+    an event and a user, and contains the following columns:
+    event_id | user_id
     '''
     __tablename__ = 'participation'
-    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), primary_key = True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    event_id = db.Column(
+        db.Integer, db.ForeignKey('events.id'), primary_key=True
+    )
+    user_id = db.Column(
+        db.Integer, db.ForeignKey('users.id'), primary_key=True
+    )

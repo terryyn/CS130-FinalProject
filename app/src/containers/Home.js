@@ -8,13 +8,16 @@ import ICAL from 'ical.js';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ImportICS from '../components/ImportICSForm';
-import StyleForm from '../components/AddEventForm';
+import StyleForm from '../components/addeventForm';
 import DayView from '../components/DayView';
 
+import '../styles/home.css';
+
+import Server from '../server';
+const server = new Server();
+
+
 const useStyles = makeStyles({
-	grid: {
-		padding: '32px'
-	},
 	paper: {
 		position: 'absolute',
 		width: 400,
@@ -33,9 +36,10 @@ function getModalStyle() {
 	};
 }
 
-function Home() {
+function Home(props) {
 	const [ dateString, setDate ] = useState(new Date().toLocaleString());
 	const [ calendar, setCalendar ] = useState(null);
+	const [ events, setEvents ] = useState([]);
 	const [ showAddEvent, setAddEvent ] = useState(false);
 	const [ showImportICS, setImportICS ] = useState(false);
 
@@ -50,16 +54,16 @@ function Home() {
 			'VERSION:2.0',
 			'BEGIN:VEVENT',
 			'DTSTAMP:20190205T191224Z',
-			'DTSTART:20191112T070000Z',
-			'DTEND:20191112T110000Z',
-			'SUMMARY:Planning meeting',
+			'DTSTART:20191112T210000Z',
+			'DTEND:20191112T220000Z',
+			'SUMMARY:Test Event 1',
 			'UID:4088E990AD89CB3DBB484909',
 			'END:VEVENT',
 			'BEGIN:VEVENT',
-			'DTSTAMP:20190205T191224Z',
-			'DTSTART:20191113T070000Z',
-			'DTEND:20191113T110000Z',
-			'SUMMARY:Planning meeting 2',
+			'DTSTAMP:20191112T191224Z',
+			'DTSTART:20191112T180000Z',
+			'DTEND:20191113T200000Z',
+			'SUMMARY:Test Event 2',
 			'UID:4088E990AD89CB3DBB484909',
 			'END:VEVENT',
 			'END:VCALENDAR'
@@ -75,7 +79,6 @@ function Home() {
 		const comp = new ICAL.Component(calendar);
 		const currDate = new Date(dateString).toDateString();
 		const vevents = comp.getAllSubcomponents('vevent');
-
 		const events = [];
 		vevents.forEach((vevent) => {
 			const event = new ICAL.Event(vevent);
@@ -85,11 +88,14 @@ function Home() {
 				events.push(event);
 			}
 		});
+		events.sort(function(first, second) {
+			return first.startDate._time.hour - second.startDate._time.hour;
+		});
 		return events;
 	}
 
 	useEffect(() => getCalendar(), []);
-	const events = useMemo(() => getEvents(), [ calendar, dateString ]);
+	useEffect(() => setEvents(getEvents()), [ calendar, dateString ]);
 
 	function onChangeDate(date) {
 		setDate(date.toLocaleString());
@@ -111,6 +117,8 @@ function Home() {
 		// Refetch calendar
 		setCalendar(comp.toJSON());
 		// TODO: change to get
+		setEvents(getEvents());
+		setAddEvent(false);
 	}
 
 	function toggleAddEventModal() {
@@ -152,31 +160,35 @@ function Home() {
 	}
 
 	return (
-		<Grid container spacing={3} className={classes.grid}>
-			{renderImportICS()}
-			{renderAddEvent()}
-			<Grid item xs={12}>
-				<h1>My calendar</h1>
-			</Grid>
-			<Grid item xs={9}>
-				<DayView date={dateString} events={events} />
-			</Grid>
-			<Grid item xs={3}>
+		<div id="home">
+			<div id="day-view">
+				<Grid container spacing={3} id="grid">
+					{renderImportICS()}
+					{renderAddEvent()}
+					<Grid item xs={12}>
+						<h1 id="name-h1">{props.currentUser.replace(/ .*/, '')}'s Day</h1>
+					</Grid>
+					<Grid item xs={9} id="event-grid">
+						<DayView date={dateString} events={events} />
+					</Grid>
+				</Grid>
+				<Grid container justify="space-evenly" alignItems="flex-end" item xs={12} spacing={3} id="buttons">
+					<Grid item>
+						<Button variant="contained" color="default" onClick={toggleImportICSModal}>
+							Import .ics file
+						</Button>
+					</Grid>
+					<Grid item>
+						<Button variant="contained" color="primary" onClick={toggleAddEventModal}>
+							Add event
+						</Button>
+					</Grid>
+				</Grid>
+			</div>
+			<div id="calendar">
 				<Calendar onChange={onChangeDate} value={new Date(dateString)} />
-			</Grid>
-			<Grid container justify="space-evenly" item xs={9} spacing={3}>
-				<Grid item>
-					<Button variant="contained" color="default" onClick={toggleImportICSModal}>
-						Import .ics file
-					</Button>
-				</Grid>
-				<Grid item>
-					<Button variant="contained" color="primary" onClick={toggleAddEventModal}>
-						Add event
-					</Button>
-				</Grid>
-			</Grid>
-		</Grid>
+			</div>
+		</div>
 	);
 }
 

@@ -84,8 +84,6 @@ class AddEventForm extends Component {
 	}
 
 	submit(e) {
-		console.log(this.state.starttime);
-		this.props.addEvent();
 	}
 
 	render() {
@@ -200,5 +198,4 @@ const buttonStyle = {
 };
 
 const StyleForm = withStyles(styles)(AddEventForm);
-
 export default StyleForm;

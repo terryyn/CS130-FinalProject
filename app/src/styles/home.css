@@ -1,0 +1,146 @@
+#home {
+    height: 100%;
+    width: 83%;
+    display: flex;
+    flex-flow: row;
+}
+
+#name-h1 {
+    color: #3f3f3f;
+}
+
+#day-view {
+    height: 100%;
+    width: 70%;
+    display: flex;
+    flex-flow: column;
+}
+
+#grid, #buttons {
+    width: 100%;
+    margin: 0;
+    padding: 3%;
+}
+
+#calendar {
+    width: 30%;
+    background: rgb(73, 76, 89)
+}
+
+#event-grid {
+    max-width: 100%;
+    flex-basis: 100%;
+}
+
+.react-calendar {
+    width: 100%;
+    background: none;
+    color: white;
+    border: none;
+    display: flex;
+    flex-flow: column;
+    padding-top: 10%;
+    padding-left: 7%;
+    padding-right: 7%;
+    height: 65%;
+}
+
+.react-calendar__navigation {
+    height: 10%;
+    margin-bottom: 10%;
+}
+
+.react-calendar__navigation button {
+    color: white;
+}
+
+.react-calendar__navigation button:hover{
+    background: none !important;
+}
+
+.react-calendar__navigation button:focus{
+    background: none !important;
+}
+
+.react-calendar__navigation__label {
+    font-weight: bold;
+    font-size: 120%;
+}
+
+.react-calendar__navigation__arrow {
+    font-size: 250%;
+    font-weight: lighter;
+}
+
+.react-calendar__navigation__arrow:hover {
+    font-weight: normal;
+}
+
+.react-calendar__viewContainer {
+    height: 90%;
+    border-top: 1px groove rgb(180, 180, 180);
+    border-bottom: 1px groove rgb(180, 180, 180);
+    padding-top: 12%;
+    padding-bottom: 12%;
+}
+
+.react-calendar__month-view {
+    height: 100%;
+}
+
+.react-calendar__month-view > div {
+    height: 100%;
+    align-items: flex-start;
+}
+
+.react-calendar__month-view > div > div {
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+}
+
+.react-calendar__month-view__weekdays {
+    height: 10%;
+    margin-bottom: 5%;
+}
+
+.react-calendar__month-view__days {
+    height: 90%;
+}
+
+.react-calendar__navigation__label {
+    color: white;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+    text-decoration: none;
+}
+
+.react-calendar__month-view__days__day {
+    color: white;
+    height: 14%;
+    font-size: 80%;
+}
+
+.react-calendar__month-view__days__day:hover:not(.react-calendar__tile--active) {
+    font-weight: bolder !important;
+    background: none !important;
+}
+
+.react-calendar__month-view__days__day:focus:not(.react-calendar__tile--active) {
+    font-weight: bolder !important;
+    background: none !important;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth {
+    color: #757575;
+    height: 14%;
+}
+
+.react-calendar__tile--active {
+    border-radius: 50%;
+}
+
+.react-calendar__tile--active:hover {
+    font-weight: bolder !important;
+}

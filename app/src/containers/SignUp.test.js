@@ -1,10 +1,10 @@
 import React from 'react';
-import StyleForm from './addeventForm.js';
+import SignUp from './SignUp.js';
 import renderer from 'react-test-renderer';
 
-describe('add event form', () =>{
+describe('SignUp page', () =>{
   test('snapshot renders', () => {
-    const component = renderer.create(<StyleForm/>);
+    const component = renderer.create(<SignUp/>);
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });

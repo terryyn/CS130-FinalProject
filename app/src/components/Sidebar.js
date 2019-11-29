@@ -2,58 +2,86 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 
-import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import { CalendarToday, ExitToApp, MeetingRoom } from '@material-ui/icons';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
+import Typography from '@material-ui/core/Typography';
 
-const useStyles = makeStyles({
-	list: {
-		width: 250
-	}
-});
+import '../styles/sidebar.css';
+
+import Server from '../server';
+const server = new Server();
 
 function Sidebar(props) {
 	let signOut = () => {
-		props.updateLoggedIn(false);
+		props.setLoggedIn(false);
+		props.setTryLogin(false);
+		server.logoutUser();
 	}
 	
 	return (
-		<Drawer open variant="permanent" className={useStyles().list} classes={{ paper: useStyles().list }}>
-			<List>
-				<ListItem>
-					<h2>UCal</h2>
-				</ListItem>
+		<div id="sidebar">
+			<div id="heading">
+				<Typography variant="h4" gutterBottom>
+					UCal
+				</Typography>
+			</div>
+			<List id="navlist">
 				<ListItem>
 					<ListItemIcon>
-						<CalendarToday />
+						{props.currentPage=="home" ?
+							(<CalendarToday />) :
+							(<CalendarToday color="disabled"/>)
+						}
 					</ListItemIcon>
 					<ListItemText>
-						<Link to="/">Home</Link>
+						{props.currentPage=="home" ?
+							(<Link class="navlink-selected" to="/home">Home</Link>) :
+							(<Link class="navlink" to="/home">Home</Link>)
+						}
 					</ListItemText>
 				</ListItem>
 				<ListItem>
 					<ListItemIcon>
-						<MeetingRoom />
+						{props.currentPage=="meeting" ?
+							(<MeetingRoom />) :
+							(<MeetingRoom color="disabled"/>)
+						}
 					</ListItemIcon>
 					<ListItemText>
-						<Link to="/meeting">Meeting</Link>
+						{props.currentPage=="meeting" ?
+							(<Link class="navlink-selected" to="/meeting">Meeting</Link>) :
+							(<Link class="navlink" to="/meeting">Meeting</Link>)
+						}
 					</ListItemText>
 				</ListItem>
-				<Divider />
+				<Divider id="divider"/>
+				<ListItem>
+					<ListItemAvatar>
+						<Avatar alt="User Photo" src={props.currentUserPhotoUrl} />
+					</ListItemAvatar>
+					<ListItemText>
+						{props.currentPage=="profile" ?
+							(<Link class="navlink-selected" to="/profile">Profile</Link>) :
+							(<Link class="navlink" to="/profile">Profile</Link>)
+						}
+					</ListItemText>
+				</ListItem>
 				<ListItem>
 					<ListItemIcon>
-						<ExitToApp />
+						<ExitToApp color="disabled"/>
 					</ListItemIcon>
 					<ListItemText>
-						<Link onClick={signOut} to="/">Sign out</Link>
+						<Link class="navlink" onClick={signOut} to="/">Sign out</Link>
 					</ListItemText>
 				</ListItem>
 			</List>
-		</Drawer>
+		</div>
 	);
 }
 
