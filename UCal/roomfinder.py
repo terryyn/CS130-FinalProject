@@ -222,14 +222,29 @@ class RoomFinder():
     '''
     def find_room(self):
         if len(self.datetimes) == 0:
-            return json.dumps((1, []))
+            return json.dumps({
+                "Error": self.ERROR_CODE[1],
+                "Timeslots": []
+            })
         if not self.handle_meeting_size():
-            return json.dumps((2, []))
+            return json.dumps({
+                "Error": self.ERROR_CODE[2],
+                "Timeslots": []
+            })
         avail_blocks = self.get_filtered_avail_blocks()
         avail_timeslots = self.merge_avail_blocks(avail_blocks)
         if len(avail_timeslots) == 0:
             if len(avail_blocks) != 0:
-                return json.dumps((3, avail_blocks))
+                return json.dumps({
+                    "Error": self.ERROR_CODE[3],
+                    "Timeslots": avail_blocks
+                })
             else:
-                return json.dumps((4, avail_blocks))
-        return json.dumps((0, avail_timeslots))
+                return json.dumps({
+                    "Error": self.ERROR_CODE[4],
+                    "Timeslots": avail_blocks
+                })
+        return json.dumps({
+            "Error": "", 
+            "Timeslots": avail_timeslots
+        })
