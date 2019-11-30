@@ -24,11 +24,17 @@ MONTH_DICT={
 
 class RoomFinder():
     TIME_FORMAT_STR = "%I:%M%p %A, %B %d, %Y "
+    ERROR_CODE = {
+        1: "No available time ranges selected. Please select at least one.",
+        2: "Meeting size greater than any study room can accomodate.",
+        3: "No available study rooms for the duration selected. Consider choosing multiple rooms?",
+        4: "No available study rooms for the time range(s) selected."
+    }
     '''
     RoomFinder encapsulates all functions and variables related to
     finding a study room for a meeting.
     '''
-    def __init__(self, setup="dev"):
+    def __init__(self, setup="dev", request_json):
         self.option = webdriver.ChromeOptions()
         if setup == "dev":
             self.option.add_argument("headless")
@@ -43,6 +49,10 @@ class RoomFinder():
         Select(
             self.driver.find_element_by_id("lid")
         ).select_by_visible_text("View All Locations")
+        meeting_size, duration, datetimes = self.read_req_json(request_json)
+        self.meeting_size = meeting_size
+        self.duration = duration
+        self.datetimes = datetimes
 
     '''
     Returns a tuple (datetime, string)
@@ -56,6 +66,23 @@ class RoomFinder():
             datetime.strptime(info_arr[0], cls.TIME_FORMAT_STR), 
             info_arr[1].strip()
         )
+
+    '''
+    Read the request json passed from frontend and format into
+    arguments to be passed to the actual function.
+    '''
+    @classmethod
+    def read_req_json(self, req_json):
+        meeting_size = int(req_json["meeting_size"])
+        duration = int(req_json["duration"])
+        datetimes = []
+        dt_str_arr = req_json["datetimes"].split("&")
+        for dt_str in dt_str_arr:
+            dt_arr = dt_str.split("^")
+            start_time = datetime.strptime(dt_arr[0], "%Y-%m-%d %H:%M")
+            end_time = datetime.strptime(dt_arr[1], "%Y-%m-%d %H:%M")
+            datetimes.append((start_time, end_time))
+        return meeting_size, duration, datetimes
 
     '''
     Returns a list of available tuples (datetime, string)
@@ -79,18 +106,18 @@ class RoomFinder():
     '''
     Check for valid meeting size and select the appropriate size on webpage.
     '''
-    def handle_meeting_size(self, meeting_size):
-        if meeting_size < 0:
+    def handle_meeting_size(self):
+        if self.meeting_size < 0:
             return False
-        elif meeting_size < 5:
+        elif self.meeting_size < 5:
             Select(
                 self.driver.find_element_by_id("capacity")
             ).select_by_visible_text("For 1-4 people")
-        elif meeting_size < 9:
+        elif self.meeting_size < 9:
             Select(
                 self.driver.find_element_by_id("capacity")
             ).select_by_visible_text("For 5-8 people")
-        elif meeting_size < 13:
+        elif self.meeting_size < 13:
             Select(
                 self.driver.find_element_by_id("capacity")
             ).select_by_visible_text("For 9-12 people")
@@ -143,18 +170,18 @@ class RoomFinder():
     datetimes: List[(start_time: datetime, end_time: datetime)]
     times sorted in order.
     '''
-    def get_filtered_avail_blocks(self, datetimes):
+    def get_filtered_avail_blocks(self):
         filtered_blocks = []
         cur_day = 0
         cur_blocks = []
-        for (req_start_time, req_end_time) in datetimes:
+        for (req_start_time, req_end_time) in self.datetimes:
             if cur_day != req_start_time.day:
                 cur_day = req_start_time.day
                 self.handle_meeting_date(req_start_time)
                 cur_blocks = self.get_avail_blocks()
             # Append all blocks within cur req interval
             filtered_blocks += [
-                (start_time,location) 
+                (start_time, location)
                 for (start_time, location) in cur_blocks
                 if (
                     start_time >= req_start_time and
@@ -163,7 +190,7 @@ class RoomFinder():
             ]
         return filtered_blocks
 
-    def merge_avail_blocks(self, duration, blocks):
+    def merge_avail_blocks(self, blocks):
         if len(blocks) == 0:
             return blocks
         merged_blocks = []
@@ -175,7 +202,7 @@ class RoomFinder():
                 cur_timeslot.append(cur_block)
             else:
                 cur_timeslot = []
-            if len(cur_timeslot) == duration:
+            if len(cur_timeslot) == self.duration:
                 merged_blocks.append(cur_timeslot.pop(0))
             prev_block = cur_block
         return merged_blocks
@@ -193,13 +220,16 @@ class RoomFinder():
     Otherwise, returns info on all available blocks that fall in the time
     ranges stated in datetimes.
     '''
-    def find_room(self, size, datetimes, duration):
-        if len(datetimes) == 0:
-            return []
-        if not self.handle_meeting_size(size):
-            return []
-        avail_blocks = self.get_filtered_avail_blocks(datetimes)
-        avail_timeslots = self.merge_avail_blocks(duration, avail_blocks)
+    def find_room(self):
+        if len(self.datetimes) == 0:
+            return json.dumps((1, []))
+        if not self.handle_meeting_size():
+            return json.dumps((2, []))
+        avail_blocks = self.get_filtered_avail_blocks()
+        avail_timeslots = self.merge_avail_blocks(avail_blocks)
         if len(avail_timeslots) == 0:
-            return (False, avail_blocks)
-        return (True, avail_timeslots)
+            if len(avail_blocks) != 0:
+                return json.dumps((3, avail_blocks))
+            else:
+                return json.dumps((4, avail_blocks))
+        return json.dumps((0, avail_timeslots))

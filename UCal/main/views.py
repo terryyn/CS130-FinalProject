@@ -1,5 +1,6 @@
 from . import main
 from .. import db_manager
+from ..roomfinder import RoomFinder
 from flask import request, redirect, render_template
 from flask_login import login_required
 import json
@@ -136,3 +137,8 @@ def add_meeting():
 def clear_data():
     db_manager.clear_all()
     return "success"
+
+@main.route('/getRoom', methods=['GET', 'POST'])
+def get_room():
+    cur_rf = RoomFinder(request.get_json(force=True))
+    return cur_rf.find_room()
