@@ -39,12 +39,23 @@ class EventType:
     MEETING = 6
     MEETING_TENTATIVE = 7
 
+class FrequencyType:
+    '''
+    The FrequencyType class serves as an enumeration indicating the
+    frequency of event as a field in event entries 
+    '''
+    DAILY = 0
+    WEEKLY = 1
+    MONTHLY = 2
 
 class Event(db.Model):
     '''
     The event table contains the following columns:
     id | name | startdate | starttime | location | eventType |
-    endtime | enddate | description | participations(meeting)
+    endtime | enddate | frequencyType | description | course | guests
+
+    A course type event should has the course field as the name of itself
+
     '''
     __tablename__ = 'events'
     def as_dict(self):
@@ -56,7 +67,10 @@ class Event(db.Model):
                'endtime': str(self.endtime),
                'location': self.location,
                'eventType': self.eventType,
-               'description': self.description}
+               'frequencyType': self.frequencyType,
+               'description': self.description,
+               'course': self.course,
+               'guests': self.guests}
        
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
@@ -68,6 +82,7 @@ class Event(db.Model):
     eventType = db.Column(db.Integer, default=EventType.DEFAULT)
     enddate = db.Column(db.Date)
     endtime = db.Column(db.Time)
+    frequencyType = db.Column(db.Integer, default=FrequencyType.DAILY)
     description = db.Column(db.String(64), nullable=True)
     participations = db.relationship(
         'Participation', backref='event', lazy='dynamic'

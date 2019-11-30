@@ -1,7 +1,7 @@
 import os
 from UCal import create_app, db, db_manager
 from UCal.model import User, Event, Participation, EventType
-from flask_script import Manager, Shell
+from flask_script import Manager, Shell, Server
 from flask_migrate import Migrate, MigrateCommand
 app = create_app(os.getenv('FLASK_CONFIG') or 'dev')
 manager = Manager(app)
