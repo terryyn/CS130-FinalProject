@@ -21,69 +21,6 @@ const styles = {
 class AddEventForm extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			name: '',
-			startdate: '',
-			starttime: '',
-			location: '',
-			type: '',
-			endtime: '',
-			enddate: '',
-			description: ''
-		};
-
-		this.handleStartDateChange = this.handleStartDateChange.bind(this);
-		this.handleStartTimeChange = this.handleStartTimeChange.bind(this);
-		this.handleEndDateChange = this.handleEndDateChange.bind(this);
-		this.handleEndTimeChange = this.handleEndTimeChange.bind(this);
-		this.handleNameChange = this.handleNameChange.bind(this);
-		this.handleLocationChange = this.handleLocationChange.bind(this);
-		this.handleTypeChange = this.handleTypeChange.bind(this);
-		this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
-		this.submit = this.submit.bind(this);
-	}
-
-	handleStartDateChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ startdate: value }));
-	}
-
-	handleStartTimeChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ starttime: value }));
-	}
-
-	handleEndDateChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ enddate: value }));
-	}
-
-	handleEndTimeChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ endtime: value }));
-	}
-
-	handleNameChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ name: value }));
-	}
-
-	handleLocationChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ location: value }));
-	}
-
-	handleTypeChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ type: value }));
-	}
-
-	handleDescriptionChange(e) {
-		let value = e.target.value;
-		this.setState((prev) => ({ description: value }));
-	}
-
-	submit(e) {
 	}
 
 	render() {
@@ -98,7 +35,7 @@ class AddEventForm extends Component {
 							type="date"
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
-							onChange={this.handleStartDateChange}
+							onChange={(e) => this.props.setStartDate(e.target.value)}
 						/>
 						<div id="starttime">
 							<TextField
@@ -106,7 +43,7 @@ class AddEventForm extends Component {
 								type="time"
 								variant="outlined"
 								InputProps={{ classes: { input: this.props.classes.textField } }}
-								onChange={this.handleStartTimeChange}
+								onChange={(e) => this.props.setStartTime(e.target.value)}
 							/>
 						</div>
 					</div>
@@ -118,7 +55,7 @@ class AddEventForm extends Component {
 							type="date"
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
-							onChange={this.handleEndDateChange}
+							onChange={(e) => this.props.setEndDate(e.target.value)}
 						/>
 						<div id="endtime">
 							<TextField
@@ -126,7 +63,7 @@ class AddEventForm extends Component {
 								type="time"
 								variant="outlined"
 								InputProps={{ classes: { input: this.props.classes.textField } }}
-								onChange={this.handleEndTimeChange}
+								onChange={(e) => this.props.setEndTime(e.target.value)}
 							/>
 						</div>
 					</div>
@@ -139,7 +76,7 @@ class AddEventForm extends Component {
 							title={'name'}
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
-							onChange={this.handleNameChange}
+							onChange={(e) => this.props.setName(e.target.value)}
 						/>
 					</div>
 
@@ -149,20 +86,43 @@ class AddEventForm extends Component {
 							id="location-input"
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
-							onChange={this.handleLocationChange}
+							onChange={(e) => this.props.setLocation(e.target.value)}
 						/>
 					</div>
 
 					<div className="addevent-field" id="type">
 						<InputLabel id="type-label">Type</InputLabel>
-						<Select id="type-input" label="Type" onChange={this.handleTypeChange} value={this.state.type}>
-							<MenuItem value={1}>Class</MenuItem>
-							<MenuItem value={2}>Exam</MenuItem>
-							<MenuItem value={3}>Office Hour</MenuItem>
-							<MenuItem value={4}>Club</MenuItem>
-							<MenuItem value={5}>Other</MenuItem>
+						<Select
+							id="type-input"
+							label="Type"
+							onChange={(e) => this.props.setType(e.target.value)}
+							value={this.props.type}
+						>
+							<MenuItem value={0}>General</MenuItem>
+							<MenuItem value={1}>Course</MenuItem>
+							<MenuItem value={2}>Discussion</MenuItem>
+							<MenuItem value={3}>OH</MenuItem>
+							<MenuItem value={4}>Exam</MenuItem>
+							<MenuItem value={5}>Deadline</MenuItem>
 						</Select>
 					</div>
+
+					{this.props.currentIsInstructor &&
+						<div className="addevent-field" id="course">
+							<InputLabel id="type-label">Course</InputLabel>
+							<Select
+								id="course-input"
+								label="Course"
+								onChange={(e) => this.props.setCourse(e.target.value)}
+							>
+							{
+								this.props.courses.map( (c,index) => (
+									<MenuItem value={c}>{c}</MenuItem>
+								))
+							}
+							</Select>
+						</div>
+					}
 
 					<div className="addevent-field" id="description">
 						<InputLabel id="description-label">Description</InputLabel>
@@ -172,13 +132,13 @@ class AddEventForm extends Component {
 							variant="outlined"
 							rows="2"
 							margin="normal"
-							onChange={this.handleDescriptionChange}
+							onChange={(e) => this.props.setDesc(e.target.value)}
 						/>
 					</div>
 
 					<div id="submit">
 						<Button
-							onClick={this.submit}
+							onClick={this.props.addEvent}
 							variant="contained"
 							title={'Submit'}
 							id="submit-button"

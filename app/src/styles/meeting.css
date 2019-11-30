@@ -1,0 +1,155 @@
+#meeting-card {
+    height: 100%;
+    width: 83%;
+    display: flex;
+    flex-flow: column;
+}
+
+#meeting-h1-div {
+    height: 10%;
+}
+
+#name-h1 {
+    color: #3f3f3f;
+    padding: 3%;
+}
+
+#meeting-content {
+    height: 90%;
+}
+
+#meeting-details, #time-details {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#meeting-details {
+    width: 70%;
+}
+
+#time-details {
+    width: 30%;
+    padding-left: 3%;
+    height: 60%
+}
+
+#range-and-guests {
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+}
+
+#range-form {
+    display: flex;
+    flex-flow: row;
+}
+
+#range-container {
+    display: flex;
+    width: 60%;
+}
+
+#description-and-loc {
+    width: 40%;
+}
+
+#material-card-container {
+    background: rgb(73, 76, 89) !important;
+    color: white;
+}
+
+#from-field label, #from-field input, #from-field svg, #to-field label, #to-field input, #to-field svg {
+    color: white;
+}
+
+#from-field .MuiInput-underline:before, #to-field .MuiInput-underline:before {
+    border-bottom: 1px solid white !important;
+}
+
+#from-field .MuiInput-underline.Mui-focused:after, #to-field .MuiInput-underline.Mui-focused:after {
+    border-bottom: 2px solid white !important;
+}
+
+#description-and-loc label, #description-and-loc textarea, #description-and-loc input {
+    color: white !important;
+}
+
+#description-and-loc fieldset {
+    border-color: white !important;
+}
+
+#guest-form label, #guest-form textarea, #guest-form input {
+    color: white !important;
+}
+
+#guest-form fieldset{
+    border-color: white;
+}
+
+#time-container {
+    height: 100%
+}
+
+#time-card {
+    background: rgb(73, 76, 89) !important;
+    color: white;
+    height: 100%
+}
+
+#time-card button {
+    color: white;
+    border-color: white !important;
+}
+
+#time-buttons {
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-start;
+    padding: 5%;
+    overflow: scroll;
+}
+
+#time-buttons button {
+    margin-bottom: 5%;
+}
+
+#custom-field label, #custom-field input, #custom-field svg {
+    color: white;
+}
+
+#custom-field .MuiInput-underline:before {
+    border-bottom: 1px solid white !important;
+}
+
+#custom-field .MuiInput-underline.Mui-focused:after {
+    border-bottom: 2px solid white !important;
+}
+
+#custom-time-range {
+    display: flex;
+    flex-flow: row;
+}
+
+#custom-time-range > div {
+    margin: 2%;
+}
+
+#custom-date-picker {
+    margin: 2%;
+    width: 46%
+}
+
+#custom-submit-button {
+    margin-top: 10%;
+    margin-left: 2%;
+}
+
+#guest-form hr {
+    border-top: 1px solid #aaaa;
+    width: 77%;
+    margin-top: 3%;
+    margin-bottom: 2%;
+}

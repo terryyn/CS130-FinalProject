@@ -2,7 +2,7 @@ from . import main
 from .. import db_manager
 from flask import request, redirect, render_template
 from flask_login import login_required
-
+import json
 
 class Course:
     '''
@@ -95,19 +95,47 @@ def delete_event():
     return 'success'
     # return xx_template('success')
 
+@main.route('/deleteEventsByCourse', methods=['GET', 'POST'])
+def delete_events_by_course():
+    '''
+    takes in a course_name from json: {'course': string}
+    delete all events(e.g. Office Hours) associated with the course for current user
+    '''
+    target_events_id = db_manager.get_all_course_events(request.get_json(force=True)['course'])
+    for event_id in target_events_id:
+        db_manager.delete_event_from_database(event_id)
+    return 'success'
+
 @main.route('/editEvent', methods=['GET', 'POST']) 
 def edit_event():
     db_manager.edit_event_in_database(request.get_json(force=True)['eventID'], request.get_json(force=True))
     return 'success'
     # return xx_template('success')
 
+@main.route('/getCourses', methods=['GET', 'POST'])
+@login_required
+def get_courses():
+    course_names = db_manager.get_all_courses()
+    return course_names
+    
 @main.route('/getEventByUserAndDate', methods=['GET', 'POST']) 
 def get_events_by_user_and_date():
     '''
     get event by userid + date
+    takes in json: {"date": str}
     '''
     events_on_date = db_manager.get_events_by_user_and_date(request.get_json(force=True))
-    return events_on_date
+    events_json = [event.as_dict() for event in events_on_date]
+    return json.dumps({'events': events_json})
+
+@main.route('/filterEventByType', methods=['GET','POST'])
+def filter_events_by_type():
+    '''
+    takes in json: {'event_type': int}
+    '''
+    events_of_type = db_manager.get_events_by_type(request.get_json(force=True)['event_type'])
+    events_json = [event.as_dict() for event in events_of_type]
+    return json.dumps({'events': events_json})
 
 @main.route('/getEventById', methods=['GET', 'POST'])
 def get_event_by_id():
