@@ -235,9 +235,19 @@ class DatabaseManager():
 
         if num_of_participants == 1:
             db.session.delete(target_event)
-
+            
         db.session.delete(current_participation)
         db.session.commit()
+
+    def get_all_course_events(self, course_name):
+        '''
+        takes in the course name
+        return a lists of events' id associated with the course and the course itself
+        '''
+        course_events = Event.query.join(Participation).filter(Event.course.contains(course_name), \
+                                    Participation.user_id == current_user.id).all()
+        event_ids = [event.id for event in course_events]
+        return event_ids
 
     def edit_event_in_database(self, eventID, changes_json):
         '''

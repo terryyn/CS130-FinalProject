@@ -52,7 +52,10 @@ class Event(db.Model):
     '''
     The event table contains the following columns:
     id | name | startdate | starttime | location | eventType |
-    endtime | enddate | frequencyType | description | participations(meeting)
+    endtime | enddate | frequencyType | description | course | guests
+
+    A course type event should has the course field as the name of itself
+
     '''
     __tablename__ = 'events'
     def as_dict(self):
@@ -65,7 +68,9 @@ class Event(db.Model):
                'location': self.location,
                'eventType': self.eventType,
                'frequencyType': self.frequencyType,
-               'description': self.description}
+               'description': self.description,
+               'course': self.course,
+               'guests': self.guests}
        
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
