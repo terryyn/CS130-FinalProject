@@ -1,3 +1,4 @@
+import json
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -34,7 +35,7 @@ class RoomFinder():
     RoomFinder encapsulates all functions and variables related to
     finding a study room for a meeting.
     '''
-    def __init__(self, setup="dev", request_json):
+    def __init__(self, request_json, setup="dev"):
         self.option = webdriver.ChromeOptions()
         if setup == "dev":
             self.option.add_argument("headless")
@@ -62,10 +63,16 @@ class RoomFinder():
     @classmethod
     def process_info_str(cls, info_str):
         info_arr = info_str.split("-", 5)
+        location = ""
+        if info_arr[1].strip() != "12":
+            location = info_arr[1].strip()
+        else:
+            location = info_arr[1] + "-" + info_arr[2].strip()
         return (
-            datetime.strptime(info_arr[0], cls.TIME_FORMAT_STR), 
-            info_arr[1].strip()
+            datetime.strptime(info_arr[0], cls.TIME_FORMAT_STR),
+            location
         )
+            
 
     '''
     Read the request json passed from frontend and format into
@@ -222,14 +229,44 @@ class RoomFinder():
     '''
     def find_room(self):
         if len(self.datetimes) == 0:
-            return json.dumps((1, []))
+            return json.dumps({
+                "Error": self.ERROR_CODE[1],
+                "Timeslots": []
+            })
         if not self.handle_meeting_size():
-            return json.dumps((2, []))
+            return json.dumps({
+                "Error": self.ERROR_CODE[2],
+                "Timeslots": []
+            })
         avail_blocks = self.get_filtered_avail_blocks()
         avail_timeslots = self.merge_avail_blocks(avail_blocks)
         if len(avail_timeslots) == 0:
             if len(avail_blocks) != 0:
-                return json.dumps((3, avail_blocks))
+                return json.dumps({
+                    "Error": self.ERROR_CODE[3],
+                    "Timeslots": [
+                        (
+                            timeslot[0].strftime("%Y-%m-%d %H:%M"),
+                            timeslot[1]
+                        ) for timeslot in avail_blocks
+                    ]
+                })
             else:
-                return json.dumps((4, avail_blocks))
-        return json.dumps((0, avail_timeslots))
+                return json.dumps({
+                    "Error": self.ERROR_CODE[4],
+                    "Timeslots": [
+                        (
+                            timeslot[0].strftime("%Y-%m-%d %H:%M"),
+                            timeslot[1]
+                        ) for timeslot in avail_blocks
+                    ]
+                })
+        return json.dumps({
+            "Error": "",
+            "Timeslots": [
+                (
+                    timeslot[0].strftime("%Y-%m-%d %H:%M"),
+                    timeslot[1]
+                ) for timeslot in avail_timeslots
+            ]
+        })
