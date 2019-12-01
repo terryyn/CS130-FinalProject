@@ -44,9 +44,10 @@ class FrequencyType:
     The FrequencyType class serves as an enumeration indicating the
     frequency of event as a field in event entries 
     '''
-    DAILY = 0
-    WEEKLY = 1
-    MONTHLY = 2
+    DEFAULT = 0
+    DAILY = 1
+    WEEKLY = 2
+    MONTHLY = 3
 
 class Event(db.Model):
     '''
@@ -82,7 +83,7 @@ class Event(db.Model):
     eventType = db.Column(db.Integer, default=EventType.DEFAULT)
     enddate = db.Column(db.Date)
     endtime = db.Column(db.Time)
-    frequencyType = db.Column(db.Integer, default=FrequencyType.DAILY)
+    frequencyType = db.Column(db.Integer, default=FrequencyType.DEFAULT)
     description = db.Column(db.String(64), nullable=True)
     participations = db.relationship(
         'Participation', backref='event', lazy='dynamic'
