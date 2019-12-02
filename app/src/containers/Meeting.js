@@ -68,6 +68,10 @@ function Meeting() {
 	const [ customStartDate, setCustomStartDate ] = useState(new Date());
 	const [ customEndDate, setCustomEndDate ] = useState(new Date());
 
+	const [ availableRooms, setAvailableRooms] = useState([]);
+	const [ roomErrMsg, setRoomErrMsg]  = useState("");
+
+
 	const handleStartDateChange = date => {
 		setStartDate(date);
 	};
@@ -115,6 +119,14 @@ function Meeting() {
 	const handleCustomEndDate = date => {
 		setCustomEndDate(date);
 	};
+
+	const handleAvailableRooms = rooms => {
+		setAvailableRooms(rooms);
+	};
+
+	const handleRoomErrMsg = msg => {
+		setRoomErrMsg(msg);
+	}
 
 	function formatDate(d) {
 		var month = '' + (d.getMonth() + 1);
@@ -374,6 +386,43 @@ function Meeting() {
 		setShowAvailable(true);
 	}
 
+	function getAvailableRooms() {
+		const form = 
+		server.getAvailableRoom(form).then();
+	}
+
+	function renderFindRoom() {
+		getAvailableRooms();
+		return (
+			showAvailable && <Card id="room-card"> 
+				<div id="room-container">
+				<CardHeader title="Available Rooms" />
+						<Typography className={classes.pos} color="textSecondary">
+							Study room for the selected time
+						</Typography>
+						<CardContent className={classes.cardContent}>
+							{
+								(availableRooms.length == 0) ?
+								(
+									<div id="room-message">
+										{roomErrMsg}
+									</div>	
+								) :
+								(
+									<div id="availablerooms">
+										{availableRooms.map((room, index) => (
+											<div> {room} </div>
+										))}
+									</div>
+								)
+							}
+						</CardContent>
+
+				</div>
+			</Card>
+		);
+	}
+
 	return (
 		<div id="meeting-card">
 			<div id="meeting-h1-div">
@@ -392,6 +441,7 @@ function Meeting() {
 					</Grid>
 					<Grid item xs={4} id='time-details'>
 						{renderAvailableTimes()}
+						{/* {renderFindRoom()} */}
 					</Grid>
 				</Grid>
 			</div>

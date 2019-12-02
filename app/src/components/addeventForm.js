@@ -113,6 +113,21 @@ class AddEventForm extends Component {
 						</Select>
 					</div>
 
+					<div className="addevent-field" id="type">
+						<InputLabel id="type-label">Frequency</InputLabel>
+						<Select
+							id="type-input"
+							label="Frequency"
+							onChange={(e) => this.props.setFrequency(e.target.value)}
+							value={this.props.frequency}
+						>
+							<MenuItem value={0}>Once</MenuItem>
+							<MenuItem value={1}>Daily</MenuItem>
+							<MenuItem value={2}>Weekly</MenuItem>
+							<MenuItem value={3}>Monthly</MenuItem>
+						</Select>
+					</div>
+
 					{this.props.currentIsInstructor && (
 						<div className="addevent-field" id="course">
 							<InputLabel id="type-label">Course</InputLabel>

@@ -54,6 +54,10 @@ class Server {
 		return this.perform('post', '/getEventByUserAndDate', form);
 	}
 
+	getAvailableRoom(form) {
+		return this.perform('post', '/getRoom', form);
+	}
+
 	async perform(method, resource, data = {}) {
 		console.log(method, 'request to:', resource, 'with:');
 		console.log(data);
