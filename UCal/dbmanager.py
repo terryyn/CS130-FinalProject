@@ -293,9 +293,8 @@ class DatabaseManager():
         start_day = sqlalchemy.func.extract('day', Event.startdate)
         end_day = sqlalchemy.func.extract('day', Event.enddate)
 
-        occupied_events = Participation.query.filter(
-            Participation.user_id == userid
-        ).join(Event).filter(db.or_(db.and_(Event.frequencyType == FrequencyType.DEFAULT, 
+        occupied_events = Event.query.join(Participation).filter(Participation.user_id == userid)\
+        .filter(db.or_(db.and_(Event.frequencyType == FrequencyType.DEFAULT, 
                                             Event.startdate <= date,  Event.enddate >= date), 
                                     db.and_(Event.frequencyType == FrequencyType.DAILY,
                                             Event.startdate <= date),
