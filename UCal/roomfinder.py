@@ -28,8 +28,7 @@ class RoomFinder():
     ERROR_CODE = {
         1: "No available time ranges selected. Please select at least one.",
         2: "Meeting size greater than any study room can accomodate.",
-        3: "No available study rooms for the duration selected. Consider choosing multiple rooms?",
-        4: "No available study rooms for the time range(s) selected."
+        3: "No available study rooms for the time range(s) selected."
     }
     '''
     RoomFinder encapsulates all functions and variables related to
@@ -200,18 +199,26 @@ class RoomFinder():
     def merge_avail_blocks(self, blocks):
         if len(blocks) == 0:
             return blocks
+        sorted_blocks = sorted(blocks, key=lambda x: x[1])
         merged_blocks = []
-        cur_timeslot = [blocks[0]]
-        prev_block = blocks[0]
-        for i in range(1, len(blocks)):
-            cur_block = blocks[i]
-            if cur_block[0] - prev_block[0] == timedelta(minutes=30):
+        cur_timeslot = [sorted_blocks[0]]
+        prev_block = sorted_blocks[0]
+        for i in range(1, len(sorted_blocks)):
+            cur_block = sorted_blocks[i]
+            if (
+                cur_block[0] - prev_block[0] == timedelta(minutes=30) and
+                cur_block[1] == prev_block[1]
+            ):
                 cur_timeslot.append(cur_block)
-            else:
-                cur_timeslot = []
-            if len(cur_timeslot) == self.duration:
-                merged_blocks.append(cur_timeslot.pop(0))
+            elif (
+                cur_block[0] != prev_block[0] or
+                cur_block[1] != prev_block[1]
+            ):
+                cur_timeslot = [cur_block]
+            if len(cur_timeslot) >= self.duration:
+                merged_blocks.append(cur_timeslot[len(cur_timeslot)-self.duration])
             prev_block = cur_block
+        merged_blocks = list(set(merged_blocks))
         return merged_blocks
 
 
@@ -231,42 +238,32 @@ class RoomFinder():
         if len(self.datetimes) == 0:
             return json.dumps({
                 "Error": self.ERROR_CODE[1],
-                "Timeslots": []
+                "Timeslots": {}
             })
         if not self.handle_meeting_size():
             return json.dumps({
                 "Error": self.ERROR_CODE[2],
-                "Timeslots": []
+                "Timeslots": {}
             })
         avail_blocks = self.get_filtered_avail_blocks()
         avail_timeslots = self.merge_avail_blocks(avail_blocks)
         if len(avail_timeslots) == 0:
-            if len(avail_blocks) != 0:
-                return json.dumps({
-                    "Error": self.ERROR_CODE[3],
-                    "Timeslots": [
-                        (
-                            timeslot[0].strftime("%Y-%m-%d %H:%M"),
-                            timeslot[1]
-                        ) for timeslot in avail_blocks
-                    ]
-                })
+            return json.dumps({
+                "Error": self.ERROR_CODE[3],
+                "Timeslots": {}
+            })
+        avail_timeslots = sorted(avail_timeslots, key=lambda x: x[0])
+        prev = avail_timeslots[0]
+        ts_loc = {prev[0].strftime("%Y-%m-%d %H:%M"): []}
+        for ts in avail_timeslots:
+            if ts[0] == prev[0]:
+                ts_loc[prev[0].strftime("%Y-%m-%d %H:%M")].append(ts[1])
             else:
-                return json.dumps({
-                    "Error": self.ERROR_CODE[4],
-                    "Timeslots": [
-                        (
-                            timeslot[0].strftime("%Y-%m-%d %H:%M"),
-                            timeslot[1]
-                        ) for timeslot in avail_blocks
-                    ]
-                })
+                ts_loc[ts[0].strftime("%Y-%m-%d %H:%M")] = [ts[1]]
+            prev = ts
         return json.dumps({
             "Error": "",
-            "Timeslots": [
-                (
-                    timeslot[0].strftime("%Y-%m-%d %H:%M"),
-                    timeslot[1]
-                ) for timeslot in avail_timeslots
-            ]
+            "Timeslots": ts_loc
         })
+
+
