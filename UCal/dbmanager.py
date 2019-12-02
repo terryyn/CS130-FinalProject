@@ -105,6 +105,22 @@ class DatabaseManager():
         db.session.commit()
         return True
 
+    @staticmethod
+    def convert_date(date):
+        return datetime.datetime.strptime(
+            date, '%Y-%m-%d'
+        ).date()
+
+    @staticmethod
+    def convert_time(time, has_seconds=False):
+        if has_seconds:
+            return datetime.datetime.strptime(
+            time, '%H:%M:%S'
+        ).time()
+        return datetime.datetime.strptime(
+            time, '%H:%M'
+        ).time()
+
     def read_event_json(self, event_json):
         '''
         Takes in a json-converted dict including 8 fields about an event:
@@ -112,18 +128,10 @@ class DatabaseManager():
         type: string, enddate: string, endtime: string, description: string
         Returns an Event object initiated with the above information
         '''
-        start_date = datetime.datetime.strptime(
-            event_json['startdate'], '%Y-%m-%d'
-        ).date()
-        start_time = datetime.datetime.strptime(
-            event_json['starttime'], '%H:%M'
-        ).time()
-        end_date = datetime.datetime.strptime(
-            event_json['enddate'], '%Y-%m-%d'
-        ).date()
-        end_time = datetime.datetime.strptime(
-            event_json['endtime'], '%H:%M'
-        ).time()
+        start_date = self.convert_date(event_json['startdate'])
+        start_time = self.convert_time(event_json['starttime'])
+        end_date = self.convert_date(event_json['enddate'])
+        end_time = self.convert_time(event_json['endtime'])
         return Event(
             name=event_json['name'], startdate=start_date,
             starttime=start_time, location=event_json['location'],
@@ -187,9 +195,19 @@ class DatabaseManager():
         target = Event.query.get(eventID)
         for change in changes_json:
             if not change == 'eventID':
-                target.change = changes_json[change]
+                value = changes_json[change]
+                if change == 'startdate' or change == 'enddate':
+                    setattr(target, change, self.convert_date(value))
+                elif change == 'starttime' or change == 'endtime':
+                    setattr(target, change, self.convert_time(value, has_seconds=True))
+                else:
+                    setattr(target, change, changes_json[change])
         db.session.add(target)
         db.session.commit()
+
+    def get_event_by_id(self, eventID):
+        target = Event.query.get(eventID)
+        return target
 
     def get_events_by_user_and_date(self, req_json):
         '''

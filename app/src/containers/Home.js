@@ -163,7 +163,10 @@ function Home(props) {
 			type: eventType,
 			description: eventDesc
 		};
-		server.editEvent(form);
+		server.editEvent(form).then(() => {
+			getEventsFromDate(new Date(dateString));
+			toggleEditEventModal();
+		});
 	}
 
 	function addEventFromICS() {
@@ -192,6 +195,18 @@ function Home(props) {
 
 	function toggleEditEventModal(id) {
 		setSelected(id);
+		if (!showEditEvent) {
+			server.getEvent(id).then((event_obj) => {
+				const event = event_obj['event'];
+				setDesc(event['description']);
+				setName(event['name']);
+				setLocation(event['location']);
+				setStartDate(event['startdate']);
+				setEndDate(event['enddate']);
+				setStartTime(event['starttime']);
+				setEndTime(event['endtime']);
+			});
+		}
 		setEditEvent(!showEditEvent);
 	}
 
@@ -245,6 +260,14 @@ function Home(props) {
 						setType={setType}
 						type={eventType}
 						setDesc={setDesc}
+						description={eventDesc}
+						name={eventName}
+						location={eventLocation}
+						startDate={startDate}
+						endDate={endDate}
+						startTime={startTime}
+						endTime={endTime}
+						selected={selectedEvent}
 						edit
 					/>
 				</div>
