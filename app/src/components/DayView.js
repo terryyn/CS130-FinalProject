@@ -52,7 +52,7 @@ function DayView(props) {
 	function renderEvent(event) {
 		return (
 			<Fragment>
-				<ListItem>
+				<ListItem onClick={() => props.showEvent(event['id'])} style={{ cursor: 'pointer' }}>
 					<ListItemText>
 						<div className="agenda-item general">
 							<div className="agenda-item-info">
@@ -67,10 +67,22 @@ function DayView(props) {
 								<div className="agenda-item-summary">{event.name}</div>
 							</div>
 							<div className="agenda-item-options">
-								<Button onClick={() => props.deleteEvent(event['id'])} color="secondary">
+								<Button
+									onClick={(e) => {
+										props.deleteEvent(event['id']);
+										e.stopPropagation();
+									}}
+									color="secondary"
+								>
 									delete
 								</Button>
-								<Button onClick={() => props.editEvent(event['id'])} color="default">
+								<Button
+									onClick={(e) => {
+										props.editEvent(event['id']);
+										e.stopPropagation();
+									}}
+									color="default"
+								>
 									edit
 								</Button>
 							</div>
