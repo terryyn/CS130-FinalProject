@@ -1,4 +1,5 @@
 import React, { useState, Fragment } from 'react';
+import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
@@ -48,24 +49,32 @@ function DayView(props) {
 		return ret;
 	}
 
-	function renderEvent(event, id) {
+	function renderEvent(event) {
 		return (
 			<Fragment>
 				<ListItem>
 					<ListItemText>
 						<div className="agenda-item general">
-							<div className="agenda-item-time">
-								<Typography variant="subtitle1" gutterBottom>
-									{formatTime(event.starttime)}
-								</Typography>
-								<Typography variant="subtitle1" gutterBottom>
-									{formatTime(event.endtime)}
-								</Typography>
+							<div className="agenda-item-info">
+								<div className="agenda-item-time">
+									<Typography variant="subtitle1" gutterBottom>
+										{formatTime(event.starttime)}
+									</Typography>
+									<Typography variant="subtitle1" gutterBottom>
+										{formatTime(event.endtime)}
+									</Typography>
+								</div>
+								<div className="agenda-item-summary">{event.name}</div>
 							</div>
-							<div className="agenda-item-summary">{event.name}</div>
+							<div className="agenda-item-options">
+								<Button onClick={() => props.deleteEvent(event['id'])} color="secondary">
+									delete
+								</Button>
+								<Button onClick={() => props.editEvent(event['id'])} color="default">
+									edit
+								</Button>
+							</div>
 						</div>
-						<div onClick={(id) => props.deleteEvent(id)}>delete</div>
-						<div onClick={(id) => props.editEvent(id)}>edit</div>
 					</ListItemText>
 				</ListItem>
 			</Fragment>
@@ -75,7 +84,7 @@ function DayView(props) {
 		<Card>
 			<CardHeader title={formatDate(props.date)} />
 			<CardContent>
-				<List>{props.events.length > 0 && props.events.map((event) => renderEvent(event, event.id))}</List>
+				<List>{props.events.length > 0 && props.events.map((event) => renderEvent(event))}</List>
 			</CardContent>
 		</Card>
 	);

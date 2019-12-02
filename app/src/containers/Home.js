@@ -51,7 +51,7 @@ function Home(props) {
 	const [ eventLocation, setLocation ] = useState('');
 	const [ eventType, setType ] = useState(0);
 	const [ eventDesc, setDesc ] = useState('');
-	const [ course, setCourse ] = useState("");
+	const [ course, setCourse ] = useState('');
 
 	const [ selectedEvent, setSelected ] = useState(-1);
 
@@ -153,7 +153,9 @@ function Home(props) {
 		const form = {
 			eventID: id
 		};
-		server.deleteEvent(form);
+		server.deleteEvent(form).then(() => {
+			getEventsFromDate(new Date(dateString));
+		});
 	}
 
 	function editEvent(id) {
@@ -169,7 +171,10 @@ function Home(props) {
 			description: eventDesc,
 			guests: ''
 		};
-		server.editEvent(form);
+		server.editEvent(form).then(() => {
+			getEventsFromDate(new Date(dateString));
+			toggleEditEventModal();
+		});
 	}
 
 	function addEventFromICS() {
@@ -198,6 +203,18 @@ function Home(props) {
 
 	function toggleEditEventModal(id) {
 		setSelected(id);
+		if (!showEditEvent) {
+			server.getEvent(id).then((event_obj) => {
+				const event = event_obj['event'];
+				setDesc(event['description']);
+				setName(event['name']);
+				setLocation(event['location']);
+				setStartDate(event['startdate']);
+				setEndDate(event['enddate']);
+				setStartTime(event['starttime']);
+				setEndTime(event['endtime']);
+			});
+		}
 		setEditEvent(!showEditEvent);
 	}
 
@@ -254,6 +271,15 @@ function Home(props) {
 						setType={setType}
 						type={eventType}
 						setDesc={setDesc}
+						description={eventDesc}
+						name={eventName}
+						location={eventLocation}
+						startDate={startDate}
+						endDate={endDate}
+						startTime={startTime}
+						endTime={endTime}
+						selected={selectedEvent}
+						edit
 						setCourse={setCourse}
 						courses={props.currentCourses}
 						currentIsInstructor={props.currentIsInstructor}

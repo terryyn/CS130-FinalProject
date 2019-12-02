@@ -109,7 +109,8 @@ def delete_events_by_course():
 
 @main.route('/editEvent', methods=['GET', 'POST']) 
 def edit_event():
-    db_manager.edit_event_in_database(request.get_json(force=True)['eventID'], request.get_json(force=True))
+    event_obj = request.get_json(force=True)
+    db_manager.edit_event_in_database(event_obj['eventID'], event_obj)
     return 'success'
     # return xx_template('success')
 
@@ -143,7 +144,8 @@ def get_event_by_id():
     '''
     get event by eventID
     '''
-    return Event.query.get(request.get_json(force=True)['eventID'])
+    event_dict = db_manager.get_event_by_id(request.get_json(force=True)['eventID']).as_dict()
+    return json.dumps({'event': event_dict})
 
 @main.route('/schedule-meeting', methods=['GET','POST']) 
 def schedule_meeting(): 

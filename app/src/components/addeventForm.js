@@ -26,7 +26,7 @@ class AddEventForm extends Component {
 	render() {
 		return (
 			<div className="addevent">
-				<h1 className="addevent-title">Add an event</h1>
+				<h1 className="addevent-title">{this.props.edit ? 'Edit this event' : 'Add an event'}</h1>
 				<form className="addevent-form" onSubmit={this.submit}>
 					<div className="addevent-field" id="start">
 						<InputLabel id="start-label">Start</InputLabel>
@@ -36,6 +36,7 @@ class AddEventForm extends Component {
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
 							onChange={(e) => this.props.setStartDate(e.target.value)}
+							value={this.props.edit ? this.props.startDate : ''}
 						/>
 						<div id="starttime">
 							<TextField
@@ -44,6 +45,7 @@ class AddEventForm extends Component {
 								variant="outlined"
 								InputProps={{ classes: { input: this.props.classes.textField } }}
 								onChange={(e) => this.props.setStartTime(e.target.value)}
+								value={this.props.edit ? this.props.startTime : ''}
 							/>
 						</div>
 					</div>
@@ -56,6 +58,7 @@ class AddEventForm extends Component {
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
 							onChange={(e) => this.props.setEndDate(e.target.value)}
+							value={this.props.edit ? this.props.endDate : ''}
 						/>
 						<div id="endtime">
 							<TextField
@@ -64,6 +67,7 @@ class AddEventForm extends Component {
 								variant="outlined"
 								InputProps={{ classes: { input: this.props.classes.textField } }}
 								onChange={(e) => this.props.setEndTime(e.target.value)}
+								value={this.props.edit ? this.props.endTime : ''}
 							/>
 						</div>
 					</div>
@@ -77,6 +81,7 @@ class AddEventForm extends Component {
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
 							onChange={(e) => this.props.setName(e.target.value)}
+							value={this.props.edit ? this.props.name : ''}
 						/>
 					</div>
 
@@ -87,6 +92,7 @@ class AddEventForm extends Component {
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
 							onChange={(e) => this.props.setLocation(e.target.value)}
+							value={this.props.edit ? this.props.location : ''}
 						/>
 					</div>
 
@@ -133,18 +139,19 @@ class AddEventForm extends Component {
 							rows="2"
 							margin="normal"
 							onChange={(e) => this.props.setDesc(e.target.value)}
+							value={this.props.edit ? this.props.description : ''}
 						/>
 					</div>
 
 					<div id="submit">
 						<Button
-							onClick={this.props.addEvent}
+							onClick={() => this.props.addEvent(this.props.selected)}
 							variant="contained"
 							title={'Submit'}
 							id="submit-button"
 							style={buttonStyle}
 						>
-							Create Event
+							{this.props.edit ? 'Edit Event' : 'Create Event'}
 						</Button>
 					</div>
 				</form>
