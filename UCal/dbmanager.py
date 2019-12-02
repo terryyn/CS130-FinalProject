@@ -357,9 +357,9 @@ class DatabaseManager():
         '''
         Takes in the json-converted dict containing:
         meeting_name : string, pariticipants : List[string],
-        possible_dates: List[datetime.datetime], meet_duration: int,
-        earliest_meet_time: datetime.datetime,
-        latest_meet_time: datetime.datetime
+        possible_dates: List[date string], meet_duration: integer that represents minutes,
+        earliest_meet_time: time string,
+        latest_meet_time: time string,
         Returns a list of possible meeting time, in the format:
         [{date: [(start_time_1, end_time_1),(start_time_2, end_time_2)]},...]
         '''
@@ -369,8 +369,8 @@ class DatabaseManager():
         possible_dates.sort()
         possible_days = [day.isoweekday() for day in possible_dates]
         meet_duration = meeting_json['meet_duration']
-        earliest_meet_time = meeting_json['earliest_meet_time']
-        latest_meet_time = meeting_json['latest_meet_time']
+        earliest_meet_time =  time(hour=8)
+        latest_meet_time = time(hour=18)
 
         # Get all the events within dates
         occupied_events = db.session.query(
@@ -383,7 +383,7 @@ class DatabaseManager():
                     db.and_(Event.frequencyType == FrequencyType.MONTHLY,
                     sqlalchemy.func.extract('day', Event.startdate).in_([date.day for date in possible_dates])))
         ).join(Participation).join(User).filter(
-                User.username.in_(participants)
+                User.email.in_(participants)
         ).distinct().all()
         
         # Finds all the occupied time slots in those dates 
