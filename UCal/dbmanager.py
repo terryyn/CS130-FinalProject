@@ -168,17 +168,14 @@ class DatabaseManager():
         Takes in the event id of the event and deletes the event.
         No return value.
         '''
-        target_event = Event.query.get(eventID)
-
         #first checks how many users are related to this event
-        num_of_participants = Participation.query.filter(Participation.event_id == target_event.id).count()
-        current_participation = Participation.query.filter(Participation.event_id == target_event, \
-                            Participation.user_id == current_user.id)
+        num_of_participants = Participation.query.filter(Participation.event_id == eventID).count()
+        Participation.query.filter(Participation.event_id == eventID, \
+                            Participation.user_id == current_user.id).delete()
 
         if num_of_participants == 1:
-            db.session.delete(target_event)
+            Event.query.filter(Event.id == eventID).delete()
 
-        db.session.delete(current_participation)
         db.session.commit()
 
     def edit_event_in_database(self, eventID, changes_json):
