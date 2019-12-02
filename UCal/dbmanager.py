@@ -108,6 +108,22 @@ class DatabaseManager():
         db.session.commit()
         return True
 
+    @staticmethod
+    def convert_date(date):
+        return datetime.strptime(
+            date, '%Y-%m-%d'
+        ).date()
+
+    @staticmethod
+    def convert_time(time, has_seconds=False):
+        if has_seconds:
+            return datetime.strptime(
+            time, '%H:%M:%S'
+        ).time()
+        return datetime.strptime(
+            time, '%H:%M'
+        ).time()
+
     def read_event_json(self, event_json):
         '''
         Takes in a json-converted dict including 8 fields about an event:
@@ -115,18 +131,10 @@ class DatabaseManager():
         type: string, enddate: string, endtime: string, description: string
         Returns an Event object initiated with the above information
         '''
-        start_date = datetime.strptime(
-            event_json['startdate'], '%Y-%m-%d'
-        ).date()
-        start_time = datetime.strptime(
-            event_json['starttime'], '%H:%M'
-        ).time()
-        end_date = datetime.strptime(
-            event_json['enddate'], '%Y-%m-%d'
-        ).date()
-        end_time = datetime.strptime(
-            event_json['endtime'], '%H:%M'
-        ).time()
+        start_date = self.convert_date(event_json['startdate'])
+        start_time = self.convert_time(event_json['starttime'])
+        end_date = self.convert_date(event_json['enddate'])
+        end_time = self.convert_time(event_json['endtime'])
         if event_json['course']!='':
             return Event(
                 name=event_json['name'], startdate=start_date,
@@ -228,17 +236,14 @@ class DatabaseManager():
         Takes in the event id of the event and deletes the event.
         No return value.
         '''
-        target_event = Event.query.get(eventID)
-
         #first checks how many users are related to this event
-        num_of_participants = Participation.query.filter(Participation.event_id == target_event.id).count()
-        current_participation = Participation.query.filter(Participation.event_id == target_event, \
-                            Participation.user_id == current_user.id)
+        num_of_participants = Participation.query.filter(Participation.event_id == eventID).count()
+        Participation.query.filter(Participation.event_id == eventID, \
+                            Participation.user_id == current_user.id).delete()
 
         if num_of_participants == 1:
-            db.session.delete(target_event)
-            
-        db.session.delete(current_participation)
+            Event.query.filter(Event.id == eventID).delete()
+
         db.session.commit()
 
     def get_all_course_events(self, course_name):
@@ -260,9 +265,19 @@ class DatabaseManager():
         target = Event.query.get(eventID)
         for change in changes_json:
             if not change == 'eventID':
-                target.change = changes_json[change]
+                value = changes_json[change]
+                if change == 'startdate' or change == 'enddate':
+                    setattr(target, change, self.convert_date(value))
+                elif change == 'starttime' or change == 'endtime':
+                    setattr(target, change, self.convert_time(value, has_seconds=True))
+                else:
+                    setattr(target, change, changes_json[change])
         db.session.add(target)
         db.session.commit()
+
+    def get_event_by_id(self, eventID):
+        target = Event.query.get(eventID)
+        return target
 
     def get_events_by_user_and_date(self, req_json):
         '''
@@ -351,7 +366,7 @@ class DatabaseManager():
         '''
 
         participants = meeting_json['participants']
-        possible_dates = [ datetime.strptime(date_str, '%Y-%m-%d').date() for date_str in meeting_json['possible_dates']]
+        possible_dates = [ self.convert_date(date_str) for date_str in meeting_json['possible_dates']]
         possible_dates.sort()
         possible_days = [day.isoweekday() for day in possible_dates]
         meet_duration = meeting_json['meet_duration']
