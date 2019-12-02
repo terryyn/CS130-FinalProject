@@ -149,8 +149,8 @@ def get_event_by_id():
 
 @main.route('/schedule-meeting', methods=['GET','POST']) 
 def schedule_meeting(): 
-    json_available_time = db_manager.find_available_meeting_time(request.get_json(force=True))
-    return 'success'
+    available_time = db_manager.find_available_meeting_time(request.get_json(force=True))
+    return json.dumps(available_time)
 
 @main.route('/add-meeting', methods=['GET','POST'])
 def add_meeting():
