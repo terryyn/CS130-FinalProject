@@ -52,13 +52,13 @@
 }
 
 .office-hours {
-	border-left: 5px solid rgb(70, 122, 248);
-	background: rgb(218, 231, 253);
+	border-left: 5px solid rgb(233, 115, 228);
+	background: rgb(250, 230, 248);
 }
 
 .class-deadline {
-	border-left: 5px solid rgb(70, 122, 248);
-	background: rgb(218, 231, 253);
+	border-left: 5px solid rgb(255, 0, 0);
+	background: rgb(255, 199, 199);
 }
 
 .club {
@@ -67,13 +67,13 @@
 }
 
 .meeting-new {
-	border-left: 5px solid rgb(70, 122, 248);
-	background: rgb(218, 231, 253);
+	border-left: 5px solid rgb(104, 235, 164);
+	background: rgb(227, 252, 228);
 }
 
 .meeting-accepted {
-	border-left: 5px solid rgb(70, 122, 248);
-	background: rgb(218, 231, 253);
+	border-left: 5px solid rgb(104, 235, 164);
+	background: rgb(227, 252, 228);
 }
 
 .meeting-tentative {

@@ -155,10 +155,11 @@ function Meeting() {
 			endtime: formateTime(end),
 			location: meetingLoc,
 			name: meetingName,
-			type: 7,
+			type: 6,
 			description: meetingDes,
 			course: course,
-			guests: guests
+			guests: guests,
+			frequency_type: 0
 		};
 
 		server.addEvent(form);

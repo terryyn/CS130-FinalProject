@@ -51,7 +51,7 @@ function Home(props) {
 
 	const [ eventName, setName ] = useState('');
 	const [ eventLocation, setLocation ] = useState('');
-	const [ eventType, setType ] = useState('general');
+	const [ eventType, setType ] = useState(0);
 	const [ eventDesc, setDesc ] = useState('');
 	const [ eventFreq, setFreq ] = useState(0);
 	const [ course, setCourse ] = useState('');
