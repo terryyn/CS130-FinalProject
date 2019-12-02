@@ -53,6 +53,7 @@ function Home(props) {
 	const [ eventLocation, setLocation ] = useState('');
 	const [ eventType, setType ] = useState(0);
 	const [ eventDesc, setDesc ] = useState('');
+	const [ eventFreq, setFreq ] = useState(0);
 	const [ course, setCourse ] = useState('');
 
 	const [ selectedEvent, setSelected ] = useState(-1);
@@ -94,20 +95,24 @@ function Home(props) {
 		console.log('getting events');
 		if (!calendar) return [];
 		const comp = new ICAL.Component(calendar);
-		const currDate = new Date(dateString).toDateString();
 		const vevents = comp.getAllSubcomponents('vevent');
-		const events = [];
 		vevents.forEach((vevent) => {
 			const event = new ICAL.Event(vevent);
-			const dtstart = event.startDate.toJSDate().toDateString();
-			const dtend = event.endDate.toJSDate().toDateString();
-			if (dtstart === currDate || dtend === currDate) {
-				events.push(event);
-			}
+			const dtstart = event.startDate.toJSDate();
+			const dtend = event.endDate.toJSDate();
+			const name = event.summary;
+			const description = event.description;
+			const location = event.location;
+
+			const form = {
+				name,
+				description,
+				location,
+				type: 0
+			};
+			server.addEvent(form);
 		});
-		events.sort(function(first, second) {
-			return first.startDate._time.hour - second.startDate._time.hour;
-		});
+
 		return events;
 	}
 
@@ -139,6 +144,7 @@ function Home(props) {
 			type: eventType,
 			description: eventDesc,
 			course: course,
+			frequencyType: eventFreq,
 			guests: ''
 		};
 
@@ -168,6 +174,7 @@ function Home(props) {
 			name: eventName,
 			type: eventType,
 			description: eventDesc,
+			frequencyType: eventFreq,
 			guests: ''
 		};
 		server.editEvent(form).then(() => {
@@ -261,6 +268,7 @@ function Home(props) {
 						setName={setName}
 						setLocation={setLocation}
 						setType={setType}
+						setFrequency={setFreq}
 						type={eventType}
 						setDesc={setDesc}
 						setCourse={setCourse}
@@ -290,7 +298,9 @@ function Home(props) {
 						setName={setName}
 						setLocation={setLocation}
 						setType={setType}
+						setFrequency={setFreq}
 						type={eventType}
+						frequency={eventFreq}
 						setDesc={setDesc}
 						description={eventDesc}
 						name={eventName}
@@ -362,11 +372,11 @@ function Home(props) {
 					</Grid>
 				</Grid>
 				<Grid container justify="space-evenly" alignItems="flex-end" item xs={12} spacing={3} id="buttons">
-					<Grid item>
+					{/* <Grid item>
 						<Button variant="contained" color="default" onClick={toggleImportICSModal}>
 							Import .ics file
 						</Button>
-					</Grid>
+					</Grid> */}
 					<Grid item>
 						<Button variant="contained" color="primary" onClick={toggleAddEventModal}>
 							Add event
