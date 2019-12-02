@@ -7,6 +7,7 @@ import ICAL from 'ical.js';
 
 import { makeStyles } from '@material-ui/core/styles';
 
+import EventInfo from '../components/EventInfo';
 import ImportICS from '../components/ImportICSForm';
 import StyleForm from '../components/addeventForm';
 import DayView from '../components/DayView';
@@ -39,6 +40,7 @@ function Home(props) {
 	const [ events, setEvents ] = useState([]);
 	const [ showAddEvent, setAddEvent ] = useState(false);
 	const [ showEditEvent, setEditEvent ] = useState(false);
+	const [ showEventInfo, setEventInfo ] = useState(false);
 
 	const [ showImportICS, setImportICS ] = useState(false);
 
@@ -51,7 +53,7 @@ function Home(props) {
 	const [ eventLocation, setLocation ] = useState('');
 	const [ eventType, setType ] = useState(0);
 	const [ eventDesc, setDesc ] = useState('');
-	const [ course, setCourse ] = useState("");
+	const [ course, setCourse ] = useState('');
 
 	const [ selectedEvent, setSelected ] = useState(-1);
 
@@ -117,7 +119,6 @@ function Home(props) {
 		const newDateStr = date.toDateString();
 		const form = { date: newDateStr };
 		server.getEventByUserAndDate(form).then((events) => {
-			console.log('events', events);
 			setEvents(events['events'] ? events['events'] : []);
 		});
 	}
@@ -141,8 +142,6 @@ function Home(props) {
 			guests: ''
 		};
 
-		console.log(form);
-
 		server.addEvent(form).then(() => {
 			getEventsFromDate(new Date(dateString));
 			toggleAddEventModal();
@@ -153,7 +152,9 @@ function Home(props) {
 		const form = {
 			eventID: id
 		};
-		server.deleteEvent(form);
+		server.deleteEvent(form).then(() => {
+			getEventsFromDate(new Date(dateString));
+		});
 	}
 
 	function editEvent(id) {
@@ -169,7 +170,10 @@ function Home(props) {
 			description: eventDesc,
 			guests: ''
 		};
-		server.editEvent(form);
+		server.editEvent(form).then(() => {
+			getEventsFromDate(new Date(dateString));
+			toggleEditEventModal();
+		});
 	}
 
 	function addEventFromICS() {
@@ -196,13 +200,47 @@ function Home(props) {
 		setAddEvent(!showAddEvent);
 	}
 
+	function clearEventInfo() {
+		setDesc(null);
+		setName(null);
+		setLocation(null);
+		setStartDate(null);
+		setEndDate(null);
+		setStartTime(null);
+		setEndTime(null);
+	}
+
+	function getEvent(id) {
+		server.getEvent(id).then((event_obj) => {
+			const event = event_obj['event'];
+			setDesc(event['description']);
+			setName(event['name']);
+			setLocation(event['location']);
+			setStartDate(event['startdate']);
+			setEndDate(event['enddate']);
+			setStartTime(event['starttime']);
+			setEndTime(event['endtime']);
+		});
+	}
+
 	function toggleEditEventModal(id) {
 		setSelected(id);
+		if (!showEditEvent) {
+			getEvent(id);
+		}
 		setEditEvent(!showEditEvent);
 	}
 
 	function toggleImportICSModal() {
+		clearEventInfo();
 		setImportICS(!showImportICS);
+	}
+
+	function toggleEventInfoModal(id) {
+		if (!showEventInfo) {
+			getEvent(id);
+		}
+		setEventInfo(!showEventInfo);
 	}
 
 	function renderAddEvent() {
@@ -254,10 +292,34 @@ function Home(props) {
 						setType={setType}
 						type={eventType}
 						setDesc={setDesc}
+						description={eventDesc}
+						name={eventName}
+						location={eventLocation}
+						startDate={startDate}
+						endDate={endDate}
+						startTime={startTime}
+						endTime={endTime}
+						selected={selectedEvent}
+						edit
 						setCourse={setCourse}
 						courses={props.currentCourses}
 						currentIsInstructor={props.currentIsInstructor}
 					/>
+				</div>
+			</Modal>
+		);
+	}
+
+	function renderEventInfo() {
+		return (
+			<Modal
+				aria-labelledby="simple-modal-title"
+				aria-describedby="simple-modal-description"
+				open={showEventInfo}
+				onClose={() => setEventInfo(false)}
+			>
+				<div style={getModalStyle()} className={classes.paper}>
+					<EventInfo name={eventName} description={eventDesc} location={eventLocation} />
 				</div>
 			</Modal>
 		);
@@ -285,6 +347,7 @@ function Home(props) {
 					{renderImportICS()}
 					{renderAddEvent()}
 					{renderEditEvent()}
+					{renderEventInfo()}
 					<Grid item xs={12}>
 						<h1 id="name-h1">{props.currentUser.replace(/ .*/, '')}'s Day</h1>
 					</Grid>
@@ -294,6 +357,7 @@ function Home(props) {
 							events={events}
 							editEvent={toggleEditEventModal}
 							deleteEvent={deleteEvent}
+							showEvent={toggleEventInfoModal}
 						/>
 					</Grid>
 				</Grid>
