@@ -140,6 +140,7 @@ class DatabaseManager():
                 name=event_json['name'], startdate=start_date,
                 starttime=start_time, location=event_json['location'],
                 eventType=event_json['type'], enddate=end_date,
+                frequencyType=event_json['frequency_type'],
                 endtime=end_time, description=event_json['description'], course=event_json['course'])
         elif event_json['guests']!='':
             return Event(
@@ -182,13 +183,14 @@ class DatabaseManager():
         Returns the event id of the event added, or the existing event.
         '''
         new_event = self.read_event_json(event_json)
-        old_event = Event.query.filter(Event.name == new_event.name, \
-                    Event.startdate == new_event.startdate, \
-                    Event.starttime == new_event.starttime, \
-                    Event.location == new_event.location, \
-                    Event.eventType == new_event.eventType, \
-                    Event.enddate == new_event.enddate, \
-                    Event.endtime == new_event.endtime, \
+        old_event = Event.query.filter(Event.name == new_event.name,
+                    Event.startdate == new_event.startdate,
+                    Event.starttime == new_event.starttime,
+                    Event.location == new_event.location,
+                    Event.eventType == new_event.eventType,
+                    Event.frequencyType == new_event.frequencyType,
+                    Event.enddate == new_event.enddate,
+                    Event.endtime == new_event.endtime,
                     Event.description == new_event.description)
         if not old_event.count():
             db.session.add(new_event)
@@ -286,10 +288,36 @@ class DatabaseManager():
         userid = current_user.id
         date_str = req_json['date']
         date = datetime.strptime(date_str, '%a %b %d %Y').date()
-        occupied_events = Event.query.join(Participation).filter(
-            Participation.user_id == userid,
-            Event.startdate <= date, Event.enddate >= date
-        ).order_by(Event.startdate).all()
+        start_dow = sqlalchemy.func.extract('dow', Event.startdate)
+        end_dow = sqlalchemy.func.extract('dow', Event.enddate)
+        start_day = sqlalchemy.func.extract('day', Event.startdate)
+        end_day = sqlalchemy.func.extract('day', Event.enddate)
+
+        occupied_events = Participation.query.filter(
+            Participation.user_id == userid
+        ).join(Event).filter(db.or_(db.and_(Event.frequencyType == FrequencyType.DEFAULT, 
+                                            Event.startdate <= date,  Event.enddate >= date), 
+                                    db.and_(Event.frequencyType == FrequencyType.DAILY,
+                                            Event.startdate <= date),
+                                    db.and_(Event.frequencyType == FrequencyType.WEEKLY, 
+                                            db.or_(
+                                                db.and_(start_dow <= end_dow,
+                                                        start_dow <= date.isoweekday(), 
+                                                        end_dow >= date.isoweekday()),
+                                                db.and_(start_dow >= end_dow,
+                                                        db.or_(start_dow <= date.isoweekday(),
+                                                                end_dow >= date.isoweekday()))
+                                                )),
+                                    db.and_(Event.frequencyType == FrequencyType.MONTHLY,
+                                            db.or_(
+                                                db.and_(start_day <= end_day,
+                                                        start_day <= date.day, 
+                                                        end_day >= date.day),
+                                                db.and_(start_day >= end_day,
+                                                        db.or_(start_day <= date.day,
+                                                                end_dow >= date.day))
+                                                )))).order_by(Event.startdate).all()
+
         return occupied_events
 
     def get_events_by_type(self, event_type):
@@ -338,7 +366,7 @@ class DatabaseManager():
         '''
 
         participants = meeting_json['participants']
-        possible_dates = meeting_json['possible_dates']
+        possible_dates = [ self.convert_date(date_str) for date_str in meeting_json['possible_dates']]
         possible_dates.sort()
         possible_days = [day.isoweekday() for day in possible_dates]
         meet_duration = meeting_json['meet_duration']
