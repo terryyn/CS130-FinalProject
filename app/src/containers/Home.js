@@ -49,8 +49,9 @@ function Home(props) {
 
 	const [ eventName, setName ] = useState('');
 	const [ eventLocation, setLocation ] = useState('');
-	const [ eventType, setType ] = useState(1);
+	const [ eventType, setType ] = useState(0);
 	const [ eventDesc, setDesc ] = useState('');
+	const [ course, setCourse ] = useState('');
 
 	const [ selectedEvent, setSelected ] = useState(-1);
 
@@ -108,7 +109,9 @@ function Home(props) {
 		return events;
 	}
 
-	useEffect(() => getEventsFromDate(new Date()), []);
+	useEffect(() => {
+		getEventsFromDate(new Date());
+	}, []);
 
 	async function getEventsFromDate(date) {
 		const newDateStr = date.toDateString();
@@ -133,8 +136,12 @@ function Home(props) {
 			location: eventLocation,
 			name: eventName,
 			type: eventType,
-			description: eventDesc
+			description: eventDesc,
+			course: course,
+			guests: ''
 		};
+
+		console.log(form);
 
 		server.addEvent(form).then(() => {
 			getEventsFromDate(new Date(dateString));
@@ -161,7 +168,8 @@ function Home(props) {
 			location: eventLocation,
 			name: eventName,
 			type: eventType,
-			description: eventDesc
+			description: eventDesc,
+			guests: ''
 		};
 		server.editEvent(form).then(() => {
 			getEventsFromDate(new Date(dateString));
@@ -234,6 +242,9 @@ function Home(props) {
 						setType={setType}
 						type={eventType}
 						setDesc={setDesc}
+						setCourse={setCourse}
+						courses={props.currentCourses}
+						currentIsInstructor={props.currentIsInstructor}
 					/>
 				</div>
 			</Modal>
@@ -269,6 +280,9 @@ function Home(props) {
 						endTime={endTime}
 						selected={selectedEvent}
 						edit
+						setCourse={setCourse}
+						courses={props.currentCourses}
+						currentIsInstructor={props.currentIsInstructor}
 					/>
 				</div>
 			</Modal>

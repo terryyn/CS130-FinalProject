@@ -1,9 +1,9 @@
 # flake8 compatible
-import datetime
-import time
+from datetime import datetime, date, time
+from collections import defaultdict
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
-from .model import Event, User, Participation
+from .model import Event, User, Participation, EventType, FrequencyType
 from flask_login import login_user, login_required, current_user, logout_user
 import sqlalchemy
 
@@ -77,7 +77,7 @@ class DatabaseManager():
     
     def auth(self):
         if current_user.is_authenticated:
-            return {'name': current_user.username, 'email': current_user.email, 'is_instructor': current_user.is_instructor}
+            return {'name': current_user.username, 'email': current_user.email, 'is_instructor': current_user.is_instructor, 'courses': current_user.courses}
         else:
             return None
     
@@ -102,6 +102,9 @@ class DatabaseManager():
         current_user.is_instructor = convertToBool(user_json['is_instructor'])
         if (len(user_json['password'])>2) :
             current_user.password_hash = str(generate_password_hash(user_json['password']))
+        if (user_json['courses']!=''):
+            current_user.courses = user_json['courses']
+
         db.session.commit()
         return True
 
@@ -132,11 +135,43 @@ class DatabaseManager():
         start_time = self.convert_time(event_json['starttime'])
         end_date = self.convert_date(event_json['enddate'])
         end_time = self.convert_time(event_json['endtime'])
-        return Event(
-            name=event_json['name'], startdate=start_date,
-            starttime=start_time, location=event_json['location'],
-            eventType=event_json['type'], enddate=end_date,
-            endtime=end_time, description=event_json['description'])
+        if event_json['course']!='':
+            return Event(
+                name=event_json['name'], startdate=start_date,
+                starttime=start_time, location=event_json['location'],
+                eventType=event_json['type'], enddate=end_date,
+                endtime=end_time, description=event_json['description'], course=event_json['course'])
+        elif event_json['guests']!='':
+            return Event(
+                name=event_json['name'], startdate=start_date,
+                starttime=start_time, location=event_json['location'],
+                eventType=event_json['type'], enddate=end_date,
+                endtime=end_time, description=event_json['description'], guests=event_json['guests'])
+        else:
+            return Event(
+                name=event_json['name'], startdate=start_date,
+                starttime=start_time, location=event_json['location'],
+                eventType=event_json['type'], enddate=end_date,
+                endtime=end_time, description=event_json['description'])
+    
+    def getUsersWithEmail(self, guests):
+        ret = []
+        emails = guests.split(',')
+        for i in range(len(emails)):
+            emails[i] = emails[i].strip()
+            user = User.query.filter_by(email=emails[i]).first()
+            ret.append(user)
+        return ret
+
+    def getUsersWithCourse(self, course):
+        ret = []
+        users = User.query.all()
+        for u in users:
+            if u.courses!='' and u.id!=current_user.id:
+                courses = u.courses.split(',')
+                if course in courses:
+                    ret.append(u)
+        return ret
 
     @login_required
     def add_event_to_database(self, event_json):
@@ -150,7 +185,6 @@ class DatabaseManager():
         old_event = Event.query.filter(Event.name == new_event.name, \
                     Event.startdate == new_event.startdate, \
                     Event.starttime == new_event.starttime, \
-                    Event.starttime == new_event.starttime, \
                     Event.location == new_event.location, \
                     Event.eventType == new_event.eventType, \
                     Event.enddate == new_event.enddate, \
@@ -162,7 +196,31 @@ class DatabaseManager():
             event_id = new_event.id
         else:
             event_id = old_event.one_or_none().id
-
+        
+        #Try to send notifications to users if course exists
+        try:
+            users_to_notify = self.getUsersWithCourse(new_event.course)
+            for u in users_to_notify:
+                try:
+                    db.session.add(Participation(event_id=event_id, user_id=u.id))
+                    db.session.commit()
+                except sqlalchemy.exc.IntegrityError:
+                    pass
+        except:
+            pass
+        
+        #Try to send notifications to guests if guests exists
+        try:
+            users_to_notify = self.getUsersWithEmail(new_event.guests)
+            for u in users_to_notify:
+                try:
+                    db.session.add(Participation(event_id=event_id, user_id=u.id))
+                    db.session.commit()
+                except sqlalchemy.exc.IntegrityError:
+                    pass
+        except:
+            pass
+            
         try:
             db.session.add(Participation(event_id=event_id, user_id=current_user.id))
             db.session.commit()
@@ -185,6 +243,16 @@ class DatabaseManager():
             Event.query.filter(Event.id == eventID).delete()
 
         db.session.commit()
+
+    def get_all_course_events(self, course_name):
+        '''
+        takes in the course name
+        return a lists of events' id associated with the course and the course itself
+        '''
+        course_events = Event.query.join(Participation).filter(Event.course.contains(course_name), \
+                                    Participation.user_id == current_user.id).all()
+        event_ids = [event.id for event in course_events]
+        return event_ids
 
     def edit_event_in_database(self, eventID, changes_json):
         '''
@@ -224,6 +292,18 @@ class DatabaseManager():
         ).order_by(Event.startdate).all()
         return occupied_events
 
+    def get_events_by_type(self, event_type):
+        '''
+        Takes in a event_type(int).
+        Return a list of events of this type
+        '''
+        userid = current_user.id
+        events_of_type = Event.query.join(Participation).filter(
+            Participation.user_id == userid,
+            Event.eventType == event_type
+        ).all()
+        return events_of_type
+
     def get_students(self, course_name):
         '''
         Takes in the course name string.
@@ -237,71 +317,103 @@ class DatabaseManager():
             students_id.append(row.user_id)
         return students_id
 
+    def get_all_courses(self):
+        course_names = [ r.name for r in db.session.query(Event.name) \
+                            .join(Participation) \
+                            .filter(Participation.user_id == current_user.id) \
+                            .filter(Event.eventType == EventType.COURSE)]
+        return {"course_names" : course_names}
+
+    #Currently only consider meetings that has duration less than one day
     # TODO: discuss the format of passed in earliest/latest meet time
-    # TODO: consider cases where there are events before earliest meeting time or lastest meet time
-    def find_available_meeting_time(self, event_json):
+    def find_available_meeting_time(self, meeting_json):
         '''
         Takes in the json-converted dict containing:
         meeting_name : string, pariticipants : List[string],
-        possible_days: List[datetime.datetime], meet_duration: int,
+        possible_dates: List[datetime.datetime], meet_duration: int,
         earliest_meet_time: datetime.datetime,
         latest_meet_time: datetime.datetime
         Returns a list of possible meeting time, in the format:
         [{date: [(start_time_1, end_time_1),(start_time_2, end_time_2)]},...]
         '''
-        participants = event_json['participants']
-        possible_days = event_json['possible_days']
-        meet_duration = event_json['meet_duration']
-        earliest_meet_time = event_json['earliest_meet_time']
-        latest_meet_time = event_json['latest_meet_time']
 
+        participants = meeting_json['participants']
+        possible_dates = meeting_json['possible_dates']
+        possible_dates.sort()
+        possible_days = [day.isoweekday() for day in possible_dates]
+        meet_duration = meeting_json['meet_duration']
+        earliest_meet_time = meeting_json['earliest_meet_time']
+        latest_meet_time = meeting_json['latest_meet_time']
+
+        # Get all the events within dates
         occupied_events = db.session.query(
-            Event.id, Event.date, Event.time
-        ).filter(
-            Event.date.in_(possible_days)
+            Event.id, Event.startdate, Event.starttime, Event.endtime, Event.frequencyType).filter(
+            db.or_(Event.startdate.in_(possible_dates),
+                    db.and_(Event.frequencyType == FrequencyType.DAILY,
+                    Event.startdate <= possible_dates[0]),
+                    db.and_(Event.frequencyType == FrequencyType.WEEKLY,
+                    sqlalchemy.func.extract('dow', Event.startdate).in_(possible_days)),
+                    db.and_(Event.frequencyType == FrequencyType.MONTHLY,
+                    sqlalchemy.func.extract('day', Event.startdate).in_([date.day for date in possible_dates])))
         ).join(Participation).join(User).filter(
                 User.username.in_(participants)
         ).distinct().all()
-
-        occupied_time_dict = {}
+        
+        # Finds all the occupied time slots in those dates 
+        occupied_time_dict = defaultdict(list)
         for event in occupied_events:
-            if event.date not in occupied_time_dict:
-                occupied_time_dict[event.date] = [event.time]
+            if event.frequencyType == FrequencyType.DAILY:
+                for date in possible_dates:
+                    if event.startdate <= date:
+                        occupied_time_dict[date].append((event.starttime, event.endtime))
+
+            elif event.frequencyType == FrequencyType.WEEKLY:
+                for date in possible_dates:
+                    if event.startdate.isoweekday() == date.isoweekday():
+                        occupied_time_dict[date].append((event.starttime, event.endtime))
+            elif event.frequencyType == FrequencyType.MONTHLY:
+                for date in possible_dates:
+                    if event.startdate.day == date.day:
+                        occupied_time_dict[date].append((event.starttime, event.endtime))
             else:
-                occupied_time_dict[event.date].append(event.time)
+                occupied_time_dict[event.startdate].append((event.starttime, event.endtime))
+
+        for date in occupied_time_dict:
+            occupied_time_dict[date].sort()
+        
         '''
         the current format of possible meeting time is
         [{date: [(start_time_1, end_time_1),(start_time_2, end_time_2)]},...]
         '''
         all_possible_time_slots = []
-        for possible_day in possible_days:
-            if possible_day not in occupied_time_dict:
+        for possible_date in possible_dates:
+            if possible_date not in occupied_time_dict:
                 all_possible_time_slots.append(
-                    {possible_day: [(earliest_meet_time, latest_meet_time)]}
+                    {possible_date: [(earliest_meet_time, latest_meet_time)]}
                 )
             else:
                 possible_time_slots = []
-                for i in len(occupied_time_dict[possible_day]) - 1:
+                for i in range(len(occupied_time_dict[possible_date]) - 1):
                     time_diff = (
                         datetime.combine(
                             datetime.today(),
-                            occupied_time_dict[possible_day][i+1][0]
+                            occupied_time_dict[possible_date][i+1][0]
                         )
                         - datetime.combine(
                             datetime.today(),
-                            occupied_time_dict[possible_day][i][1]
+                            occupied_time_dict[possible_date][i][1]
                         )
                     ).total_seconds() / 60
-                    if meet_duration < time_diff:
+                    if meet_duration <= time_diff:
                         possible_time_slots.append((
-                            occupied_time_dict[possible_day][i][1],
-                            occupied_time_dict[possible_day][i+1][0]
+                            occupied_time_dict[possible_date][i][1],
+                            occupied_time_dict[possible_date][i+1][0]
                         ))
 
                 earliest_time_diff = (
                     datetime.combine(
                         datetime.today(),
-                        occupied_time_dict[possible_day][0][0]
+                        occupied_time_dict[possible_date][0][0]
                     ) - datetime.combine(
                         datetime.today(), earliest_meet_time)
                     ).total_seconds() / 60
@@ -309,17 +421,17 @@ class DatabaseManager():
                     datetime.combine(datetime.today(), latest_meet_time)
                     - datetime.combine(
                         datetime.today(),
-                        occupied_time_dict[possible_day][-1][1]
+                        occupied_time_dict[possible_date][-1][1]
                     )).total_seconds() / 60
 
-                if meet_duration < earliest_time_diff:
-                    possible_time_slots.append((earliest_time_diff, occupied_time_dict[possible_day][0][0]))
-                if meet_duration < latest_time_diff:
-                    possible_time_slots.append((occupied_time_dict[possible_day][-1][1], latest_time_diff))
+                if meet_duration <= earliest_time_diff:
+                    possible_time_slots.append((earliest_meet_time, occupied_time_dict[possible_date][0][0]))
+                if meet_duration <= latest_time_diff:
+                    possible_time_slots.append((occupied_time_dict[possible_date][-1][1], latest_meet_time))
 
                 if possible_time_slots:
                     all_possible_time_slots.append(
-                        {possible_day: possible_time_slots}
+                        {possible_date: possible_time_slots}
                     )
 
         return all_possible_time_slots

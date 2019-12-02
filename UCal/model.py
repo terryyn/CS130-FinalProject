@@ -16,6 +16,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(128), unique=True, index = True)
     password_hash = db.Column(db.String(128))
     is_instructor = db.Column(db.Boolean)
+    courses =  db.Column(db.String(1024), default='')
     participations = db.relationship(
         'Participation', backref='user', lazy='dynamic'
     )
@@ -31,16 +32,31 @@ class EventType:
     '''
     DEFAULT = 0
     COURSE = 1
-    MEETING = 2
-    EXAM = 3
-    ASSIGNMENT = 4
+    DISCUSSION = 2
+    OH = 3
+    EXAM = 4
+    DEADLINE = 5
+    MEETING = 6
+    MEETING_TENTATIVE = 7
 
+class FrequencyType:
+    '''
+    The FrequencyType class serves as an enumeration indicating the
+    frequency of event as a field in event entries 
+    '''
+    DEFAULT = 0
+    DAILY = 1
+    WEEKLY = 2
+    MONTHLY = 3
 
 class Event(db.Model):
     '''
     The event table contains the following columns:
     id | name | startdate | starttime | location | eventType |
-    endtime | enddate | description | participations(meeting)
+    endtime | enddate | frequencyType | description | course | guests
+
+    A course type event should has the course field as the name of itself
+
     '''
     __tablename__ = 'events'
     def as_dict(self):
@@ -52,16 +68,22 @@ class Event(db.Model):
                'endtime': str(self.endtime),
                'location': self.location,
                'eventType': self.eventType,
-               'description': self.description}
+               'frequencyType': self.frequencyType,
+               'description': self.description,
+               'course': self.course,
+               'guests': self.guests}
        
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
+    course = db.Column(db.String(64), default=None)
+    guests = db.Column(db.String(), default=None)
     startdate = db.Column(db.Date)
     starttime = db.Column(db.Time)
     location = db.Column(db.String(64))
     eventType = db.Column(db.Integer, default=EventType.DEFAULT)
     enddate = db.Column(db.Date)
     endtime = db.Column(db.Time)
+    frequencyType = db.Column(db.Integer, default=FrequencyType.DEFAULT)
     description = db.Column(db.String(64), nullable=True)
     participations = db.relationship(
         'Participation', backref='event', lazy='dynamic'
