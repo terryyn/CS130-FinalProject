@@ -370,8 +370,8 @@ class DatabaseManager():
         possible_dates.sort()
         possible_days = [day.isoweekday() for day in possible_dates]
         meet_duration = meeting_json['meet_duration']
-        earliest_meet_time = self.convert_time(meeting_json['earliest_meet_time'])
-        latest_meet_time = self.convert_time(meeting_json['latest_meet_time'])
+        earliest_meet_time =  time(hour=8)
+        latest_meet_time = time(hour=18)
 
         # Get all the events within dates
         occupied_events = db.session.query(
