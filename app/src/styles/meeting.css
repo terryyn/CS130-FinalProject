@@ -98,6 +98,16 @@
     height: 100%
 }
 
+#room-container {
+    height: 100%
+}
+
+#room-card {
+    background: rgb(73, 76, 89) !important;
+    color: white;
+    height: 100%
+}
+
 #time-card button {
     color: white;
     border-color: white !important;
