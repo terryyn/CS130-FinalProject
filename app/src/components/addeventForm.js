@@ -36,7 +36,7 @@ class AddEventForm extends Component {
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
 							onChange={(e) => this.props.setStartDate(e.target.value)}
-							value={this.props.edit ? this.props.startDate : ''}
+							value={this.props.startDate}
 						/>
 						<div id="starttime">
 							<TextField
@@ -45,7 +45,7 @@ class AddEventForm extends Component {
 								variant="outlined"
 								InputProps={{ classes: { input: this.props.classes.textField } }}
 								onChange={(e) => this.props.setStartTime(e.target.value)}
-								value={this.props.edit ? this.props.startTime : ''}
+								value={this.props.startTime}
 							/>
 						</div>
 					</div>
@@ -58,7 +58,7 @@ class AddEventForm extends Component {
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
 							onChange={(e) => this.props.setEndDate(e.target.value)}
-							value={this.props.edit ? this.props.endDate : ''}
+							value={this.props.endDate}
 						/>
 						<div id="endtime">
 							<TextField
@@ -67,7 +67,7 @@ class AddEventForm extends Component {
 								variant="outlined"
 								InputProps={{ classes: { input: this.props.classes.textField } }}
 								onChange={(e) => this.props.setEndTime(e.target.value)}
-								value={this.props.edit ? this.props.endTime : ''}
+								value={this.props.endTime}
 							/>
 						</div>
 					</div>
@@ -81,7 +81,7 @@ class AddEventForm extends Component {
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
 							onChange={(e) => this.props.setName(e.target.value)}
-							value={this.props.edit ? this.props.name : ''}
+							value={this.props.name}
 						/>
 					</div>
 
@@ -92,7 +92,7 @@ class AddEventForm extends Component {
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
 							onChange={(e) => this.props.setLocation(e.target.value)}
-							value={this.props.edit ? this.props.location : ''}
+							value={this.props.location}
 						/>
 					</div>
 
@@ -113,7 +113,7 @@ class AddEventForm extends Component {
 						</Select>
 					</div>
 
-					{this.props.currentIsInstructor &&
+					{this.props.currentIsInstructor && (
 						<div className="addevent-field" id="course">
 							<InputLabel id="type-label">Course</InputLabel>
 							<Select
@@ -121,14 +121,10 @@ class AddEventForm extends Component {
 								label="Course"
 								onChange={(e) => this.props.setCourse(e.target.value)}
 							>
-							{
-								this.props.courses.map( (c,index) => (
-									<MenuItem value={c}>{c}</MenuItem>
-								))
-							}
+								{this.props.courses.map((c, index) => <MenuItem value={c}>{c}</MenuItem>)}
 							</Select>
 						</div>
-					}
+					)}
 
 					<div className="addevent-field" id="description">
 						<InputLabel id="description-label">Description</InputLabel>
@@ -139,7 +135,7 @@ class AddEventForm extends Component {
 							rows="2"
 							margin="normal"
 							onChange={(e) => this.props.setDesc(e.target.value)}
-							value={this.props.edit ? this.props.description : ''}
+							value={this.props.description}
 						/>
 					</div>
 

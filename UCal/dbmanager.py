@@ -110,17 +110,17 @@ class DatabaseManager():
 
     @staticmethod
     def convert_date(date):
-        return datetime.datetime.strptime(
+        return datetime.strptime(
             date, '%Y-%m-%d'
         ).date()
 
     @staticmethod
     def convert_time(time, has_seconds=False):
         if has_seconds:
-            return datetime.datetime.strptime(
+            return datetime.strptime(
             time, '%H:%M:%S'
         ).time()
-        return datetime.datetime.strptime(
+        return datetime.strptime(
             time, '%H:%M'
         ).time()
 
@@ -285,7 +285,7 @@ class DatabaseManager():
         # match the json object from client
         userid = current_user.id
         date_str = req_json['date']
-        date = datetime.datetime.strptime(date_str, '%a %b %d %Y').date()
+        date = datetime.strptime(date_str, '%a %b %d %Y').date()
         occupied_events = Event.query.join(Participation).filter(
             Participation.user_id == userid,
             Event.startdate <= date, Event.enddate >= date
