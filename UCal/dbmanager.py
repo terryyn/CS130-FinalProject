@@ -1,5 +1,5 @@
 # flake8 compatible
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 from collections import defaultdict
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
@@ -364,9 +364,16 @@ class DatabaseManager():
         [{date: [(start_time_1, end_time_1),(start_time_2, end_time_2)]},...]
         '''
 
-        participants = meeting_json['participants']
-        possible_dates = [ self.convert_date(date_str) for date_str in meeting_json['possible_dates']]
-        possible_dates.sort()
+        participants = meeting_json['participants'].split(',')
+        possible_dates = []
+        earliest_meet_date = self.convert_date(meeting_json['earliest_meet_date'])
+        latest_meet_date = self.convert_date(meeting_json['latest_meet_date'])
+        step = timedelta(days=1)
+        
+        while earliest_meet_date <= latest_meet_date:
+            possible_dates.append(earliest_meet_date)
+            earliest_meet_date += step
+        
         possible_days = [day.isoweekday() for day in possible_dates]
         meet_duration = meeting_json['meet_duration']
         earliest_meet_time =  time(hour=8)
