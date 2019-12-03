@@ -125,12 +125,22 @@ function Home(props) {
 		const form = { date: newDateStr };
 		server.getEventByUserAndDate(form).then((events) => {
 			setEvents(events['events'] ? events['events'] : []);
+			events['events'].forEach(e => {
+				if (e['eventType']==0) e['eventType']='general';
+				else if (e['eventType']==1) e['eventType']='course';
+				else if (e['eventType']==2) e['eventType']='discussion';
+				else if (e['eventType']==3) e['eventType']='office-hours';
+				else if (e['eventType']==4) e['eventType']='exam';
+				else if (e['eventType']==5) e['eventType']='class-deadline';
+				else if (e['eventType']==6) e['eventType']='meeting-accepted';
+				else e['eventType']='general';
+			});
 		});
 	}
 
 	function onChangeDate(date) {
 		setDate(date.toLocaleString());
-		setEvents(getEventsFromDate(date));
+		getEventsFromDate(date);
 	}
 
 	async function addEvent() {
@@ -215,6 +225,7 @@ function Home(props) {
 		setEndDate(null);
 		setStartTime(null);
 		setEndTime(null);
+		setType(0);
 	}
 
 	function getEvent(id) {
@@ -227,6 +238,14 @@ function Home(props) {
 			setEndDate(event['enddate']);
 			setStartTime(event['starttime']);
 			setEndTime(event['endtime']);
+			if (event['eventType']==0) setType('general');
+			else if (event['eventType']==1) setType('course');
+			else if (event['eventType']==2) setType('discussion');
+			else if (event['eventType']==3) setType('office-hours');
+			else if (event['eventType']==4) setType('exam');
+			else if (event['eventType']==5) setType('class-deadline');
+			else if (event['eventType']==6) setType('meeting-accepted');
+			else setType('general');
 		});
 	}
 

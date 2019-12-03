@@ -1,3 +1,6 @@
+#!/usr/local/bin/python
+# coding=utf-8
+
 import json
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -142,7 +145,7 @@ class RoomFinder():
         cur_dates = self.driver.find_element_by_class_name(
             "fc-left"
         ).get_attribute("innerText").split('\n')[0]
-
+            
         start_date = cur_dates.split('–')[0].strip(' ').split(',')
         site_start_date = datetime(
             year=int(start_date[2].strip(' ')),
