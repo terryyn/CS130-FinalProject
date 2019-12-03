@@ -85,11 +85,19 @@ class RoomFinder():
         meeting_size = int(req_json["meeting_size"])
         duration = int(req_json["duration"])
         datetimes = []
-        dt_str_arr = req_json["datetimes"].split("&")
+        dt_str_arr = req_json["datetimes"].split(",")
         for dt_str in dt_str_arr:
-            dt_arr = dt_str.split("^")
-            start_time = datetime.strptime(dt_arr[0], "%Y-%m-%d %H:%M")
-            end_time = datetime.strptime(dt_arr[1], "%Y-%m-%d %H:%M")
+            dt_arr = dt_str.split("-")
+            dt_str = ('-').join(dt_arr[:3])
+            start_time = datetime.strptime(dt_str, "%Y-%m-%d %H:%M")
+            end_time_temp = datetime.strptime(dt_arr[3], "%H:%M")
+            end_time = datetime(
+                year=start_time.year,
+                month=start_time.month,
+                day=start_time.day,
+                hour=end_time_temp.hour,
+                minute=end_time_temp.minute
+            )
             datetimes.append((start_time, end_time))
         return meeting_size, duration, datetimes
 
