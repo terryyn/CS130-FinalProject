@@ -392,7 +392,7 @@ class DatabaseManager():
         ).join(Participation).join(User).filter(
                 User.email.in_(participants)
         ).distinct().all()
-        
+
         # Finds all the occupied time slots in those dates 
         occupied_time_dict = defaultdict(list)
         for event in occupied_events:
@@ -419,12 +419,10 @@ class DatabaseManager():
         the current format of possible meeting time is
         [{date: [(start_time_1, end_time_1),(start_time_2, end_time_2)]},...]
         '''
-        all_possible_time_slots = []
+        all_possible_time_slots = {}
         for possible_date in possible_dates:
             if possible_date not in occupied_time_dict:
-                all_possible_time_slots.append(
-                    {possible_date: [(earliest_meet_time, latest_meet_time)]}
-                )
+                all_possible_time_slots[possible_date] = [(earliest_meet_time, latest_meet_time)]
             else:
                 possible_time_slots = []
                 for i in range(len(occupied_time_dict[possible_date]) - 1):
@@ -464,11 +462,14 @@ class DatabaseManager():
                     possible_time_slots.append((occupied_time_dict[possible_date][-1][1], latest_meet_time))
 
                 if possible_time_slots:
-                    all_possible_time_slots.append(
-                        {possible_date: possible_time_slots}
-                    )
-
-        return all_possible_time_slots
+                    all_possible_time_slots[possible_date] = possible_time_slots
+        
+        time_slot_lists = []
+        for date in all_possible_time_slots:
+            for time_range in all_possible_time_slots[date]:
+                time_str = date.strftime("%Y-%m-%d ") + time_range[0].strftime("%H:%M-") + time_range[1].strftime("%H:%M")
+                time_slot_lists.append(time_str)
+        return time_slot_lists
     
     def clear_all(self):
         meta = db.metadata
