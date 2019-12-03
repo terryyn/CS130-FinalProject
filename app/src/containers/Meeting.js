@@ -19,6 +19,7 @@ import { Button } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
+import Link from '@material-ui/core/Link';
 
 import '../styles/meeting.css'
 import { withTheme } from '@material-ui/styles';
@@ -60,6 +61,7 @@ function Meeting() {
 	const [ meetingDes, setMeetingDes ] = useState("");
 	const [ meetingLoc, setMeetingLoc ] = useState("");
 	const [ meetingName, setMeetingName ] = useState("");
+	const [ duration, setDuration] = useState("0");
 
 	const [ guests, setGuests ] = useState([]);
 	const [ course, setCourse ] = useState("");
@@ -126,6 +128,10 @@ function Meeting() {
 
 	const handleRoomErrMsg = msg => {
 		setRoomErrMsg(msg);
+	}
+
+	const handleDuration = dur => {
+		setDuration(dur.target.value);
 	}
 
 	function formatDate(d) {
@@ -244,9 +250,9 @@ function Meeting() {
 								/>
 								<TextField
 									id="outlined-multiline-flexible"
-									label="Location"
-									value={meetingLoc}
-									onChange={handleMeetingLocChange}
+									label="Duration"
+									value={duration}
+									onChange={handleDuration}
 									className={classes.textField}
 									margin="normal"
 									variant="outlined"
@@ -307,9 +313,14 @@ function Meeting() {
 								(
 									<div id="time-buttons">
 										{availableTimes.map((time, index) => (
+											<div>
 											<Button key={index} variant="outlined" onClick={() => {submitMeeting(new Date(time.start), new Date(time.end))}}>
 												{`${time.start} to ${time.end}`}
 											</Button>
+											<Typography>
+												<a href="http://calendar.library.ucla.edu/reserve">{availableRooms[index]}</a>
+											</Typography>
+											</div>
 										))}
 									</div>
 								) :
@@ -380,48 +391,28 @@ function Meeting() {
 	}
 
 	function getAvailableTimes() {
+		var name = meetingName;
+		var dur = parseInt(duration)*60;
+		var startdate = formatDate(startDate);
+		var enddate = formatDate(endDate);
 		setAvailable([
-			// { start: 'October 13, 2019 11:30', end: 'October 13, 2019 12:30' },
-			// { start: 'October 20, 2019 1:00', end: '"October 20, 2019 5:00' },
+			{ start: 'December 5, 2019 11:30', end: 'December 5, 2019 12:30' },
+			{ start: 'December 2, 2019 13:00', end: '"December 2, 2019 14:00' },
 		]);
+		getAvailableRooms();
 		setShowAvailable(true);
 	}
 
 	function getAvailableRooms() {
-		const form = 
-		server.getAvailableRoom(form).then();
-	}
-
-	function renderFindRoom() {
-		getAvailableRooms();
-		return (
-			showAvailable && <Card id="room-card"> 
-				<div id="room-container">
-				<CardHeader title="Available Rooms" />
-						<Typography className={classes.pos} color="textSecondary">
-							Study room for the selected time
-						</Typography>
-						<CardContent className={classes.cardContent}>
-							{
-								(availableRooms.length == 0) ?
-								(
-									<div id="room-message">
-										{roomErrMsg}
-									</div>	
-								) :
-								(
-									<div id="availablerooms">
-										{availableRooms.map((room, index) => (
-											<div> {room} </div>
-										))}
-									</div>
-								)
-							}
-						</CardContent>
-
-				</div>
-			</Card>
-		);
+		var meetsize = guests.length + 1;
+		var dur = parseInt(duration)*2;
+		const form = {
+			duration: 2, meeting_size: 1, datetimes: '2019-12-05 11:30^2019-12-05 12:30&2019-12-02 13:00^2019-12-02 14:00'
+		}
+		// server.getAvailableRoom(form).then(data => {
+		// 		setAvailableRooms(data.Timeslots);
+		// });
+		setAvailableRooms(["Powell Study Room 1,Powell Study Room 2","Powell Study Room 1"])
 	}
 
 	return (
