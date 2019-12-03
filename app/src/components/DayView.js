@@ -50,11 +50,21 @@ function DayView(props) {
 	}
 
 	function renderEvent(event) {
+		if (event.eventType === parseInt(event.eventType, 10)) {
+			if (event.eventType==0) event.eventType='general';
+			else if (event.eventType==1) event.eventType='course';
+			else if (event.eventType==2) event.eventType='discussion';
+			else if (event.eventType==3) event.eventType='office-hours';
+			else if (event.eventType==4) event.eventType='exam';
+			else if (event.eventType==5) event.eventType='class-deadline';
+			else if (event.eventType==6) event.eventType='meeting-accepted';
+			else event.eventType='general';
+		}
 		return (
 			<Fragment>
 				<ListItem onClick={() => props.showEvent(event['id'])} style={{ cursor: 'pointer' }}>
 					<ListItemText>
-						<div className="agenda-item general">
+						<div className={"agenda-item " + event.eventType}>
 							<div className="agenda-item-info">
 								<div className="agenda-item-time">
 									<Typography variant="subtitle1" gutterBottom>
