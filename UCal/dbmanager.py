@@ -376,8 +376,8 @@ class DatabaseManager():
         
         possible_days = [day.isoweekday() for day in possible_dates]
         meet_duration = meeting_json['meet_duration']
-        earliest_meet_time =  time(hour=8)
-        latest_meet_time = time(hour=18)
+        earliest_meet_time = self.convert_time(meeting_json['earliest_meet_time'])
+        latest_meet_time = self.convert_time(meeting_json['latest_meet_time'])
 
         # Get all the events within dates
         occupied_events = db.session.query(
@@ -464,11 +464,25 @@ class DatabaseManager():
                 if possible_time_slots:
                     all_possible_time_slots[possible_date] = possible_time_slots
         
+        return format_time_slot_lists(all_possible_time_slots, meet_duration)
+
+    def format_time_slot_lists(self,time_slots, meeting_duration):
         time_slot_lists = []
-        for date in all_possible_time_slots:
-            for time_range in all_possible_time_slots[date]:
-                time_str = date.strftime("%Y-%m-%d ") + time_range[0].strftime("%H:%M-") + time_range[1].strftime("%H:%M")
-                time_slot_lists.append(time_str)
+        for date in time_slots:
+            for time_range in time_slots[date]:
+                meeting_start_time = time_range[0]
+                while meeting_start_time < time_range[1]:
+                    meeting_end_time = (datetime.combine(
+                        datetime.today(),
+                        meeting_start_time
+                        ) + timedelta(minutes=meeting_duration)).time()
+                    if meeting_end_time < time_range[1]:
+                        time_str = date.strftime("%Y-%m-%d ") + meeting_start_time.strftime("%H:%M-") + meeting_end_time.strftime("%H:%M")
+                        time_slot_lists.append(time_str)
+                    meeting_start_time = (datetime.combine(
+                        datetime.today(),
+                        meeting_start_time
+                        ) + timedelta(minutes=30)).time()
         return time_slot_lists
     
     def clear_all(self):
