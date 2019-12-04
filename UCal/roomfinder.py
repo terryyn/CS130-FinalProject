@@ -9,6 +9,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.support.ui import Select
 from datetime import datetime, date, time, timedelta
+from webdriver_manager.chrome import ChromeDriverManager
+
 
 MONTH_DICT={
     "January": 1,
@@ -43,7 +45,7 @@ class RoomFinder():
             self.option.add_argument("headless")
         else:
             self.option.add_argument(" - incognito")
-        self.driver = webdriver.Chrome(chrome_options=self.option)
+        self.driver = webdriver.Chrome(ChromeDriverManager().install(),chrome_options=self.option)
         self.driver.implicitly_wait(30)
         self.base_url = "http://calendar.library.ucla.edu/reserve"
         self.verificationErrors = []
@@ -90,7 +92,7 @@ class RoomFinder():
             dt_arr = dt_str.split("-")
             dt_str = ('-').join(dt_arr[:3])
             start_time = datetime.strptime(dt_str, "%Y-%m-%d %H:%M")
-            end_time_temp = datetime.strptime(dt_arr[3], "%H:%M")
+            end_time_temp = datetime.strptime(dt_arr[3], "%H:%M%S")
             end_time = datetime(
                 year=start_time.year,
                 month=start_time.month,
@@ -150,9 +152,9 @@ class RoomFinder():
     Returns false if not valid, true otherwise.
     '''
     def handle_meeting_date(self, req_datetime):
-        cur_dates = self.driver.find_element_by_class_name(
-            "fc-left"
-        ).get_attribute("innerText").split('\n')[0]
+        cur_dates = self.driver.find_element_by_tag_name(
+            "h2"
+        ).get_attribute("innerText")
             
         start_date = cur_dates.split('–')[0].strip(' ').split(',')
         site_start_date = datetime(

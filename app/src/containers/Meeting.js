@@ -53,7 +53,7 @@ function Meeting() {
 	const classes = useStyles();
 
 	const [ showAvailable, setShowAvailable ] = useState(false);
-	const [ availableTimes, setAvailable ] = useState([]);
+	const [ availableTimes, setAvailableTimes] = useState([]);
 
 	const [ startDate, setStartDate ] = useState(new Date());
 	const [ endDate, setEndDate ] = useState(new Date());
@@ -63,14 +63,14 @@ function Meeting() {
 	const [ meetingName, setMeetingName ] = useState("");
 	const [ duration, setDuration] = useState("0");
 
-	const [ guests, setGuests ] = useState([]);
+	const [ guests, setGuests ] = useState("");
 	const [ course, setCourse ] = useState("");
 
 	const [ showSuccess, setSuccess ] = useState(false);
 	const [ customStartDate, setCustomStartDate ] = useState(new Date());
 	const [ customEndDate, setCustomEndDate ] = useState(new Date());
 
-	const [ availableRooms, setAvailableRooms] = useState([]);
+	const [ availableRooms, setAvailableRooms] = useState(new Object());
 	const [ roomErrMsg, setRoomErrMsg]  = useState("");
 
 
@@ -153,12 +153,13 @@ function Meeting() {
 		return datetext.substring(0, 5);
 	}
 
-	async function addEvent(start, end) {
+	async function addEvent(time) {
+		var start = time.substring(0,time.lastIndexOf('-'));
 		const form = {
-			startdate: formatDate(start),
-			starttime: formateTime(start),
-			enddate: formatDate(end),
-			endtime: formateTime(end),
+			startdate: start.substring(0,start.indexOf(' ')),
+			starttime: start.substring(start.indexOf(' ')+1,start.length),
+			enddate: start.substring(0,start.indexOf(' ')),
+			endtime: time.substring(time.lastIndexOf('-'),time.length),
 			location: meetingLoc,
 			name: meetingName,
 			type: 6,
@@ -314,11 +315,11 @@ function Meeting() {
 									<div id="time-buttons">
 										{availableTimes.map((time, index) => (
 											<div>
-											<Button key={index} variant="outlined" onClick={() => {submitMeeting(new Date(time.start), new Date(time.end))}}>
-												{`${time.start} to ${time.end}`}
+											<Button key={index} variant="outlined" onClick={() => {submitMeeting(time)}}>
+												{time}
 											</Button>
 											<Typography>
-												<a href="http://calendar.library.ucla.edu/reserve">{availableRooms[index]}</a>
+												<Link href="http://calendar.library.ucla.edu/reserve">{Array.from(availableRooms[time.substring(0,time.lastIndexOf('-'))].keys())}</Link>
 											</Typography>
 											</div>
 										))}
@@ -391,28 +392,48 @@ function Meeting() {
 	}
 
 	function getAvailableTimes() {
-		var name = meetingName;
-		var dur = parseInt(duration)*60;
+		var dur = 60;
 		var startdate = formatDate(startDate);
 		var enddate = formatDate(endDate);
-		setAvailable([
-			{ start: 'December 5, 2019 11:30', end: 'December 5, 2019 12:30' },
-			{ start: 'December 2, 2019 13:00', end: '"December 2, 2019 14:00' },
-		]);
-		getAvailableRooms();
+		// setAvailable([
+		// 	{ start: 'December 5, 2019 11:30', end: 'December 5, 2019 12:30' },
+		// 	{ start: 'December 2, 2019 13:00', end: '"December 2, 2019 14:00' },
+		// ]);
+		// getAvailableRooms();
+		var times = ["2019-12-05 11:00-12:00"];
+		setAvailableTimes(times);
+		const form = {
+			participants: guests,
+			earliest_meet_date: startdate,
+			latest_meet_date: enddate,
+			meet_duration: dur
+		}
+		// server.getAvailableTime(form).then(data => {
+		// 	// var i;
+		// 	// for (i=0;i<data.length;i++){
+		// 	// 	console.log(Object.keys(data[i])[0]);
+		// 	// }
+		// 	console.log(data);
+		// })
+		getAvailableRooms(times);
 		setShowAvailable(true);
+
 	}
 
-	function getAvailableRooms() {
-		var meetsize = guests.length + 1;
+	function getAvailableRooms(times) {
+		var meetsize = (guests.split(",").length) + 1 ;
 		var dur = parseInt(duration)*2;
 		const form = {
-			duration: 2, meeting_size: 1, datetimes: '2019-12-05 11:30^2019-12-05 12:30&2019-12-02 13:00^2019-12-02 14:00'
+			duration: 2, 
+			meeting_size: 5, 
+			datetimes: times.join(',')
 		}
-		// server.getAvailableRoom(form).then(data => {
-		// 		setAvailableRooms(data.Timeslots);
-		// });
-		setAvailableRooms(["Powell Study Room 1,Powell Study Room 2","Powell Study Room 1"])
+		console.log(form.datetimes);
+		server.getAvailableRoom(form).then(data => {
+				console.log(data);
+				setAvailableRooms(data.Timeslots);
+		});
+		// setAvailableRooms(["Powell Study Room 1,Powell Study Room 2","Powell Study Room 1"])
 	}
 
 	return (
