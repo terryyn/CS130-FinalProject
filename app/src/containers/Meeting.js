@@ -104,9 +104,9 @@ function Meeting() {
 		setGuests("");
 	};
 
-	const submitMeeting = (startDateMeeting, endDateMeeting) => {
+	const submitMeeting = (time) => {
 		setSuccess(true);
-		addEvent(startDateMeeting, endDateMeeting);
+		addEvent(time);
 	};
 
 	const handleClose = () => {
@@ -159,7 +159,7 @@ function Meeting() {
 			startdate: start.substring(0,start.indexOf(' ')),
 			starttime: start.substring(start.indexOf(' ')+1,start.length),
 			enddate: start.substring(0,start.indexOf(' ')),
-			endtime: time.substring(time.lastIndexOf('-'),time.length),
+			endtime: time.substring(time.lastIndexOf('-')+1,time.length),
 			location: meetingLoc,
 			name: meetingName,
 			type: 6,
@@ -318,9 +318,7 @@ function Meeting() {
 											<Button key={index} variant="outlined" onClick={() => {submitMeeting(time)}}>
 												{time}
 											</Button>
-											<Typography>
-												<Link href="http://calendar.library.ucla.edu/reserve">{availableRooms[time.substring(0,time.lastIndexOf('-'))]}</Link>
-											</Typography>
+											<a href="http://calendar.library.ucla.edu/reserve">{availableRooms[time.substring(0,time.lastIndexOf('-'))]}</a>
 											</div>
 										))}
 									</div>
@@ -368,7 +366,7 @@ function Meeting() {
 													}}
 												/>
 											</div>
-											<Button variant="outlined" id="custom-submit-button" onClick={() => {submitMeeting(customStartDate, customEndDate)}}>
+											<Button variant="outlined" id="custom-submit-button" onClick={() => {submitMeeting(formatDateToTime(customStartDate,customEndDate))}}>
 												Create Meeting
 											</Button>
 										</MuiPickersUtilsProvider>
@@ -391,8 +389,12 @@ function Meeting() {
 		);
 	}
 
+	function formatDateToTime(start,end){
+
+	}
+
 	function getAvailableTimes() {
-		var dur = 60;
+		var dur = 60*parseInt(duration);
 		var startdate = formatDate(startDate);
 		var enddate = formatDate(endDate);
 		var starttime = formatTime(startDate);
@@ -421,7 +423,6 @@ function Meeting() {
 			setAvailableRooms(temproom);
 			console.log(data);
 			getAvailableRooms(data);
-			setShowAvailable(true);
 		})
 		// var data = ["2019-12-04 10:00-11:00"];
 		// setAvailableTimes(data);
@@ -451,7 +452,8 @@ function Meeting() {
 		console.log(form.datetimes);
 		server.getAvailableRoom(form).then(data => {
 				console.log(data);
-				setAvailableRooms(data.map.map((loc,index) => {loc.substring(0,loc.indexOf(':'))}));
+				setAvailableRooms(data.Timeslots)
+				setShowAvailable(true);
 		});
 		// setAvailableRooms(["Powell Study Room 1,Powell Study Room 2","Powell Study Room 1"])
 	}

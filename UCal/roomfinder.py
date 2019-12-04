@@ -87,7 +87,7 @@ class RoomFinder():
             self.option.add_argument("headless")
         else:
             self.option.add_argument(" - incognito")
-        self.driver = webdriver.Chrome(ChromeDriverManager().install(),chrome_options=self.option)
+        self.driver = webdriver.Chrome(chrome_options=self.option)
         self.driver.implicitly_wait(30)
         self.base_url = "http://calendar.library.ucla.edu/reserve"
         self.verificationErrors = []
