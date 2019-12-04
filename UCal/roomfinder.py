@@ -5,6 +5,10 @@ import json
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import Select
+from datetime import datetime, date, time, timedelta
+from webdriver_manager.chrome import ChromeDriverManager
+
+
 from datetime import datetime, timedelta
 
 class RoomFinder():
@@ -83,7 +87,7 @@ class RoomFinder():
             self.option.add_argument("headless")
         else:
             self.option.add_argument(" - incognito")
-        self.driver = webdriver.Chrome(chrome_options=self.option)
+        self.driver = webdriver.Chrome(ChromeDriverManager().install(),chrome_options=self.option)
         self.driver.implicitly_wait(30)
         self.base_url = "http://calendar.library.ucla.edu/reserve"
         self.verificationErrors = []
@@ -130,7 +134,7 @@ class RoomFinder():
             dt_arr = dt_str.split("-")
             dt_str = ('-').join(dt_arr[:3])
             start_time = datetime.strptime(dt_str, "%Y-%m-%d %H:%M")
-            end_time_temp = datetime.strptime(dt_arr[3], "%H:%M")
+            end_time_temp = datetime.strptime(dt_arr[3], "%H:%M%S")
             end_time = datetime(
                 year=start_time.year,
                 month=start_time.month,
