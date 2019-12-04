@@ -467,6 +467,11 @@ class DatabaseManager():
         return format_time_slot_lists(all_possible_time_slots, meet_duration)
 
     def format_time_slot_lists(self,time_slots, meeting_duration):
+        '''
+        divide previous large time blocks into small time blocks with the same length of meeting
+        return format:
+        ['2019-12-05 09:00-09:30', '2019-12-05 09:30-10:00']
+        '''
         time_slot_lists = []
         for date in time_slots:
             for time_range in time_slots[date]:
@@ -476,7 +481,7 @@ class DatabaseManager():
                         datetime.today(),
                         meeting_start_time
                         ) + timedelta(minutes=meeting_duration)).time()
-                    if meeting_end_time < time_range[1]:
+                    if meeting_end_time <= time_range[1]:
                         time_str = date.strftime("%Y-%m-%d ") + meeting_start_time.strftime("%H:%M-") + meeting_end_time.strftime("%H:%M")
                         time_slot_lists.append(time_str)
                     meeting_start_time = (datetime.combine(
