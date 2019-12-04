@@ -285,10 +285,13 @@ class RoomFinder():
                 loc = loc.strip()
                 sum_loc = cls.LOCATION_DICT[loc]
                 if sum_loc in cur_sum_dict:
-                    cur_sum_dict[sum_loc].append(loc)
+                    cur_sum_dict[sum_loc] += "," + loc
                 else:
-                    cur_sum_dict[sum_loc] = [loc]
-            summarized_time_loc[time] = cur_sum_dict
+                    cur_sum_dict[sum_loc] = loc
+            cur_sum_arr = []
+            for location, room in cur_sum_dict.items():
+                cur_sum_arr.append(location + ":" + room)
+            summarized_time_loc[time] = cur_sum_arr
         return summarized_time_loc
 
     '''
