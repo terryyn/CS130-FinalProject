@@ -3,37 +3,79 @@
 
 import json
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import Select
 from datetime import datetime, date, time, timedelta
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-MONTH_DICT={
-    "January": 1,
-    "February": 2,
-    "March": 3,
-    "April": 4,
-    "May": 5,
-    "June": 6,
-    "July": 7,
-    "August": 8,
-    "September": 9,
-    "October": 10,
-    "November": 11,
-    "December": 12
-}
-
+from datetime import datetime, timedelta
 
 class RoomFinder():
+    MONTH_DICT = {
+        "January": 1,
+        "February": 2,
+        "March": 3,
+        "April": 4,
+        "May": 5,
+        "June": 6,
+        "July": 7,
+        "August": 8,
+        "September": 9,
+        "October": 10,
+        "November": 11,
+        "December": 12
+    }
     TIME_FORMAT_STR = "%I:%M%p %A, %B %d, %Y "
     ERROR_CODE = {
         1: "No available time ranges selected. Please select at least one.",
         2: "Meeting size greater than any study room can accomodate.",
         3: "No available study rooms for the time range(s) selected."
+    }
+    LOCATION_DICT = {
+        'Powell Group Study Room A': 'Powell Group Study Rooms', 
+        'Powell Group Study Room B': 'Powell Group Study Rooms', 
+        'Powell Group Study Room C': 'Powell Group Study Rooms', 
+        'Powell Group Study Room D': 'Powell Group Study Rooms', 
+        'Powell Group Study Room E': 'Powell Group Study Rooms', 
+        'Powell Group Study Room F': 'Powell Group Study Rooms',
+        'YRL Collaboration Pod R01': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R02': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R03': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R04': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R05': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R06': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R07': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R08': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R09': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R10': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R11': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R12': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R13': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R14': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R15': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R16': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R17': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R18': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R19': 'YRL Collaboration Pods',
+        'YRL Collaboration Pod R20': 'YRL Collaboration Pods',
+        'YRL Group Study Room G01': 'YRL Group Study Rooms',
+        'YRL Group Study Room G02': 'YRL Group Study Rooms',
+        'YRL Group Study Room G03': 'YRL Group Study Rooms',
+        'YRL Group Study Room G04': 'YRL Group Study Rooms',
+        'YRL Group Study Room G05': 'YRL Group Study Rooms',
+        'YRL Group Study Room G06': 'YRL Group Study Rooms',
+        'YRL Group Study Room G07': 'YRL Group Study Rooms',
+        'YRL Group Study Room G08': 'YRL Group Study Rooms',
+        'YRL Group Study Room G09': 'YRL Group Study Rooms',
+        'YRL Group Study Room G10': 'YRL Group Study Rooms',
+        'YRL Group Study Room G11': 'YRL Group Study Rooms',
+        'YRL Group Study Room G12': 'YRL Group Study Rooms',
+        'YRL Group Study Room G13': 'YRL Group Study Rooms',
+        'YRL Group Study Room G14': 'YRL Group Study Rooms',
+        'YRL Group Study Room G15': 'YRL Group Study Rooms',
+        '12-077E Group Study Room': 'Biomedical Library',
+        'Collaboration Pod': 'Biomedical Library'
     }
     '''
     RoomFinder encapsulates all functions and variables related to
@@ -154,12 +196,12 @@ class RoomFinder():
     def handle_meeting_date(self, req_datetime):
         cur_dates = self.driver.find_element_by_tag_name(
             "h2"
-        ).get_attribute("innerText")
+        ).get_attribute("innerText").split('\n')[0]
             
         start_date = cur_dates.split('–')[0].strip(' ').split(',')
         site_start_date = datetime(
             year=int(start_date[2].strip(' ')),
-            month=MONTH_DICT[start_date[1].strip(' ').split()[0]],
+            month=self.MONTH_DICT[start_date[1].strip(' ').split()[0]],
             day=int(start_date[1].strip(' ').split()[1]),
             hour=req_datetime.hour,
             minute=req_datetime.minute
@@ -167,7 +209,7 @@ class RoomFinder():
         end_date = cur_dates.split('–')[1].strip(' ').split(',')
         site_end_date = datetime(
             year=int(end_date[2].strip(' ')),
-            month=MONTH_DICT[end_date[1].strip(' ').split()[0]],
+            month=self.MONTH_DICT[end_date[1].strip(' ').split()[0]],
             day=int(end_date[1].strip(' ').split()[1]),
             hour=req_datetime.hour,
             minute=req_datetime.minute
@@ -234,6 +276,20 @@ class RoomFinder():
         merged_blocks = list(set(merged_blocks))
         return merged_blocks
 
+    @classmethod
+    def summarize_location(cls, time_loc):
+        summarized_time_loc = {}
+        for time in time_loc.keys():
+            cur_sum_dict = {}
+            for loc in time_loc[time]:
+                loc = loc.strip()
+                sum_loc = cls.LOCATION_DICT[loc]
+                if sum_loc in cur_sum_dict:
+                    cur_sum_dict[sum_loc].append(loc)
+                else:
+                    cur_sum_dict[sum_loc] = [loc]
+            summarized_time_loc[time] = cur_sum_dict
+        return summarized_time_loc
 
     '''
     Takes in parameters: 
@@ -276,7 +332,5 @@ class RoomFinder():
             prev = ts
         return json.dumps({
             "Error": "",
-            "Timeslots": ts_loc
+            "Timeslots": self.summarize_location(ts_loc)
         })
-
-
