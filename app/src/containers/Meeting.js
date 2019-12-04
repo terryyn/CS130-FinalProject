@@ -147,7 +147,7 @@ function Meeting() {
 		return [year, month, day].join('-');
 	}
 
-	function formateTime(d) {
+	function formatTime(d) {
 		var datetext = d.toTimeString();
 		var datetext = datetext.split(' ')[0];
 		return datetext.substring(0, 5);
@@ -319,7 +319,7 @@ function Meeting() {
 												{time}
 											</Button>
 											<Typography>
-												<Link href="http://calendar.library.ucla.edu/reserve">{Array.from(availableRooms[time.substring(0,time.lastIndexOf('-'))].keys())}</Link>
+												<Link href="http://calendar.library.ucla.edu/reserve">{availableRooms[time.substring(0,time.lastIndexOf('-'))]}</Link>
 											</Typography>
 											</div>
 										))}
@@ -395,28 +395,48 @@ function Meeting() {
 		var dur = 60;
 		var startdate = formatDate(startDate);
 		var enddate = formatDate(endDate);
+		var starttime = formatTime(startDate);
+		var endtime  = formatTime(endDate);
 		// setAvailable([
 		// 	{ start: 'December 5, 2019 11:30', end: 'December 5, 2019 12:30' },
 		// 	{ start: 'December 2, 2019 13:00', end: '"December 2, 2019 14:00' },
 		// ]);
 		// getAvailableRooms();
-		var times = ["2019-12-05 11:00-12:00"];
-		setAvailableTimes(times);
 		const form = {
 			participants: guests,
 			earliest_meet_date: startdate,
 			latest_meet_date: enddate,
+			earliest_meet_time: starttime,
+			latest_meet_time: endtime,
 			meet_duration: dur
 		}
-		// server.getAvailableTime(form).then(data => {
-		// 	// var i;
-		// 	// for (i=0;i<data.length;i++){
-		// 	// 	console.log(Object.keys(data[i])[0]);
-		// 	// }
-		// 	console.log(data);
-		// })
-		getAvailableRooms(times);
-		setShowAvailable(true);
+		server.getAvailableTime(form).then(data => {
+			setAvailableTimes(data);
+			var temproom = new Object();
+			var i;
+			for(i=0;i<data.length;i++) {
+				temproom[data[i]] = [];
+			}
+
+			setAvailableRooms(temproom);
+			console.log(data);
+			getAvailableRooms(data);
+			setShowAvailable(true);
+		})
+		// var data = ["2019-12-04 10:00-11:00"];
+		// setAvailableTimes(data);
+		// var temproom = new Object();
+		// var i;
+		// for(i=0;i<data.length;i++) {
+		// 	temproom[data[i]] = [];
+		// }
+
+		// setAvailableRooms(temproom);
+		// console.log(data);
+		// getAvailableRooms(data);
+		// setShowAvailable(true);
+
+
 
 	}
 
@@ -431,7 +451,7 @@ function Meeting() {
 		console.log(form.datetimes);
 		server.getAvailableRoom(form).then(data => {
 				console.log(data);
-				setAvailableRooms(data.Timeslots);
+				setAvailableRooms(data.map.map((loc,index) => {loc.substring(0,loc.indexOf(':'))}));
 		});
 		// setAvailableRooms(["Powell Study Room 1,Powell Study Room 2","Powell Study Room 1"])
 	}

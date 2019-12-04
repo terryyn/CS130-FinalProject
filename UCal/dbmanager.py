@@ -464,7 +464,7 @@ class DatabaseManager():
                 if possible_time_slots:
                     all_possible_time_slots[possible_date] = possible_time_slots
         
-        return format_time_slot_lists(all_possible_time_slots, meet_duration)
+        return self.format_time_slot_lists(all_possible_time_slots, meet_duration)
 
     def format_time_slot_lists(self,time_slots, meeting_duration):
         '''
