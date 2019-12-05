@@ -61,6 +61,10 @@ class Server {
 	getNotifs() {
 		return this.perform('get', '/getNotifs');
 	}
+	
+	getAvailableTime(form) {
+		return this.perform('post', '/schedule-meeting',form);
+	}
 
 	async perform(method, resource, data = {}) {
 		console.log(method, 'request to:', resource, 'with:');

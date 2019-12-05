@@ -19,6 +19,7 @@ import { Button } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
+import Link from '@material-ui/core/Link';
 
 import '../styles/meeting.css'
 import { withTheme } from '@material-ui/styles';
@@ -52,7 +53,7 @@ function Meeting() {
 	const classes = useStyles();
 
 	const [ showAvailable, setShowAvailable ] = useState(false);
-	const [ availableTimes, setAvailable ] = useState([]);
+	const [ availableTimes, setAvailableTimes] = useState([]);
 
 	const [ startDate, setStartDate ] = useState(new Date());
 	const [ endDate, setEndDate ] = useState(new Date());
@@ -60,15 +61,16 @@ function Meeting() {
 	const [ meetingDes, setMeetingDes ] = useState("");
 	const [ meetingLoc, setMeetingLoc ] = useState("");
 	const [ meetingName, setMeetingName ] = useState("");
+	const [ duration, setDuration] = useState("0");
 
-	const [ guests, setGuests ] = useState([]);
+	const [ guests, setGuests ] = useState("");
 	const [ course, setCourse ] = useState("");
 
 	const [ showSuccess, setSuccess ] = useState(false);
 	const [ customStartDate, setCustomStartDate ] = useState(new Date());
 	const [ customEndDate, setCustomEndDate ] = useState(new Date());
 
-	const [ availableRooms, setAvailableRooms] = useState([]);
+	const [ availableRooms, setAvailableRooms] = useState(new Object());
 	const [ roomErrMsg, setRoomErrMsg]  = useState("");
 
 
@@ -102,9 +104,9 @@ function Meeting() {
 		setGuests("");
 	};
 
-	const submitMeeting = (startDateMeeting, endDateMeeting) => {
+	const submitMeeting = (time) => {
 		setSuccess(true);
-		addEvent(startDateMeeting, endDateMeeting);
+		addEvent(time);
 	};
 
 	const handleClose = () => {
@@ -128,6 +130,10 @@ function Meeting() {
 		setRoomErrMsg(msg);
 	}
 
+	const handleDuration = dur => {
+		setDuration(dur.target.value);
+	}
+
 	function formatDate(d) {
 		var month = '' + (d.getMonth() + 1);
 		var day = '' + d.getDate();
@@ -141,18 +147,19 @@ function Meeting() {
 		return [year, month, day].join('-');
 	}
 
-	function formateTime(d) {
+	function formatTime(d) {
 		var datetext = d.toTimeString();
 		var datetext = datetext.split(' ')[0];
 		return datetext.substring(0, 5);
 	}
 
-	async function addEvent(start, end) {
+	async function addEvent(time) {
+		var start = time.substring(0,time.lastIndexOf('-'));
 		const form = {
-			startdate: formatDate(start),
-			starttime: formateTime(start),
-			enddate: formatDate(end),
-			endtime: formateTime(end),
+			startdate: start.substring(0,start.indexOf(' ')),
+			starttime: start.substring(start.indexOf(' ')+1,start.length),
+			enddate: start.substring(0,start.indexOf(' ')),
+			endtime: time.substring(time.lastIndexOf('-')+1,time.length),
 			location: meetingLoc,
 			name: meetingName,
 			type: 6,
@@ -244,9 +251,9 @@ function Meeting() {
 								/>
 								<TextField
 									id="outlined-multiline-flexible"
-									label="Location"
-									value={meetingLoc}
-									onChange={handleMeetingLocChange}
+									label="Duration"
+									value={duration}
+									onChange={handleDuration}
 									className={classes.textField}
 									margin="normal"
 									variant="outlined"
@@ -307,9 +314,12 @@ function Meeting() {
 								(
 									<div id="time-buttons">
 										{availableTimes.map((time, index) => (
-											<Button key={index} variant="outlined" onClick={() => {submitMeeting(new Date(time.start), new Date(time.end))}}>
-												{`${time.start} to ${time.end}`}
+											<div>
+											<Button key={index} variant="outlined" onClick={() => {submitMeeting(time)}}>
+												{time}
 											</Button>
+											<a href="http://calendar.library.ucla.edu/reserve">{availableRooms[time.substring(0,time.lastIndexOf('-'))]}</a>
+											</div>
 										))}
 									</div>
 								) :
@@ -356,7 +366,7 @@ function Meeting() {
 													}}
 												/>
 											</div>
-											<Button variant="outlined" id="custom-submit-button" onClick={() => {submitMeeting(customStartDate, customEndDate)}}>
+											<Button variant="outlined" id="custom-submit-button" onClick={() => {submitMeeting(formatDateToTime(customStartDate,customEndDate))}}>
 												Create Meeting
 											</Button>
 										</MuiPickersUtilsProvider>
@@ -379,49 +389,73 @@ function Meeting() {
 		);
 	}
 
+	function formatDateToTime(start,end){
+
+	}
+
 	function getAvailableTimes() {
-		setAvailable([
-			// { start: 'October 13, 2019 11:30', end: 'October 13, 2019 12:30' },
-			// { start: 'October 20, 2019 1:00', end: '"October 20, 2019 5:00' },
-		]);
-		setShowAvailable(true);
+		var dur = 60*parseInt(duration);
+		var startdate = formatDate(startDate);
+		var enddate = formatDate(endDate);
+		var starttime = formatTime(startDate);
+		var endtime  = formatTime(endDate);
+		// setAvailable([
+		// 	{ start: 'December 5, 2019 11:30', end: 'December 5, 2019 12:30' },
+		// 	{ start: 'December 2, 2019 13:00', end: '"December 2, 2019 14:00' },
+		// ]);
+		// getAvailableRooms();
+		const form = {
+			participants: guests,
+			earliest_meet_date: startdate,
+			latest_meet_date: enddate,
+			earliest_meet_time: starttime,
+			latest_meet_time: endtime,
+			meet_duration: dur
+		}
+		server.getAvailableTime(form).then(data => {
+			setAvailableTimes(data);
+			var temproom = new Object();
+			var i;
+			for(i=0;i<data.length;i++) {
+				temproom[data[i]] = [];
+			}
+
+			setAvailableRooms(temproom);
+			console.log(data);
+			getAvailableRooms(data);
+		})
+		// var data = ["2019-12-04 10:00-11:00"];
+		// setAvailableTimes(data);
+		// var temproom = new Object();
+		// var i;
+		// for(i=0;i<data.length;i++) {
+		// 	temproom[data[i]] = [];
+		// }
+
+		// setAvailableRooms(temproom);
+		// console.log(data);
+		// getAvailableRooms(data);
+		// setShowAvailable(true);
+
+
+
 	}
 
-	function getAvailableRooms() {
-		const form = 
-		server.getAvailableRoom(form).then();
-	}
-
-	function renderFindRoom() {
-		getAvailableRooms();
-		return (
-			showAvailable && <Card id="room-card"> 
-				<div id="room-container">
-				<CardHeader title="Available Rooms" />
-						<Typography className={classes.pos} color="textSecondary">
-							Study room for the selected time
-						</Typography>
-						<CardContent className={classes.cardContent}>
-							{
-								(availableRooms.length == 0) ?
-								(
-									<div id="room-message">
-										{roomErrMsg}
-									</div>	
-								) :
-								(
-									<div id="availablerooms">
-										{availableRooms.map((room, index) => (
-											<div> {room} </div>
-										))}
-									</div>
-								)
-							}
-						</CardContent>
-
-				</div>
-			</Card>
-		);
+	function getAvailableRooms(times) {
+		var meetsize = (guests.split(",").length) + 1 ;
+		var dur = parseInt(duration)*2;
+		const form = {
+			duration: 2, 
+			meeting_size: 5, 
+			datetimes: times.join(',')
+		}
+		console.log(form.datetimes);
+		server.getAvailableRoom(form).then(data => {
+				console.log(data);
+				setAvailableRooms(data.Timeslots)
+				setShowAvailable(true);
+		});
+		// setAvailableRooms(["Powell Study Room 1,Powell Study Room 2","Powell Study Room 1"])
 	}
 
 	return (

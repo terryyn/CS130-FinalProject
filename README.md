@@ -25,3 +25,20 @@ docker-compose up -d --build
 
 Navigate to localhost:3000 to start using the app
 
+
+## Frontend documentation
+
+To run:
+`npm start`
+
+The code is organized as follows:
+```
+/app
+|- App.js  // base App file with global logic
+|- server.js // HTTP request abstraction layer
+|- /components // dummy components (ideally stateless)
+|- /containers // typically views which contain actual business logic
+    |- /snapshots // frontend test snapshots
+|- /styles // contains stylesheets for views
+```
+

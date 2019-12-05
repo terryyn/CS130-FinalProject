@@ -1,5 +1,5 @@
 # flake8 compatible
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 from collections import defaultdict
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
@@ -408,13 +408,20 @@ class DatabaseManager():
         [{date: [(start_time_1, end_time_1),(start_time_2, end_time_2)]},...]
         '''
 
-        participants = meeting_json['participants']
-        possible_dates = [ self.convert_date(date_str) for date_str in meeting_json['possible_dates']]
-        possible_dates.sort()
+        participants = meeting_json['participants'].split(',')
+        possible_dates = []
+        earliest_meet_date = self.convert_date(meeting_json['earliest_meet_date'])
+        latest_meet_date = self.convert_date(meeting_json['latest_meet_date'])
+        step = timedelta(days=1)
+        
+        while earliest_meet_date <= latest_meet_date:
+            possible_dates.append(earliest_meet_date)
+            earliest_meet_date += step
+        
         possible_days = [day.isoweekday() for day in possible_dates]
         meet_duration = meeting_json['meet_duration']
-        earliest_meet_time =  time(hour=8)
-        latest_meet_time = time(hour=18)
+        earliest_meet_time = self.convert_time(meeting_json['earliest_meet_time'])
+        latest_meet_time = self.convert_time(meeting_json['latest_meet_time'])
 
         # Get all the events within dates
         occupied_events = db.session.query(
@@ -429,7 +436,7 @@ class DatabaseManager():
         ).join(Participation).join(User).filter(
                 User.email.in_(participants)
         ).distinct().all()
-        
+
         # Finds all the occupied time slots in those dates 
         occupied_time_dict = defaultdict(list)
         for event in occupied_events:
@@ -456,12 +463,10 @@ class DatabaseManager():
         the current format of possible meeting time is
         [{date: [(start_time_1, end_time_1),(start_time_2, end_time_2)]},...]
         '''
-        all_possible_time_slots = []
+        all_possible_time_slots = {}
         for possible_date in possible_dates:
             if possible_date not in occupied_time_dict:
-                all_possible_time_slots.append(
-                    {possible_date: [(earliest_meet_time, latest_meet_time)]}
-                )
+                all_possible_time_slots[possible_date] = [(earliest_meet_time, latest_meet_time)]
             else:
                 possible_time_slots = []
                 for i in range(len(occupied_time_dict[possible_date]) - 1):
@@ -501,11 +506,33 @@ class DatabaseManager():
                     possible_time_slots.append((occupied_time_dict[possible_date][-1][1], latest_meet_time))
 
                 if possible_time_slots:
-                    all_possible_time_slots.append(
-                        {possible_date: possible_time_slots}
-                    )
+                    all_possible_time_slots[possible_date] = possible_time_slots
+        
+        return self.format_time_slot_lists(all_possible_time_slots, meet_duration)
 
-        return all_possible_time_slots
+    def format_time_slot_lists(self,time_slots, meeting_duration):
+        '''
+        divide previous large time blocks into small time blocks with the same length of meeting
+        return format:
+        ['2019-12-05 09:00-09:30', '2019-12-05 09:30-10:00']
+        '''
+        time_slot_lists = []
+        for date in time_slots:
+            for time_range in time_slots[date]:
+                meeting_start_time = time_range[0]
+                while meeting_start_time < time_range[1]:
+                    meeting_end_time = (datetime.combine(
+                        datetime.today(),
+                        meeting_start_time
+                        ) + timedelta(minutes=meeting_duration)).time()
+                    if meeting_end_time <= time_range[1]:
+                        time_str = date.strftime("%Y-%m-%d ") + meeting_start_time.strftime("%H:%M-") + meeting_end_time.strftime("%H:%M")
+                        time_slot_lists.append(time_str)
+                    meeting_start_time = (datetime.combine(
+                        datetime.today(),
+                        meeting_start_time
+                        ) + timedelta(minutes=30)).time()
+        return time_slot_lists
     
     def clear_all(self):
         meta = db.metadata
