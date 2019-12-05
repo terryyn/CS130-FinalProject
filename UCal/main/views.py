@@ -73,6 +73,12 @@ def getName():
     if request.method == 'GET':
         return db_manager.get_username()
 
+@main.route('/getNotifs', methods=['GET'])
+@login_required
+def getNotifs():
+    if request.method == 'GET':
+        return db_manager.get_notifs()
+
 @main.route('/editUser', methods=['POST'])
 @login_required
 def editUser():

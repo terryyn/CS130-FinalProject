@@ -49,6 +49,7 @@ class DatabaseManager():
                 email=user_json['email'],
                 password_hash=generate_password_hash(user_json['password']),
                 is_instructor=convertToBool(user_json['is_instructor']),
+                courses=''
             )
             db.session.add(new_user)
             db.session.commit()
@@ -70,14 +71,14 @@ class DatabaseManager():
         remember = convertToBool(user_json['remember'])
         if check_password_hash(current_user.password_hash, user_json['password']):
             login_user(current_user, remember=remember)
-            return {'name': current_user.username, 'email': current_user.email, 'is_instructor': current_user.is_instructor}
+            return {'name': current_user.username, 'email': current_user.email, 'is_instructor': current_user.is_instructor, 'courses': current_user.courses}
         else:
             return -2
         return -3
     
     def auth(self):
         if current_user.is_authenticated:
-            return {'name': current_user.username, 'email': current_user.email, 'is_instructor': current_user.is_instructor, 'courses': current_user.courses}
+            return {'name': current_user.username, 'email': current_user.email, 'is_instructor': current_user.is_instructor, 'courses': current_user.courses, 'notifications': current_user.notifications}
         else:
             return None
     
@@ -88,6 +89,10 @@ class DatabaseManager():
     @login_required
     def get_username(self):
         return current_user.username
+
+    @login_required
+    def get_notifs(self):
+        return current_user.notifications
 
     @login_required
     def edit_user(self, user_json):
@@ -116,6 +121,10 @@ class DatabaseManager():
 
     @staticmethod
     def convert_time(time, has_seconds=False):
+        if (len(time)>5):
+            has_seconds=True
+        else:
+            has_seconds=False
         if has_seconds:
             return datetime.strptime(
             time, '%H:%M:%S'
@@ -168,10 +177,11 @@ class DatabaseManager():
         ret = []
         users = User.query.all()
         for u in users:
-            if u.courses!='' and u.id!=current_user.id:
-                courses = u.courses.split(',')
-                if course in courses:
-                    ret.append(u)
+            if u.courses is not None:
+                if u.courses!='' and u.id!=current_user.id:
+                    courses = u.courses.split(',')
+                    if course in courses:
+                        ret.append(u)
         return ret
 
     @login_required
@@ -205,7 +215,11 @@ class DatabaseManager():
             for u in users_to_notify:
                 try:
                     db.session.add(Participation(event_id=event_id, user_id=u.id))
-                    db.session.commit()
+                    notif = 'Event added by ' + current_user.username + ': ' + new_event.course + ' ' + new_event.name + ' ' + new_event.startdate.strftime("%m/%d") + ' ' + new_event.starttime.strftime("%H:%M")
+                    if u.notifications is None:
+                        u.notifications = notif
+                    else:
+                        u.notifications = u.notifications + ',' + notif
                 except sqlalchemy.exc.IntegrityError:
                     pass
         except:
@@ -217,7 +231,6 @@ class DatabaseManager():
             for u in users_to_notify:
                 try:
                     db.session.add(Participation(event_id=event_id, user_id=u.id))
-                    db.session.commit()
                 except sqlalchemy.exc.IntegrityError:
                     pass
         except:
@@ -225,9 +238,9 @@ class DatabaseManager():
             
         try:
             db.session.add(Participation(event_id=event_id, user_id=current_user.id))
-            db.session.commit()
         except sqlalchemy.exc.IntegrityError:
             pass
+        db.session.commit()
         return event_id
 
     @login_required
@@ -236,13 +249,27 @@ class DatabaseManager():
         Takes in the event id of the event and deletes the event.
         No return value.
         '''
-        #first checks how many users are related to this event
-        num_of_participants = Participation.query.filter(Participation.event_id == eventID).count()
-        Participation.query.filter(Participation.event_id == eventID, \
-                            Participation.user_id == current_user.id).delete()
 
-        if num_of_participants == 1:
-            Event.query.filter(Event.id == eventID).delete()
+        target = Event.query.get(eventID)
+
+        users_to_notify = User.query.join(Participation).filter(
+            Participation.event_id == eventID
+        ).all()
+
+        if (current_user.is_instructor or target.eventType==6):
+            try:
+                for u in users_to_notify:
+                    if u!=current_user.id:
+                        notif = 'Event deleted by ' + current_user.username + ': ' + target.course + ' ' + target.name + ' ' + target.startdate.strftime("%m/%d") + ' ' + target.starttime.strftime("%H:%M")
+                        if u.notifications is None:
+                            u.notifications = notif
+                        else:
+                            u.notifications = u.notifications + ',' + notif
+            except:
+                pass
+
+        Participation.query.filter_by(event_id=eventID).delete()
+        Event.query.filter(Event.id == eventID).delete()
 
         db.session.commit()
 
@@ -269,9 +296,26 @@ class DatabaseManager():
                 if change == 'startdate' or change == 'enddate':
                     setattr(target, change, self.convert_date(value))
                 elif change == 'starttime' or change == 'endtime':
-                    setattr(target, change, self.convert_time(value, has_seconds=True))
+                    setattr(target, change, self.convert_time(value, has_seconds=False))
                 else:
                     setattr(target, change, changes_json[change])
+        
+        users_to_notify = User.query.join(Participation).filter(
+            Participation.event_id == eventID
+        ).all()
+
+        if (current_user.is_instructor or target.eventType==6):
+            try:
+                for u in users_to_notify:
+                    if u!=current_user.id:
+                        notif = 'Event edited by ' + current_user.username + ': ' + target.course + ' ' + target.name + ' ' + target.startdate.strftime("%m/%d") + ' ' + target.starttime.strftime("%H:%M")
+                        if u.notifications is None:
+                            u.notifications = notif
+                        else:
+                            u.notifications = u.notifications + ',' + notif
+            except:
+                pass
+            
         db.session.add(target)
         db.session.commit()
 

@@ -73,7 +73,6 @@ class AddEventForm extends Component {
 					</div>
 
 					<div className="addevent-field" id="name">
-						<InputLabel id="name-label">Name</InputLabel>
 						<TextField
 							required
 							id="name-input"
@@ -82,17 +81,18 @@ class AddEventForm extends Component {
 							InputProps={{ classes: { input: this.props.classes.textField } }}
 							onChange={(e) => this.props.setName(e.target.value)}
 							value={this.props.name}
+							label="Name"
 						/>
 					</div>
 
 					<div className="addevent-field" id="location">
-						<InputLabel id="location-label">Location</InputLabel>
 						<TextField
 							id="location-input"
 							variant="outlined"
 							InputProps={{ classes: { input: this.props.classes.textField } }}
 							onChange={(e) => this.props.setLocation(e.target.value)}
 							value={this.props.location}
+							label="Location"
 						/>
 					</div>
 
@@ -135,6 +135,7 @@ class AddEventForm extends Component {
 								id="course-input"
 								label="Course"
 								onChange={(e) => this.props.setCourse(e.target.value)}
+								value={this.props.course}
 							>
 								{this.props.courses.map((c, index) => <MenuItem value={c}>{c}</MenuItem>)}
 							</Select>
@@ -142,7 +143,6 @@ class AddEventForm extends Component {
 					)}
 
 					<div className="addevent-field" id="description">
-						<InputLabel id="description-label">Description</InputLabel>
 						<TextField
 							id="description-input"
 							multiline
@@ -151,6 +151,7 @@ class AddEventForm extends Component {
 							margin="normal"
 							onChange={(e) => this.props.setDesc(e.target.value)}
 							value={this.props.description}
+							label="Description"
 						/>
 					</div>
 

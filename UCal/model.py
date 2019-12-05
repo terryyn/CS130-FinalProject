@@ -17,6 +17,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     is_instructor = db.Column(db.Boolean)
     courses =  db.Column(db.String(1024), default='')
+    notifications =  db.Column(db.String(1024), default='')
     participations = db.relationship(
         'Participation', backref='user', lazy='dynamic'
     )

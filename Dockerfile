@@ -4,6 +4,7 @@ COPY ./migrations /migrations
 COPY ./config.py /config.py
 COPY ./run_server.py /run_server.py
 COPY ./requirements.txt /requirements.txt
+COPY ./Procfile /Procfile
 WORKDIR /
 RUN apt-get update -y && \
     apt-get install -y python-pip python-dev

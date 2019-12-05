@@ -156,3 +156,7 @@
 .react-calendar__tile--active:hover {
     font-weight: bolder !important;
 }
+
+#addevent-dialog {
+    padding: 3%;
+}

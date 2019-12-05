@@ -30,7 +30,8 @@ function getModalStyle() {
 	return {
 		top: '50%',
 		left: '50%',
-		transform: `translate(-50%, -50%)`
+		transform: `translate(-50%, -50%)`,
+		padding: "2%"
 	};
 }
 
@@ -154,7 +155,7 @@ function Home(props) {
 			type: eventType,
 			description: eventDesc,
 			course: course,
-			frequencyType: eventFreq,
+			frequency_type: eventFreq,
 			guests: ''
 		};
 
@@ -184,7 +185,7 @@ function Home(props) {
 			name: eventName,
 			type: eventType,
 			description: eventDesc,
-			frequencyType: eventFreq,
+			frequency_type: eventFreq,
 			guests: ''
 		};
 		server.editEvent(form).then(() => {
@@ -291,6 +292,7 @@ function Home(props) {
 						type={eventType}
 						setDesc={setDesc}
 						setCourse={setCourse}
+						course={course}
 						courses={props.currentCourses}
 						currentIsInstructor={props.currentIsInstructor}
 					/>
@@ -306,6 +308,7 @@ function Home(props) {
 				aria-describedby="simple-modal-description"
 				open={showEditEvent}
 				onClose={() => setEditEvent(false)}
+				className="addevent-dialog"
 			>
 				<div style={getModalStyle()} className={classes.paper}>
 					<StyleForm

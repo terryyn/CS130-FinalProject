@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -13,6 +13,10 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@material-ui/core/Dialog';
+import { blue } from '@material-ui/core/colors';
+
 import '../styles/sidebar.css';
 
 import Server from '../server';
@@ -24,6 +28,21 @@ function Sidebar(props) {
 		props.setTryLogin(false);
 		server.logoutUser();
 	}
+
+	function getNotifs() {
+		server.getNotifs().then((ret_notifs) => {
+			if (ret_notifs[0]==',') ret_notifs=ret_notifs.substring(1,ret_notifs.length)
+			setNotifs(ret_notifs.split(','));
+			setShowNotifs(true);
+		})
+	}
+
+	const [ notifs, setNotifs ] = useState([]);
+	const [ showNotifs, setShowNotifs ] = useState(false);
+	
+	function handleClose() {
+		setShowNotifs(false);
+	};
 	
 	return (
 		<div id="sidebar">
@@ -76,7 +95,7 @@ function Sidebar(props) {
 						<NotificationsIcon />
 					</ListItemIcon>
 					<ListItemText>
-						<Link class="navlink" to="/">Notifications</Link>
+						<Link class="navlink" onClick={getNotifs}>Notifications</Link>
 					</ListItemText>
 				</ListItem>
 				<ListItem>
@@ -99,6 +118,13 @@ function Sidebar(props) {
 					</ListItemText>
 				</ListItem>
 			</List>
+			<Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={showNotifs} id="notif-dialog">
+				<ul class="list-type4">
+				{notifs.map(notif => (
+					<li class="notif-li"><a href="#">{notif}</a></li>
+				))}
+				</ul>
+			</Dialog>
 		</div>
 	);
 }
