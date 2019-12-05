@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { AssignmentReturnTwoTone } from '@material-ui/icons';
 
-const BASE_URI = 'https://ucal-backend.herokuapp.com';
+const BASE_URI = 'http://localhost:5000';
 
 const client = axios.create({
 	baseURL: BASE_URI,
@@ -61,7 +61,7 @@ class Server {
 	getNotifs() {
 		return this.perform('get', '/getNotifs');
 	}
-	
+
 	getAvailableTime(form) {
 		return this.perform('post', '/schedule-meeting',form);
 	}
