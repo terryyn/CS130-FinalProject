@@ -218,7 +218,7 @@ class RoomFinder():
         if req_datetime < site_start_date:
             return False
         if req_datetime > site_end_date:
-            num_clicks = ((req_datetime - site_end_date).day - 1) / 3 + 1
+            num_clicks = int(((req_datetime - site_end_date).days - 1) / 3 + 1)
             for i in range(0, num_clicks):
                 buttons = self.driver.find_elements_by_class_name(
                     "fc-next-button"
