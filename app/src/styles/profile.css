@@ -53,10 +53,6 @@
     margin-bottom: 8px;
 }
 
-#courses-container > div > div:before {
-    background-color: white !important;
-}
-
 .MuiChip-deletable {
     background: rgb(73, 76, 89) !important;
     border: 1px solid white !important;
